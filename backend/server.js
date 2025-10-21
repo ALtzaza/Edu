@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import testRoutes from './routes/test.js';  
 
 // 2. ตรวจสอบว่ามี MONGO_URI และ PORT
 const MONGO_URI = process.env.MONGO_URI;
@@ -21,8 +22,21 @@ app.use(cors()); // เปิดรับการเชื่อมต่อจ
 app.use(express.json()); // ทำให้ Express อ่าน JSON body ได้
 
 // --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) ---
-// ตัวอย่าง: app.use('/api/products', productRoutes);
-// ตัวอย่าง: app.use('/api/users', userRoutes);
+
+// app.use('/', testRoutes);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // --- 6. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
