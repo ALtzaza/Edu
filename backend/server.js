@@ -3,7 +3,11 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import testRoutes from './routes/test.js';  
+import quiz from './routes/quizzes.js';
+import lesson from './routes/lessons.js';
+import quizresults from './routes/quizresults.js';
+import certificateRoutes from './routes/certificates.js';
+import workShopRoutes from './routes/workshop.js';
 
 // 2. ตรวจสอบว่ามี MONGO_URI และ PORT
 const MONGO_URI = process.env.MONGO_URI;
@@ -21,9 +25,19 @@ const app = express();
 app.use(cors()); // เปิดรับการเชื่อมต่อจาก Origin อื่นๆ
 app.use(express.json()); // ทำให้ Express อ่าน JSON body ได้
 
-// --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) ---
+// ‼️ 5. เพิ่มบรรทัดนี้: ทำให้โฟลเดอร์ 'uploads' เป็น Public (Static) ‼️
+// นี่คือบรรทัดที่จะทำให้คุณ "เปิดไฟล์" ที่อัปโหลดได้
+// โดยจะแมป URL: /uploads/abc.zip -> ไปยังไฟล์ในโฟลเดอร์: [project]/uploads/abc.zip
+app.use('/uploads', express.static('uploads'));
 
+
+// --- 6. API Routes
 // app.use('/', testRoutes);
+app.use('/', quiz);
+app.use('/', lesson);
+app.use('/', quizresults);
+app.use('/', certificateRoutes);
+app.use('/', workShopRoutes);
 
 
 
@@ -39,7 +53,7 @@ app.use(express.json()); // ทำให้ Express อ่าน JSON body ไ�
 
 
 
-// --- 6. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
+// --- 7. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ เชื่อมต่อ MongoDB สำเร็จ!');

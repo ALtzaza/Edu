@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
+import mongooseSequence from 'mongoose-sequence';
+
 const { Schema } = mongoose;
+const AutoIncrement = mongooseSequence(mongoose);
 
 // -------- USERS --------
 const userSchema = new Schema({
-  name: { type: String, required: true }
-//   email: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
 //   password: { type: String, required: true },
-//   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' }
 //   avatar: String,
 //   bio: String,
 //   createdAt: { type: Date, default: Date.now }
@@ -46,19 +49,38 @@ const purchaseSchema = new Schema({
 // -------- QUIZ --------
 const quizSchema = new Schema({
   lesson: { type: Schema.Types.ObjectId, ref: 'Lesson' },
+  lessonNum: Number,  
+  quizNumber: { type: Number, unique: true },
   question: String,
   choices: [String],
   correctAnswer: String
 });
 
+quizSchema.plugin(AutoIncrement, { inc_field: 'quizNumber' });  
+
+
+
 // -------- QUIZ RESULTS --------
 const quizResultSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   lesson: { type: Schema.Types.ObjectId, ref: 'Lesson' },
+  lessonNum: Number,
   score: Number,
   total: Number,
   submittedAt: { type: Date, default: Date.now }
 });
+
+// -------- LESSONS -------- (เพิ่มส่วนนี้เข้าไป)
+const lessonSchema = new Schema({
+  course: { type: Schema.Types.ObjectId, ref: 'Course' },
+  title: { type: String, required: true },
+  lessonNumber: { type: Number, unique: true },
+  // คุณอาจจะเพิ่ม field อื่นๆ เช่น videoUrl, content ฯลฯ
+  createdAt: { type: Date, default: Date.now }
+});
+
+lessonSchema.plugin(AutoIncrement, { inc_field: 'lessonNumber' });
+
 
 // -------- WORKSHOPS --------
 const workshopSchema = new Schema({
@@ -119,6 +141,8 @@ const blogSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+
+
 // -------- EXPORT MODELS --------
 export const User = mongoose.model('User', userSchema);
 export const Category = mongoose.model('Category', categorySchema);
@@ -132,3 +156,4 @@ export const Review = mongoose.model('Review', reviewSchema);
 export const Progress = mongoose.model('Progress', progressSchema);
 export const Notification = mongoose.model('Notification', notificationSchema);
 export const Blog = mongoose.model('Blog', blogSchema);
+export const Lesson = mongoose.model('Lesson', lessonSchema);
