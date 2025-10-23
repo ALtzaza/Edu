@@ -1,11 +1,17 @@
-// 1. โหลด .env ก่อนเสมอ
+
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import testRoutes from './routes/test.js';  
+import categoryRoutes from "./routes/categories.js";
+import courseRoutes from "./routes/courses.js";
+import sectionRouter from "./routes/section.js";
+import lessonRouter from "./routes/lesson.js";
+import progressRoutes from "./routes/progresses.js";
+import notificationRoutes from "./routes/notificates.js";
+// import testRoutes from "./routes/test.js";
 
-// 2. ตรวจสอบว่ามี MONGO_URI และ PORT
+
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
 
@@ -21,8 +27,13 @@ const app = express();
 app.use(cors()); // เปิดรับการเชื่อมต่อจาก Origin อื่นๆ
 app.use(express.json()); // ทำให้ Express อ่าน JSON body ได้
 
-// --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) ---
-
+// --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) --- 
+app.use('/api/categories', categoryRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/sections', sectionRouter);
+app.use('/api/lessons', lessonRouter);
+app.use('/api/progresses', progressRoutes);
+app.use('/api/notifications', notificationRoutes);
 // app.use('/', testRoutes);
 
 
