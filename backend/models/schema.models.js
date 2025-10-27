@@ -98,7 +98,7 @@ const certificateSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   course: { type: Schema.Types.ObjectId, ref: 'Course' },
   issueDate: { type: Date, default: Date.now },
-  certificateUrl: String,
+  certificateData: { type: String, required: true },
   approvedBy: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 

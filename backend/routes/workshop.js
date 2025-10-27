@@ -22,8 +22,8 @@ const upload = multer({ storage: storage });
 
 // --- ID จำลอง (Mock IDs) ---
 // (ใช้ ID ที่คุณมีในฐานข้อมูล)
-const MOCK_USER_ID = "68f8761e956af1a115c4db62"; // (ID ของนักเรียน)
-const MOCK_ADMIN_ID = "68f8916f956af1a115c4db7a"; // (ID ของ Admin/ผู้สอน)
+const MOCK_USER_ID = "68f8c33e74d745e38e7bdf7d"; // (ID ของนักเรียน)
+const MOCK_ADMIN_ID = "660000000000000000000001"; // (ID ของ Admin/ผู้สอน)
 
 
 // ---------------------------------------------------

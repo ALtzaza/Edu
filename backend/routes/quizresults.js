@@ -3,7 +3,7 @@ import {Quiz, QuizResult, Lesson } from '../models/schema.models.js';
 
 const router = express.Router();
 
-const MOCK_USER_ID = "68f8761e956af1a115c4db62"
+const MOCK_USER_ID = "68f8c33e74d745e38e7bdf7d"
 //ดูผลสอบ ของตัวเอง ในบทเรียนนั้นๆ (สำหรับนักเรียน)
 router.get('/api/lessons/:lessonNum/results/me', async (req, res) => {
     try {

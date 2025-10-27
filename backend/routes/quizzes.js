@@ -116,7 +116,7 @@ router.get("/api/lessons/:lessonNum/quizzes/take", async (req, res) => {
   }
 });
 
-const MOCK_USER_ID = "68f8761e956af1a115c4db62";
+const MOCK_USER_ID = "68f8c33e74d745e38e7bdf7d";
 
 router.post("/api/lessons/:lessonNum/quizzes/submit", async (req, res) => {
   try {
