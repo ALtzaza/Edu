@@ -9,23 +9,40 @@ const AutoIncrement = mongooseSequence(mongoose);
 // -------- USERS --------
 const userSchema = new Schema({
   name: { type: String, required: true },
+  surname: { type: String },
+  username: { type: String, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ['student', 'teacher', 'admin'], default: 'student' },
+  avatar: {
+    type: String,
+    default: "https://cdn-icons-png.flaticon.com/512/149/149071.png", // รูป default
+  },
+  bio: String,
+  createdAt: { type: Date, default: Date.now },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
+
+});
+
+
+// -------- COURSE CATEGORIES --------
+const categorySchema = new Schema({
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   avatar: String,
   bio: String,
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+
+  // เพิ่มสอง field นี้
+  averageRating: { type: Number, default: 0 },
+  reviewCount: { type: Number, default: 0 }
 });
 
-const categorySchema = new Schema(
-  {
-    name: { type: String, required: true, unique: true },
-    description: String,
-  },
-  {
-    timestamps: true, // สร้าง createdAt, updatedAt อัตโนมัติ
-  }
-);
+
 
 const courseSchema = new Schema(
   {
@@ -78,22 +95,32 @@ const lessonSchema = new Schema(
 
 // -------- PURCHASES --------
 const purchaseSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "User" },
-  course: { type: Schema.Types.ObjectId, ref: "Course" },
-  amount: Number,
-  status: {
-    type: String,
-    enum: ["pending", "paid", "cancelled", "refunded"],
-    default: "pending",
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
+  amount: { 
+    type: Number, 
+    min: [0, "Amount ต้องเป็นบวกเสมอ"],
+    required: true 
   },
-  paymentMethod: {
-    type: String,
-    enum: ["credit_card", "bank_transfer", "wallet", "mock"],
-    default: "mock",
+  status: { type: String, enum: ['pending', 'paid', 'cancelled', 'refunded'], default: 'pending' },
+  paymentMethod: { 
+    type: String, 
+    enum: ['credit_card', 'bank_transfer', 'wallet', 'mock', 'manual', 'gift', 'admin_granted'], 
+    default: 'manual',
+    required: true 
   },
   paymentRef: String,
+  slipUrl: { type: String }, // แนบสลิป
   createdAt: { type: Date, default: Date.now },
+  transactionId: { 
+    type: String, 
+    unique: true, 
+    default: () => `txn_${Date.now()}_${Math.floor(Math.random() * 10000)}`
+  },
+  purchasedAt: { type: Date }
 });
+
+
 
 // -------- QUIZ --------
 const quizSchema = new Schema({
@@ -141,28 +168,34 @@ const certificateSchema = new Schema({
 
 // -------- REVIEWS --------
 const reviewSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "User" },
-  course: { type: Schema.Types.ObjectId, ref: "Course" },
-  rating: { type: Number, min: 1, max: 5 },
-  comment: String,
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
+  rating: { type: Number, min: 1, max: 5, required: true },
+  comment: { type: String, trim: true },
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
-// -------- PROGRESS (แก้ไข Schema นี้) --------
-const progressSchema = new Schema(
-  {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    course: { type: Schema.Types.ObjectId, ref: "Course", required: true }, //  1. (แก้ไข) เปลี่ยนเป็น Array เพื่อเก็บ ID ของบทเรียนที่จบแล้ว
-    lessonsCompleted: [{ type: Schema.Types.ObjectId, ref: "Lesson" }],
-    totalLessons: { type: Number, default: 0 }, //  2. (เพิ่ม) เราจะเก็บจำนวนบทเรียนทั้งหมดของคอร์สไว้
-    percentage: { type: Number, default: 0 },
-    lastWatched: { type: Schema.Types.ObjectId, ref: "Lesson" },
-  },
-  {
-    timestamps: true, //  3. (แก้ไข) ใช้ timestamps
-  }
-); //  (สำคัญ) สร้าง Index เพื่อให้ User + Course ไม่ซ้ำกัน
-progressSchema.index({ user: 1, course: 1 }, { unique: true });
+// ป้องกันการรีวิวซ้ำ (1 user ต่อ 1 course)
+reviewSchema.index({ user: 1, course: 1 }, { unique: true });
+
+// อัปเดตเวลาอัตโนมัติเมื่อแก้ไข
+reviewSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+
+// -------- PROGRESS --------
+const progressSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
+  course: { type: Schema.Types.ObjectId, ref: 'Course' },
+  lessonsCompleted: Number,
+  totalLessons: Number,
+  percentage: Number,
+  lastWatched: { type: Schema.Types.ObjectId, ref: 'Lesson' },
+  updatedAt: { type: Date, default: Date.now }
+});
 
 // -------- NOTIFICATIONS (อัปเกรด) --------
 const notificationSchema = new Schema(
