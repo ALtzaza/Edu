@@ -1,180 +1,187 @@
-import express from 'express';
-// (อย่าลืม import Model ให้ครบ)
-import { Workshop, User, Course } from '../models/schema.models.js';
-import multer from 'multer';
-import path from 'path';
+import express from "express";
+// (แก้ไข) import 'Lesson' เพิ่มเข้ามา
+import { Workshop, User, Course, Lesson } from "../models/schema.models.js";
+import multer from "multer";
+import path from "path";
 
 const router = express.Router();
 
 // --- ตั้งค่า Multer Storage ---
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // เก็บในโฟลเดอร์ uploads
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    // ใช้ "วันที่-ชื่อไฟล์เดิม.นามสกุล"
-    cb(null, Date.now() + '-' + file.originalname); 
-  }
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
-
 
 const upload = multer({ storage: storage });
 
 // --- ID จำลอง (Mock IDs) ---
-// (ใช้ ID ที่คุณมีในฐานข้อมูล)
-const MOCK_USER_ID = "68f8c33e74d745e38e7bdf7d"; // (ID ของนักเรียน)
-const MOCK_ADMIN_ID = "660000000000000000000001"; // (ID ของ Admin/ผู้สอน)
+const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
+const MOCK_ADMIN_ID = "660000000000000000000001";
 
-
+// --------------------------------------------------- 
+// API: (นักเรียน) "ส่งงาน" หรือ "ส่งงานแก้"
+// (แก้ไข) เปลี่ยน Route ให้รับ lessonId ด้วย
 // ---------------------------------------------------
-// API:  (นักเรียน) "ส่งงาน" หรือ "ส่งงานแก้"
-// ---------------------------------------------------
-router.post('/api/courses/:courseId/workshops', upload.single('workshopFile'), async (req, res) => {
+router.post(
+  "/api/courses/:courseId/lessons/:lessonId/workshops",
+  upload.single("workshopFile"),
+  async (req, res) => {
     try {
-        const { courseId } = req.params;
-        const userId = MOCK_USER_ID; // (ในอนาคต: req.user._id)
+      // (แก้ไข) ดึง lessonId จาก params
+      const { courseId, lessonId } = req.params;
+      const userId = MOCK_USER_ID;
 
-    if (!req.file) {
-            return res.status(400).json({ message: 'No file uploaded' });
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const fileUrl = req.file.filename; // (แก้ไข) ตรวจสอบโดยใช้ 3 field (user, course, lesson)
+
+      let workshop = await Workshop.findOne({
+        user: userId,
+        course: courseId,
+        lesson: lessonId,
+      });
+
+      if (workshop) {
+        // (ตรรกะนี้ยังเหมือนเดิม)
+        if (workshop.status === "approved") {
+          return res
+            .status(400)
+            .json({ message: "Workshop already approved. Cannot resubmit." });
         }
-
-        const fileUrl = req.file.filename;
-
-        // ตรวจสอบว่าเคยส่งงานนี้หรือยัง
-        let workshop = await Workshop.findOne({ user: userId, course: courseId });
-
-        if (workshop) {
-            // ถ้าเคยส่งแล้ว และงาน "ผ่าน" (approved) แล้ว -> ส่งซ้ำไม่ได้
-            if (workshop.status === 'approved') {
-                return res.status(400).json({ message: 'Workshop already approved. Cannot resubmit.' });
-            }
-            
-            // ถ้าเคยส่งแล้ว (แต่ยังไม่ผ่าน) -> ให้อัปเดตไฟล์ (ส่งซ้ำ)
-            workshop.fileUrl = fileUrl;
-            workshop.status = 'pending'; // ตั้งสถานะเป็น "รอตรวจ" ใหม่
-            workshop.submittedAt = Date.now();
-            workshop.feedback = null; // ล้าง feedback เก่า
-            workshop.reviewedAt = null;
-            await workshop.save();
-            res.status(200).send(workshop); // ส่ง 200 OK (เพราะเป็นการอัปเดต)
-
-        } else {
-            // ถ้ายังไม่เคยส่ง -> สร้างใหม่
-            const newWorkshop = new Workshop({
-                user: userId,
-                course: courseId,
-                fileUrl: fileUrl
-                // status: 'pending' (อัตโนมัติ)
-            });
-            await newWorkshop.save();
-            res.status(201).send(newWorkshop); // ส่ง 201 Created (เพราะสร้างใหม่)
-        }
-
+        workshop.fileUrl = fileUrl;
+        workshop.status = "pending";
+        workshop.submittedAt = Date.now();
+        workshop.feedback = null;
+        workshop.reviewedAt = null;
+        await workshop.save();
+        res.status(200).send(workshop);
+      } else {
+        // (แก้ไข) เพิ่ม lesson: lessonId ตอนสร้างใหม่
+        const newWorkshop = new Workshop({
+          user: userId,
+          course: courseId,
+          lesson: lessonId, //  เพิ่ม field นี้
+          fileUrl: fileUrl,
+        });
+        await newWorkshop.save();
+        res.status(201).send(newWorkshop);
+      }
     } catch (error) {
-        res.status(500).send({ message: 'Server Error', error: error.message });
+      res.status(500).send({ message: "Server Error", error: error.message });
     }
-});
+  }
+);
 
 // ---------------------------------------------------
-// API:  (นักเรียน) ดู Workshop ทั้งหมดของตัวเอง
+// API:  (นักเรียน) ดู Workshop ทั้งหมดของตัวเอง
 // ---------------------------------------------------
-router.get('/api/workshops/me', async (req, res) => {
-    try {
-        const userId = MOCK_USER_ID; 
+router.get("/api/workshops/me", async (req, res) => {
+  try {
+    const userId = MOCK_USER_ID;
 
-        const workshops = await Workshop.find({ user: userId })
-            .populate('course', 'title'); // ดึง "title" ของ Course มาแสดง
+    const workshops = await Workshop.find({ user: userId })
+      .populate("course", "title")
+      .populate("lesson", "title"); //  (แก้ไข) populate ชื่อบทเรียนมาด้วย
 
-        res.status(200).send(workshops);
-
-    } catch (error) {
-        res.status(500).send({ message: 'Server Error', error: error.message });
-    }
+    res.status(200).send(workshops);
+  } catch (error) {
+    res.status(500).send({ message: "Server Error", error: error.message });
+  }
 });
-
 
 // ---------------------------------------------------
 // API: (Admin) ดู Workshop ทั้งหมดใน Course
-// (สามารถกรองสถานะได้ เช่น /workshops?status=pending)
+// (กรองตาม status หรือ lessonId ได้)
 // ---------------------------------------------------
-router.get('/api/courses/:courseId/workshops', async (req, res) => {
-    try {
-        const { courseId } = req.params;
-        const { status } = req.query; // รับ status จาก query string (e.g., ?status=pending)
+router.get("/api/courses/:courseId/workshops", async (req, res) => {
+  try {
+    const { courseId } = req.params; // (แก้ไข) รับ lessonId เพิ่มมาเผื่อกรอง
+    const { status, lessonId } = req.query; // (แก้ไข) สร้างตัวกรอง (Filter)
 
-        // สร้างตัวกรอง (Filter)
-        const filter = { course: courseId };
-        if (status) {
-            filter.status = status;
-        }
-
-        const workshops = await Workshop.find(filter)
-            .populate('user', 'name'); // ดึง "name" ของนักเรียน
-
-        res.status(200).send(workshops);
-
-    } catch (error) {
-        res.status(500).send({ message: 'Server Error', error: error.message });
+    const filter = { course: courseId };
+    if (status) {
+      filter.status = status;
     }
+    //  (เพิ่ม) ถ้ามี query ?lessonId=... ก็ให้กรองเฉพาะบทเรียนนั้น
+    if (lessonId) {
+      filter.lesson = lessonId;
+    }
+
+    const workshops = await Workshop.find(filter)
+      .populate("user", "name")
+      .populate("lesson", "title"); //  (แก้ไข) populate ชื่อบทเรียนมาด้วย
+
+    res.status(200).send(workshops);
+  } catch (error) {
+    res.status(500).send({ message: "Server Error", error: error.message });
+  }
 });
 
 // ---------------------------------------------------
 // API: (Admin) "ตรวจงาน" (ให้ Feedback และ Status)
+// (ไม่ต้องแก้ไข)
 // ---------------------------------------------------
-router.put('/api/workshops/:workshopId/review', async (req, res) => {
-    try {
-        const { workshopId } = req.params;
-        const { feedback, status } = req.body;
-        // const adminId = MOCK_ADMIN_ID; // (เก็บไว้เผื่อต้องใช้)
+router.put("/api/workshops/:workshopId/review", async (req, res) => {
+  // ... (โค้ดส่วนนี้เหมือนเดิม 100% เพราะทำงานโดยใช้ workshopId)
+  try {
+    const { workshopId } = req.params;
+    const { feedback, status } = req.body;
 
-        if (!feedback || !status) {
-            return res.status(400).json({ message: 'feedback and status are required' });
-        }
-        if (!['approved', 'rejected'].includes(status)) {
-             return res.status(400).json({ message: 'Invalid status. Must be "approved" or "rejected".' });
-        }
-
-        const updatedWorkshop = await Workshop.findByIdAndUpdate(
-            workshopId,
-            {
-                feedback: feedback,
-                status: status,
-                reviewedAt: Date.now()
-            },
-            { new: true } // {new: true} เพื่อส่งข้อมูลที่อัปเดตแล้วกลับไป
-        );
-
-        if (!updatedWorkshop) {
-            return res.status(404).json({ message: 'Workshop not found' });
-        }
-
-        res.status(200).send(updatedWorkshop);
-
-    } catch (error) {
-        res.status(500).send({ message: 'Server Error', error: error.message });
+    if (!feedback || !status) {
+      return res
+        .status(400)
+        .json({ message: "feedback and status are required" });
     }
+    if (!["approved", "rejected"].includes(status)) {
+      return res
+        .status(400)
+        .json({ message: 'Invalid status. Must be "approved" or "rejected".' });
+    }
+
+    const updatedWorkshop = await Workshop.findByIdAndUpdate(
+      workshopId,
+      {
+        feedback: feedback,
+        status: status,
+        reviewedAt: Date.now(),
+      },
+      { new: true }
+    );
+
+    if (!updatedWorkshop) {
+      return res.status(404).json({ message: "Workshop not found" });
+    }
+
+    res.status(200).send(updatedWorkshop);
+  } catch (error) {
+    res.status(500).send({ message: "Server Error", error: error.message });
+  }
 });
 
-
 // ---------------------------------------------------
-// API: (Admin) "ลบ" Workshop (เผื่อนักเรียนส่งสแปม)
+// API: (Admin) "ลบ" Workshop
+// (ไม่ต้องแก้ไข)
 // ---------------------------------------------------
-router.delete('/api/workshops/:workshopId', async (req, res) => {
-    try {
-        const { workshopId } = req.params;
+router.delete("/api/workshops/:workshopId", async (req, res) => {
+  // ... (โค้ดส่วนนี้เหมือนเดิม 100% เพราะทำงานโดยใช้ workshopId)
+  try {
+    const { workshopId } = req.params;
 
-        const deletedWorkshop = await Workshop.findByIdAndDelete(workshopId);
+    const deletedWorkshop = await Workshop.findByIdAndDelete(workshopId);
 
-        if (!deletedWorkshop) {
-            return res.status(404).json({ message: 'Workshop not found' });
-        }
-        
-        res.status(200).json({ message: 'Workshop deleted successfully' });
-
-    } catch (error) {
-        res.status(500).send({ message: 'Server Error', error: error.message });
+    if (!deletedWorkshop) {
+      return res.status(404).json({ message: "Workshop not found" });
     }
+    res.status(200).json({ message: "Workshop deleted successfully" });
+  } catch (error) {
+    res.status(500).send({ message: "Server Error", error: error.message });
+  }
 });
-
 
 export default router;

@@ -7,7 +7,7 @@ import { generatePdfFromHtml } from "../utils/pdfGenerator.js";
 
 const router = express.Router();
 
-const MOCK_USER_ID = "68fa541312c0532db303746f";
+const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
 const MOCK_ADMIN_ID = "660000000000000000000001";
 
 // API: (นักเรียน) ดูใบ Certificate ทั้งหมดของตัวเอง
