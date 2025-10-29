@@ -3,14 +3,23 @@ const { Schema } = mongoose;
 
 // -------- USERS --------
 const userSchema = new Schema({
-  name: { type: String, required: true }
-//   email: { type: String, required: true, unique: true },
-//   password: { type: String, required: true },
-//   role: { type: String, enum: ['user', 'admin'], default: 'user' },
-//   avatar: String,
-//   bio: String,
-//   createdAt: { type: Date, default: Date.now }
+  name: { type: String, required: true },
+  surname: { type: String },
+  username: { type: String, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ['student', 'teacher', 'admin'], default: 'student' },
+  avatar: {
+    type: String,
+    default: "https://cdn-icons-png.flaticon.com/512/149/149071.png", // รูป default
+  },
+  bio: String,
+  createdAt: { type: Date, default: Date.now },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
+
 });
+
 
 // -------- COURSE CATEGORIES --------
 const categorySchema = new Schema({
@@ -28,20 +37,42 @@ const courseSchema = new Schema({
   instructor: String,
   difficulty: { type: String, enum: ['beginner', 'intermediate', 'advanced'], default: 'beginner' },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+
+  // เพิ่มสอง field นี้
+  averageRating: { type: Number, default: 0 },
+  reviewCount: { type: Number, default: 0 }
 });
 
 
 // -------- PURCHASES --------
 const purchaseSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
-  course: { type: Schema.Types.ObjectId, ref: 'Course' },
-  amount: Number,
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
+  amount: { 
+    type: Number, 
+    min: [0, "Amount ต้องเป็นบวกเสมอ"],
+    required: true 
+  },
   status: { type: String, enum: ['pending', 'paid', 'cancelled', 'refunded'], default: 'pending' },
-  paymentMethod: { type: String, enum: ['credit_card', 'bank_transfer', 'wallet', 'mock'], default: 'mock' },
+  paymentMethod: { 
+    type: String, 
+    enum: ['credit_card', 'bank_transfer', 'wallet', 'mock', 'manual', 'gift', 'admin_granted'], 
+    default: 'manual',
+    required: true 
+  },
   paymentRef: String,
-  createdAt: { type: Date, default: Date.now }
+  slipUrl: { type: String }, // แนบสลิป
+  createdAt: { type: Date, default: Date.now },
+  transactionId: { 
+    type: String, 
+    unique: true, 
+    default: () => `txn_${Date.now()}_${Math.floor(Math.random() * 10000)}`
+  },
+  purchasedAt: { type: Date }
 });
+
+
 
 // -------- QUIZ --------
 const quizSchema = new Schema({
@@ -82,12 +113,23 @@ const certificateSchema = new Schema({
 
 // -------- REVIEWS --------
 const reviewSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
-  course: { type: Schema.Types.ObjectId, ref: 'Course' },
-  rating: { type: Number, min: 1, max: 5 },
-  comment: String,
-  createdAt: { type: Date, default: Date.now }
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
+  rating: { type: Number, min: 1, max: 5, required: true },
+  comment: { type: String, trim: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
+
+// ป้องกันการรีวิวซ้ำ (1 user ต่อ 1 course)
+reviewSchema.index({ user: 1, course: 1 }, { unique: true });
+
+// อัปเดตเวลาอัตโนมัติเมื่อแก้ไข
+reviewSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
 
 // -------- PROGRESS --------
 const progressSchema = new Schema({
