@@ -11,6 +11,11 @@ import progressRoutes from "./routes/progresses.js";
 import notificationRoutes from "./routes/notificates.js";
 // import testRoutes from "./routes/test.js";
 
+import quiz from './routes/quizzes.js';
+import lesson from './routes/lessons.js';
+import quizresults from './routes/quizresults.js';
+import certificateRoutes from './routes/certificates.js';
+import workShopRoutes from './routes/workshop.js';
 
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
@@ -34,7 +39,19 @@ app.use('/api/sections', sectionRouter);
 app.use('/api/lessons', lessonRouter);
 app.use('/api/progresses', progressRoutes);
 app.use('/api/notifications', notificationRoutes);
+//  5. เพิ่มบรรทัดนี้: ทำให้โฟลเดอร์ 'uploads' เป็น Public (Static) 
+// นี่คือบรรทัดที่จะทำให้คุณ "เปิดไฟล์" ที่อัปโหลดได้
+// โดยจะแมป URL: /uploads/abc.zip -> ไปยังไฟล์ในโฟลเดอร์: [project]/uploads/abc.zip
+app.use('/uploads', express.static('uploads'));
+
+
+// --- 6. API Routes
 // app.use('/', testRoutes);
+app.use('/', quiz);
+app.use('/', lesson);
+app.use('/', quizresults);
+app.use('/', certificateRoutes);
+app.use('/', workShopRoutes);
 
 
 
@@ -50,7 +67,7 @@ app.use('/api/notifications', notificationRoutes);
 
 
 
-// --- 6. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
+// --- 7. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ เชื่อมต่อ MongoDB สำเร็จ!');
