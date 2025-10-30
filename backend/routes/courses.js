@@ -5,13 +5,17 @@ import {
     Category, 
     User, 
     Section, 
-    Lesson,  
+    Lesson,
+    Review,
+    Progress,
+    Purchase  
     
     
 } from "../models/schema.models.js";
 
 
-import { mockAdmin } from "../middleware/mockAuth.js";
+import { authenticateJWT } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = Router();
 
@@ -107,7 +111,7 @@ router.get("/:id", async (req, res) => {
 
 
 // --- 3. POST /api/courses (สร้างคอร์สใหม่ - Admin) ---
-router.post("/", mockAdmin, async (req, res) => {
+router.post("/", authenticateJWT, isAdmin, async (req, res) => {
     try {
       
       const { 
@@ -153,7 +157,7 @@ router.post("/", mockAdmin, async (req, res) => {
 
 
 // --- 4. PUT /api/courses/:id (อัปเดตคอร์ส - Admin) ---
-router.put("/:id", mockAdmin, async (req, res) => {
+router.put("/:id", authenticateJWT, isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         // รับข้อมูลทั้งหมดที่ Admin อาจจะแก้
@@ -189,7 +193,7 @@ router.put("/:id", mockAdmin, async (req, res) => {
 
 
 // --- 5. DELETE /api/courses/:id (ลบคอร์ส - Admin) ---
-router.delete("/:id", mockAdmin, async (req, res) => {
+router.delete("/:id", authenticateJWT, isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
 

@@ -1,11 +1,13 @@
 // ในไฟล์ routes/lessonRouter.js
 import { Router } from "express";
 import { Lesson, Section } from "../models/schema.models.js";
-import { mockAdmin } from "../middleware/mockAuth.js";
+
+import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = Router();
 
-router.post("/", mockAdmin, async (req, res) => {
+router.post("/" ,authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { title, videoUrl, content, sectionId } = req.body;
     if (!title || !sectionId) {
@@ -56,7 +58,7 @@ router.post("/", mockAdmin, async (req, res) => {
   }
 });
 
-router.put("/:lessonId", mockAdmin, async (req, res) => {
+router.put("/:lessonId", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { lessonId } = req.params;
     const { title, videoUrl, content } = req.body;
@@ -78,7 +80,7 @@ router.put("/:lessonId", mockAdmin, async (req, res) => {
   }
 });
 
-router.delete("/:lessonId", mockAdmin, async (req, res) => {
+router.delete("/:lessonId", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { lessonId } = req.params;
     const lesson = await Lesson.findById(lessonId);
@@ -99,7 +101,7 @@ router.delete("/:lessonId", mockAdmin, async (req, res) => {
   }
 });
 
-router.get("/:lessonId", async (req, res) => {
+router.get("/:lessonId",authenticateJWT,isEnrolled, async (req, res) => {
   try {
     const { lessonId } = req.params;
     const lesson = await Lesson.findById(lessonId).populate("quizzes"); // ⬅️ (แก้ไข) ต้องเติม 's' ให้ตรง Schema

@@ -3,13 +3,15 @@ import { Router } from "express";
 import { Section, Course, Lesson } from "../models/schema.models.js"; 
 
 import { mockAdmin } from "../middleware/mockAuth.js";
+import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
 // import { verifyToken } from "../middleware/verifyToken.js";
 // import { isAdmin } from "../middleware/isAdmin.js"; 
 
 const router = Router();
 
 
-router.post("/", mockAdmin, async (req, res) => {
+router.post("/", authenticateJWT, isAdmin, async (req, res) => {
 
   try {
     const { title, courseId } = req.body;
@@ -39,7 +41,7 @@ router.post("/", mockAdmin, async (req, res) => {
 });
 
 
-router.put("/:sectionId", mockAdmin, async (req, res) => {
+router.put("/:sectionId", authenticateJWT, isAdmin, async (req, res) => {
   
   try {
     const { title } = req.body;
@@ -59,7 +61,7 @@ router.put("/:sectionId", mockAdmin, async (req, res) => {
 });
 
 
-router.delete("/:sectionId", mockAdmin, async (req, res) => {
+router.delete("/:sectionId" ,authenticateJWT, isAdmin, async (req, res) => {
   
     try {
         const { sectionId } = req.params;
@@ -79,7 +81,7 @@ router.delete("/:sectionId", mockAdmin, async (req, res) => {
 });
 
 
-router.get("/", async (req, res) => {
+router.get("/", authenticateJWT,isEnrolled, async (req, res) => {
  
   try {
     const { courseId } = req.query;

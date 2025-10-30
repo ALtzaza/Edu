@@ -2,6 +2,7 @@
 import express from "express";
 import { Review, Course } from "../models/schema.models.js";
 import { authenticateJWT } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ async function updateCourseRating(courseId) {
  * เพิ่มรีวิว (ต้อง login)
  * POST /api/reviews
 ========================= */
-router.post("/", authenticateJWT, async (req, res) => {
+router.post("/", authenticateJWT,isEnrolled, async (req, res) => {
   try {
     const { course, rating, comment } = req.body;
 
@@ -78,7 +79,7 @@ router.get("/:courseId", async (req, res) => {
  * แก้ไขรีวิว (เจ้าของเท่านั้น)
  * PUT /api/reviews/:id
 ========================= */
-router.put("/:id", authenticateJWT, async (req, res) => {
+router.put("/:id", authenticateJWT,isAdmin ,async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
     if (!review) return res.status(404).json({ message: "ไม่พบรีวิว" });
@@ -103,7 +104,7 @@ router.put("/:id", authenticateJWT, async (req, res) => {
  * ลบรีวิว (เจ้าของหรือ admin)
  * DELETE /api/reviews/:id
 ========================= */
-router.delete("/:id", authenticateJWT, async (req, res) => {
+router.delete("/:id", authenticateJWT,isAdmin, async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
     if (!review) return res.status(404).json({ message: "ไม่พบรีวิว" });
