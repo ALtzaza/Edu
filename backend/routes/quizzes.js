@@ -50,7 +50,7 @@ router.post("/api/lessons/:lessonId/quizzes", async (req, res) => {
       correctAnswer,
       quizNumber: nextQuizNumber, // ⬅ (เพิ่ม) ใส่เลขที่นับได้
     });
-    await newQuiz.save(); // 5. ‼️ (ที่แก้ไขครั้งก่อน) อัปเดต Lesson: "push" ID ของ Quiz ใหม่เข้าไปใน Array 'quizzes' ‼️
+    await newQuiz.save(); // 5. ‼(ที่แก้ไขครั้งก่อน) อัปเดต Lesson: "push" ID ของ Quiz ใหม่เข้าไปใน Array 'quizzes' 
 
     lesson.quizzes.push(newQuiz._id);
     await lesson.save(); // 6. Populate ข้อมูลก่อนส่งกลับ

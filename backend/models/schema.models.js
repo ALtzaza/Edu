@@ -125,12 +125,12 @@ const purchaseSchema = new Schema({
 // -------- QUIZ --------
 const quizSchema = new Schema({
   lesson: { type: Schema.Types.ObjectId, ref: "Lesson", required: true },
-  quizNumber: { type: Number }, //  (แก้ไข) เรายังเก็บ field นี้ไว้ แต่จะไมใ่ช้ AutoIncrement
+  quizNumber: { type: Number }, 
   question: String,
   choices: [String],
   correctAnswer: String,
 });
-// quizSchema.plugin(AutoIncrement, { inc_field: 'quizNumber' }); // ‼️ (แก้ไข) ลบบรรทัดนี้ทิ้ง ‼️
+
 
 // -------- QUIZ RESULTS --------
 const quizResultSchema = new Schema({
