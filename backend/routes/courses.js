@@ -22,61 +22,79 @@ const router = Router();
 // --- 1. GET /api/courses (หน้าร้านค้า - All Courses) ---
 
 router.get("/", async (req, res) => {
-  try {
-    const { search, sort, minPrice, maxPrice, category } = req.query;
-    const filter = {};
-
-    if (search) {
-      filter.title = new RegExp(search, "i"); 
+    try {
+      // 1. (ถูกต้อง) รับ limit มา
+      const { search, sort, minPrice, maxPrice, category, limit } = req.query;
+      const filter = {};
+  
+      // ... (Filter logic ... ถูกต้อง)
+      if (search) {
+        filter.title = new RegExp(search, "i"); 
+      }
+      if (category) {
+        filter.category = category;
+      }
+      const priceFilter = {};
+      if (minPrice) {
+        priceFilter.$gte = parseFloat(minPrice);
+      }
+      if (maxPrice) {
+        priceFilter.$lte = parseFloat(maxPrice);
+      }
+      if (Object.keys(priceFilter).length > 0) {
+        filter.price = priceFilter;
+      }
+  
+      // ... (Sort logic ... ถูกต้อง)
+      let sortOption = {};
+      switch (sort) {
+        case "title_asc":
+          sortOption.title = 1;
+          break;
+        case "title_desc":
+          sortOption.title = -1;
+          break;
+        case "price_asc":
+          sortOption.price = 1;
+          break;
+        case "price_desc":
+          sortOption.price = -1;
+          break;
+        case "rating_desc": 
+          sortOption.averageRating = -1;
+          break;
+        case "newest":
+        default:
+          sortOption.createdAt = -1;
+      }
+  
+      // ⭐️ 2. (แก้ไข) เพิ่ม .limit() ⭐️
+      
+      // (เราต้องสร้าง Query ขึ้นมาก่อน)
+      let query = Course.find(filter)
+        .populate('category', 'name')
+        .populate('instructor', 'name avatar')
+        .sort(sortOption);
+  
+      // (ถ้า Frontend ส่ง 'limit' มา)
+      if (limit) {
+        // (parseInt = แปลง "2" (String) เป็น 2 (Number))
+        query = query.limit(parseInt(limit)); 
+      }
+  
+      // (สั่ง Query ทำงาน)
+      const courses = await query; 
+  
+      res.json({
+        success: true,
+        message: `พบ ${courses.length} คอร์ส`,
+        data: courses,
+      });
+  
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
     }
-    if (category) {
-      filter.category = category;
-    }
-    const priceFilter = {};
-    if (minPrice) {
-      priceFilter.$gte = parseFloat(minPrice);
-    }
-    if (maxPrice) {
-      priceFilter.$lte = parseFloat(maxPrice);
-    }
-    if (Object.keys(priceFilter).length > 0) {
-      filter.price = priceFilter;
-    }
-
-    let sortOption = {};
-    switch (sort) {
-      case "title_asc":
-        sortOption.title = 1;
-        break;
-      case "title_desc":
-        sortOption.title = -1;
-        break;
-      case "price_asc":
-        sortOption.price = 1;
-        break;
-      case "price_desc":
-        sortOption.price = -1;
-        break;
-      case "newest":
-      default:
-        sortOption.createdAt = -1;
-    }
-
-    const courses = await Course.find(filter)
-      .populate('category', 'name')
-      .populate('instructor', 'name avatar')
-      .sort(sortOption);
-
-    res.json({
-      success: true,
-      message: `พบ ${courses.length} คอร์ส`,
-      data: courses,
-    });
-
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
+  });
 
 
 // GET /api/courses/:id (หน้า Course Detail) ---

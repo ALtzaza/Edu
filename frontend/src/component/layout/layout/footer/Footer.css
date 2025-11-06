@@ -1,0 +1,98 @@
+/* src/components/layout/Footer.css */
+
+.footer-container {
+    width: 100%;
+    /* (ใช้ Font ที่คุณขอ) */
+    font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    color: #333; /* (สีตัวอักษรเริ่มต้น) */
+  }
+  
+  /* --- 1. ส่วนบน (สีฟ้าอ่อน) --- */
+  .footer-top {
+    /* (สีฟ้าอ่อน - Mock จากรูป) */
+    background-color: #E0F7FA; 
+    display: flex;
+    justify-content: space-around; /* (แบ่ง 3 ส่วน) */
+    padding: 3rem 2rem;
+    flex-wrap: wrap; /* (เผื่อหน้าจอแคบ) */
+  }
+  
+  .footer-top > div {
+    flex: 1; /* (แบ่ง 1 ส่วนเท่าๆ กัน) */
+    min-width: 250px; /* (ความกว้างขั้นต่ำ) */
+    margin: 1rem;
+    padding: 0 1rem;
+  }
+  
+  /* (Mock Logo) */
+  .footer-logo .mock-logo-box {
+    width: 180px;
+    height: 70px;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #333;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .footer-logo p {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  /* (ส่วน Contact & Address) */
+  .footer-contact h4,
+  .footer-address h4 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #000;
+  }
+  .footer-contact p,
+  .footer-address p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .footer-contact a {
+    color: #0056b3;
+    text-decoration: none;
+  }
+  .footer-contact a:hover {
+    text-decoration: underline;
+  }
+  .copyright {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #777;
+  }
+  
+  /* --- 2. ส่วนล่าง (3 คอลัมน์ สีๆ) --- */
+  .footer-bottom {
+    display: flex;
+    color: white;
+    text-align: left;
+  }
+  
+  .footer-column {
+    flex: 1; /* (แบ่ง 1/3 เท่ากัน) */
+    padding: 4rem 2rem;
+  }
+  
+  .footer-column h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+  
+  /* (สีจากรูป) */
+  .col-socials {
+    background-color: #0000FF; /* (สีน้ำเงิน) */
+  }
+  .col-email {
+    background-color: #000000; /* (สีดำ) */
+  }
+  .col-start {
+    background-color: #BF00FF; /* (สีม่วง/Magenta) */
+  }

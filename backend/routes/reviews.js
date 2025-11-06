@@ -1,7 +1,7 @@
 // /routes/review.js
 import express from "express";
 import { Review, Course } from "../models/schema.models.js";
-import { authenticateJWT } from "../middleware/authMiddleware.js";
+import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();

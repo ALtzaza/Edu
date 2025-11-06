@@ -34,8 +34,26 @@ if (!MONGO_URI) {
 // 3. สร้างแอป Express
 const app = express();
 
+app.use((req, res, next) => {
+  console.log(`--- LOGGER: ได้รับ ${req.method} Request มาที่: ${req.originalUrl} ---`);
+  next();
+});
+
+const corsOptions = {
+  // 1. อนุญาต Frontend (Port 5173)
+  origin: "http://localhost:5173", 
+  
+  // 2. อนุญาต Methods เหล่านี้
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], 
+  
+  // 3. ⭐️ (สำคัญที่สุด) อนุญาต Header 'Authorization'
+  allowedHeaders: ["Content-Type", "Authorization"] 
+};
+
+
 // 4. Middleware
-app.use(cors()); // เปิดรับการเชื่อมต่อจาก Origin อื่นๆ
+app.use(cors(corsOptions)); // เปิดรับการเชื่อมต่อจาก Origin อื่นๆ
+
 app.use(express.json()); // ทำให้ Express อ่าน JSON body ได้
 
 // --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) --- 

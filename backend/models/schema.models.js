@@ -186,16 +186,24 @@ reviewSchema.pre('save', function (next) {
 });
 
 
-// -------- PROGRESS --------
+// -------- PROGRESS (แก้ไข Schema นี้) --------
 const progressSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
-  course: { type: Schema.Types.ObjectId, ref: 'Course' },
-  lessonsCompleted: Number,
-  totalLessons: Number,
-  percentage: Number,
-  lastWatched: { type: Schema.Types.ObjectId, ref: 'Lesson' },
-  updatedAt: { type: Date, default: Date.now }
-});
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
+  
+    // ⭐️ 1. (แก้ไข) ต้องเป็น Array (ไม่ใช่ Number)
+    lessonsCompleted: [{ type: Schema.Types.ObjectId, ref: 'Lesson' }],
+  
+    totalLessons: { type: Number, default: 0 }, 
+    percentage: { type: Number, default: 0 },
+  
+    lastWatched: { type: Schema.Types.ObjectId, ref: 'Lesson' }
+  }, { 
+    timestamps: true // ⭐️ 2. (แก้ไข) ใช้ timestamps
+  });
+  
+  // ⭐️ 3. (สำคัญ) สร้าง Index เพื่อกันข้อมูลซ้ำ
+  progressSchema.index({ user: 1, course: 1 }, { unique: true });
 
 // -------- NOTIFICATIONS (อัปเกรด) --------
 const notificationSchema = new Schema(

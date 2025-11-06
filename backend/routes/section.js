@@ -2,7 +2,7 @@
 import { Router } from "express";
 import { Section, Course, Lesson } from "../models/schema.models.js"; 
 
-import { mockAdmin } from "../middleware/mockAuth.js";
+
 import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
 // import { verifyToken } from "../middleware/verifyToken.js";

@@ -1,0 +1,136 @@
+
+
+.catalog-page-container {
+    width: 100%;
+    min-height: 100vh;
+    
+    color: #D4D4D4;
+    font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    padding: 4rem 5rem;
+    
+    background-image: 
+    
+    linear-gradient(rgba(16, 22, 47, 0.7), rgba(16, 22, 47, 0.7)),
+  
+    url('/img/Categoriesbackgound.png');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+ 
+  background-attachment: fixed; 
+  
+      
+  }
+  
+  .catalog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem; 
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #2a3661;
+    padding-bottom: 2rem;
+  }
+  
+  .catalog-header h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    color: white;
+    flex-basis: 100%; 
+    margin-bottom: 1.5rem;
+  }
+  
+  
+  .search-bar-container {
+    flex-grow: 1;
+    min-width: 300px; /* (ความกว้างขั้นต่ำ) */
+  }
+  .search-input {
+    width: 100%; /* (เต็มกล่อง .search-bar-container) */
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background-color: #1E1E1E; 
+    border: 1px solid #333;
+    color: #D4D4D4;
+    border-radius: 8px;
+  }
+  /* (ลบ .search-button ออก 
+     เพราะเราไม่ต้องกดปุ่มแล้ว) */
+  
+  
+
+  .filter-dropdown {
+    --bs-btn-bg: #1E1E1E; 
+    --bs-btn-border-color: #333;
+    --bs-btn-hover-bg: #333;
+    --bs-btn-active-bg: #444;
+    --bs-dropdown-bg: #1E1E1E; 
+    --bs-dropdown-link-hover-bg: #569CD6; 
+    --bs-dropdown-link-color: #D4D4D4;
+    
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .filter-dropdown .dropdown-toggle {
+    padding: 0.8rem 1.5rem;
+  }
+  
+  /* ⭐️ (สำคัญ) Grid Layout (แก้ปัญหา "ล้น") ⭐️ */
+  .courses-grid {
+    display: grid;
+    
+   
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  /* ⭐️ (การ์ด) ⭐️ */
+  .course-card {
+    background-color: #1E1E1E; /* (สี VS Code) */
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #2a3661;
+  }
+  .course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .course-card-image {
+    height: 180px;
+    width: 100%;
+    background-color: #333;
+    
+    /* (ถ้า API ส่ง thumbnail (รูป) มา 
+       เราจะใช้เป็น background-image แทนสี) */
+    background-size: cover;
+    background-position: center;
+    
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #555;
+  }
+  
+  .course-card-content {
+    padding: 1.5rem;
+  }
+  .course-card-content h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+    /* (ตัดข้อความที่ยาวเกิน) */
+    height: 2.8rem; /* (บังคับ 2 บรรทัด) */
+    overflow: hidden;
+  }
+  .course-card-content p {
+    font-size: 0.9rem;
+    color: #aeb9e1;
+    margin-top: 0.5rem;
+  }

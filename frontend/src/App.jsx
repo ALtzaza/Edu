@@ -1,39 +1,44 @@
-// // src/App.jsx
+// src/App.jsx
 
-// import React from 'react';
-// import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// // 1. Import Layout (ตัวคุม Outlet)
-// import Layout from './components/layout/Layout';
+// ⭐️ 1. (แก้ไข Path) ⭐️
+// (แก้ไข Path ให้ตรงกับโครงสร้างที่เราตกลงกัน)
+import Layout from './component/layout/layout/layout';
 
-// // 2. Import "หน้า" (Pages) ทั้งหมด
-// import HomePage from './pages/HomePage/HomePage';
-// import CoursesPage from './pages/CoursesPage/CoursesPage';
-// import CourseDetailPage from './pages/CourseDetailPage/CourseDetailPage';
-// import ClassroomPage from './pages/ClassroomPage/ClassroomPage';
+// ⭐️ 2. (แก้ไข Path) ⭐️
+// (ย้าย 'page' เป็น 'pages' และ 'Import' หน้าที่จำเป็น)
+import HomePage from './page/HomePage/HomePage';
+
+ import CoursesPage from './page/CoursesPage/CoursesPage';
 // import LoginPage from './pages/LoginPage/LoginPage';
 // import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 
-// function App() {
-//   return (
-//     // <BrowserRouter>
-//     //   <Routes>
-//     //     {/* 3. 👈 Route "Layout" จะคุม Route ลูกทั้งหมด */}
-//     //     <Route path="/" element={<Layout />}>
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
         
-//     //       {/* 4. 👈 "ไส้ใน" ที่ Outlet จะแสดง */}
-//     //       <Route index element={<HomePage />} /> {/* หน้าแรก (path="/") */}
-//     //       <Route path="courses" element={<CoursesPage />} /> {/* path="/courses" */}
-//     //       <Route path="courses/:id" element={<CourseDetailPage />} /> {/* path="/courses/abc1234" */}
-//     //       <Route path="classroom/:courseId" element={<ClassroomPage />} /> {/* path="/classroom/abc1234" */}
-//     //       <Route path="login" element={<LoginPage />} /> {/* path="/login" */}
+        {/* Route "Layout" (มี Navbar/Footer) */}
+        <Route path="/" element={<Layout />}>
+        
+          {/* ⭐️ 3. (เปิด) หน้าแรก ⭐️ */}
+          <Route index element={<HomePage />} /> 
+          <Route path="courses" element={<CoursesPage />} />
+          {/* (Route อื่นๆ ที่อยู่ใน Layout) */}
+          {/* <Route path="courses" element={<CoursesPage />} /> */}
+          {/* <Route path="login" element={<LoginPage />} /> */}
+        </Route>
+        
+       
 
-//     //       <Route path="*" element={<NotFoundPage />} /> {/* 404 Not Found */}
+        {/* (Route 404 - ปิดไว้ก่อนได้ถ้ายังไม่สร้าง) */}
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
           
-//     //     </Route>
-//     //   </Routes>
-//     // </BrowserRouter>
-//   );
-// }
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
-// export default App;
+export default App;

@@ -2,24 +2,43 @@
 import jwt from "jsonwebtoken";
 import { Purchase, Lesson, Section } from "../models/schema.models.js";
 
-export const authenticateJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader)
-    return res.status(401).json({ message: "ไม่มี token ใน request" });
+export const authenticateJWT = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
 
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Token ไม่ถูกต้อง" });
-    req.user = user; // user = { id, role }
+    // ⭐️ 2. (แก้ไข) เพิ่มการตรวจสอบ Header (ป้องกัน Error 500)
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: "ไม่มี token ใน request หรือ format ผิด" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    // ⭐️ 3. (แก้ไข) ใช้ "await" (แบบไม่มี Callback)
+    // (มันจะ "รอ" จนกว่าจะถอดรหัสเสร็จ)
+    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+    console.log("--- DEBUG PAYLOAD (req.user):", payload);
+    
+    // ⭐️ 4. (แก้ไข) สร้าง req.user (payload = { id, role })
+    req.user = payload; 
+    
+    // ⭐️ 5. (แก้ไข) "เสร็จแล้ว" ค่อยปล่อยไปหา isEnrolled
     next();
-  });
+
+  } catch (err) {
+    // ⭐️ 6. (แก้ไข) ถ้า Token หมดอายุ หรือ ปลอม (verify พัง)
+    return res.status(403).json({ success: false, message: "Token ไม่ถูกต้องหรือหมดอายุ", error: err.message });
+  }
 };
 
 export const isEnrolled = async (req, res, next) => {
   try {
+    // ⭐️ (Debug Log 1) ⭐️
+    console.log("--- DEBUG: isEnrolled รันแล้ว ---");
     
-    const userId = req.user.id;
+    
 
+    const userId = req.user.id;
+    console.log(`--- DEBUG: userId = ${userId} ---`);
     //  หาคอสไอดีจากทุกที่
     let courseId = null;
 

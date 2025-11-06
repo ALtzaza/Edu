@@ -1,0 +1,126 @@
+/* src/components/layout/Navbar.css (ฉบับแก้ไข V4) */
+
+/* 1. (แก้ไข) ธีมหลัก (แบ่ง ซ้าย/ขวา) */
+.navbar-container {
+  display: flex;
+  justify-content: space-between; /* ⬅️ (ซ้าย / ขวา) */
+  align-items: center;
+  padding: 0 2rem;
+  height: 100px;
+  background-color: #1E1E1E; 
+  color: #D4D4D4; 
+  font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  border-bottom: 1px solid #333;
+
+  position: sticky;
+  top:0;
+  z-index: 100;
+}
+
+/* 2. (ใหม่) "ฝั่งซ้าย" (หุ้มโลโก้ + ลิงก์) */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+/* 3. ⭐️ (ใหม่) "กล่อง" ที่ "ล็อค" โลโก้ ⭐️ */
+/* (นี่คือตัวแก้ปัญหา "ดัน") */
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+  /* (ตั้งความกว้างคงที่ ให้พอดี 10.5 ตัวอักษร + เคอร์เซอร์) */
+  width: 11ch; 
+  margin-right: 1.5rem; /* (ระยะห่างระหว่าง โลโก้ กับ Catalog) */
+}
+
+/* 4. ⭐️ (แก้ไข) โลโก้ (ตัวที่ "พิมพ์") ⭐️ */
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  
+  /* (ตัว Cursor กะพริบ) */
+  border-right: 3px solid #D4D4D4;
+  
+  white-space: nowrap;
+  overflow: hidden;
+  
+  /* ⭐️ (แก้ไข) Animation (V2) กลับมาแล้ว ⭐️ */
+  /* พิมพ์ 3.5วิ ➡️ ค้าง 4วิ ➡️ ลบ 3.5วิ ➡️ ค้าง 4วิ ➡️ วน */
+  animation: typing 3.5s steps(10) 4s infinite alternate, 
+             blink-caret .75s step-end infinite;
+}
+
+/* 5. ⭐️ (สี) 3-4 สี (VS Code Colors) ⭐️ */
+.logo-class { color: #4EC9B0; }      /* 1. Teal */
+.logo-variable { color: #9CDCFE; }  /* 2. Light Blue */
+.logo-punctuation { color: #D4D4D4; } /* 3. White */
+
+/* 6. (Animation) "พิมพ์" (Keyframes เดิม) */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 11ch } /* (10.5ch = ความกว้าง 10.5 ตัวอักษร) */
+}
+
+/* 7. (Animation) "เคอร์เซอร์กะพริบ" (Keyframes เดิม) */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #D4D4D4; }
+}
+
+
+/* 8. (คงเดิม) ลิงก์กลาง (Center) */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* 9. (คงเดิม) "กล่อง" หุ้มลิงก์ (แก้ "กดใช้งานยาก") */
+.nav-link-item {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #333; 
+}
+.nav-link-item:last-child {
+  border-right: none;
+}
+.nav-link-item a {
+  color: #D4D4D4;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+  display: block; 
+  padding: 0 1.5rem; 
+}
+.nav-link-item a:hover {
+  color: #4EC9B0; 
+}
+
+/* 10. (แก้ไข) "ฝั่งขวา" (โปรไฟล์) */
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+.navbar-right a {
+  color: #D4D4D4;
+  text-decoration: none;
+  margin-right: 1rem;
+  transition: color 0.2s ease;
+}
+.navbar-right a:hover {
+  color: #C586C0; /* (สีม่วง VS Code) */
+}
+.navbar-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #569CD6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #1E1E1E;
+}

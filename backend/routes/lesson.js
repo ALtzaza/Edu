@@ -7,56 +7,64 @@ import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = Router();
 
-router.post("/" ,authenticateJWT, isAdmin, async (req, res) => {
-  try {
-    const { title, videoUrl, content, sectionId } = req.body;
-    if (!title || !sectionId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "กรุณาส่ง title และ sectionId" });
-    }
-    const parentSection = await Section.findById(sectionId);
-    if (!parentSection) {
-      return res.status(404).json({ success: false, message: "ไม่พบ Section" });
-    }
-
-    //  (เพิ่ม) Logic ใหม่: นับจำนวน Lesson ที่มีอยู่แล้วใน "คอร์ส" นี้
-    // เราใช้ 'parentSection.course' (ID ของคอร์ส) ในการนับ
-    const existingLessonCount = await Lesson.countDocuments({
-      course: parentSection.course,
-    });
-    const nextLessonNumber = existingLessonCount + 1; // 0+1=1, 1+1=2, ...
-
-    const newLesson = new Lesson({
-      title,
-      videoUrl,
-      content,
-      section: sectionId,
-      course: parentSection.course,
-      lessonNumber: nextLessonNumber, //  (เพิ่ม) ใส่เลขที่นับได้ตรงนี้
-    });
-    await newLesson.save();
-    // (สำคัญ) ต้อง push _id เข้า Array ของ Section ด้วย
-    parentSection.lessons.push(newLesson._id);
-    await parentSection.save();
-    res.status(201).json({
-      success: true,
-      message: "สร้าง Lesson ใหม่สำเร็จ",
-      data: newLesson,
-    });
-  } catch (err) {
-    //  (เพิ่ม) ดักจับ Error E11000 โดยเฉพาะ
-    if (err.code === 11000) {
-      // ส่ง Error นี้กลับไปแทน ถ้ามีปัญหาเรื่อง unique index
-      return res.status(409).json({
-        success: false,
-        message: "Duplicate key error. อาจจะเกิดจาก lessonNumber ซ้ำ",
-        errorDetail: err.message,
+router.post("/", authenticateJWT, isAdmin, async (req, res) => {
+    try {
+      const { title, videoUrl, content, sectionId } = req.body;
+      if (!title || !sectionId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "กรุณาส่ง title และ sectionId" });
+      }
+      const parentSection = await Section.findById(sectionId);
+      if (!parentSection) {
+        return res.status(404).json({ success: false, message: "ไม่พบ Section" });
+      }
+  
+      // ⭐️ (แก้ไข Logic) ⭐️
+      // 1. หา "บทเรียนสุดท้าย" (ที่มี lessonNumber สูงสุด) ใน "คอร์ส" นี้
+      const lastLesson = await Lesson.findOne({
+        course: parentSection.course,
+      })
+        .sort({ lessonNumber: -1 }); // -1 คือเรียงจาก "มากไปน้อย"
+      
+      // 2. คำนวณเลขถัดไป
+      const nextLessonNumber = lastLesson ? lastLesson.lessonNumber + 1 : 1;
+      // (ถ้าเจอ lessonNumber: 3 ➡️ 3 + 1 = 4)
+      // (ถ้าไม่เจอ (เป็น 0) ➡️ 1)
+  
+      const newLesson = new Lesson({
+        title,
+        videoUrl,
+        content,
+        section: sectionId,
+        course: parentSection.course,
+        lessonNumber: nextLessonNumber, // ⬅️ (ใช้เลขใหม่ที่ปลอดภัย)
       });
+      
+      await newLesson.save();
+      // (สำคัญ) ต้อง push _id เข้า Array ของ Section ด้วย
+      parentSection.lessons.push(newLesson._id);
+      await parentSection.save();
+      
+      res.status(201).json({
+        success: true,
+        message: "สร้าง Lesson ใหม่สำเร็จ",
+        data: newLesson,
+      });
+  
+    } catch (err) {
+      //  (ดักจับ Error E11000 โดยเฉพาะ)
+      if (err.code === 11000) {
+        // ส่ง Error นี้กลับไปแทน ถ้ามีปัญหาเรื่อง unique index
+        return res.status(409).json({
+          success: false,
+          message: "Duplicate key error. อาจจะเกิดจาก lessonNumber ซ้ำ",
+          errorDetail: err.message,
+        });
+      }
+      res.status(500).json({ success: false, message: err.message });
     }
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
+  });
 
 router.put("/:lessonId", authenticateJWT, isAdmin, async (req, res) => {
   try {
