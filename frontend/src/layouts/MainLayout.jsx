@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'; // <-- 1. Import useState, useEffect
 import { Outlet, useLocation } from 'react-router-dom';
-import Navbar from '../components/Navbar.jsx'; 
+import Navbar from '../component/layout/layout/navbar/Navbar.jsx'
 import styles from './MainLayout.module.css'; 
 
 // Component PageHeader (ไม่ต้องแก้)
