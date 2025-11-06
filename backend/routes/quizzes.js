@@ -50,7 +50,7 @@ router.post("/api/lessons/:lessonId/quizzes", async (req, res) => {
       correctAnswer,
       quizNumber: nextQuizNumber, // ⬅ (เพิ่ม) ใส่เลขที่นับได้
     });
-    await newQuiz.save(); // 5. ‼️ (ที่แก้ไขครั้งก่อน) อัปเดต Lesson: "push" ID ของ Quiz ใหม่เข้าไปใน Array 'quizzes' ‼️
+    await newQuiz.save(); // 5. ‼(ที่แก้ไขครั้งก่อน) อัปเดต Lesson: "push" ID ของ Quiz ใหม่เข้าไปใน Array 'quizzes' 
 
     lesson.quizzes.push(newQuiz._id);
     await lesson.save(); // 6. Populate ข้อมูลก่อนส่งกลับ
@@ -141,24 +141,28 @@ router.delete("/api/quizzes/:quizId", async (req, res) => {
 //API สำหรับการทำแบบทดสอบ (Taking the Quiz)
 
 // สำหรับ "นักเรียน" (ซ่อนเฉลย)
-router.get("/api/lessons/:lessonNum/quizzes/take", async (req, res) => {
-  try {
-    const { lessonNum } = req.params;
-    const lesson = await Lesson.findOne({ lessonNumber: lessonNum });
-    if (!lesson) {
-      return res
-        .status(404) //  (แก้ไข) 4OF -> 404
-        .json({ message: "Lesson not found with that number" });
-    } // ใช้วิธีเดียวกัน แต่เพิ่ม .select() เข้าไป
+router.get("/api/lessons/:lessonId/quizzes/take", async (req, res) => {
+  try {
+    const { lessonId } = req.params; // 🟢 เปลี่ยนจาก lessonNum เป็น lessonId
+    const lesson = await Lesson.findById(lessonId); // 🟢 ใช้ findById() ซึ่งเร็วกว่า
 
-    const quizzes = await Quiz.find({ lesson: lesson._id }).select(
-      "-correctAnswer"
-    ); // quizzes ที่ส่งกลับไปจะ "ไม่มี" field correctAnswer
+    if (!lesson) {
+      return res
+        .status(404) 
+        .json({ message: "Lesson not found with that ID" }); // อัปเดตข้อความ error
+    } 
+    // ใช้วิธีเดียวกัน แต่เพิ่ม .select() เข้าไป
+    const quizzes = await Quiz.find({ lesson: lesson._id }).select(
+      "-correctAnswer"
+    ); // quizzes ที่ส่งกลับไปจะ "ไม่มี" field correctAnswer
 
-    res.status(200).send(quizzes);
-  } catch (error) {
-    res.status(500).send({ message: "Server Error", error: error.message }); //  (แก้ไข) 's res.status' -> 'res.status'
-  }
+    res.status(200).send(quizzes);
+  } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Lesson ID format" });
+    }
+    res.status(500).send({ message: "Server Error", error: error.message }); 
+  }
 });
 
 const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
@@ -178,24 +182,31 @@ router.post("/api/lessons/:lessonId/quizzes/submit", async (req, res) => {
     }
     const quizzes = await Quiz.find({ lesson: lessonId });
 
-    let score = 0;
-    quizzes.forEach((quiz) => {
-      //  ใช้ quiz._id.toString() (ซึ่งถูกต้องอยู่แล้ว)
-      const userAnswer = answers.find((a) => a.quizId == quiz._id.toString());
-      if (userAnswer && userAnswer.selectedAnswer === quiz.correctAnswer) {
-        score++;
-      }
-    });
+  let score = 0;
+    quizzes.forEach((quiz) => {
+      //  ใช้ quiz._id.toString() (ซึ่งถูกต้องอยู่แล้ว)
+      const userAnswer = answers.find((a) => a.quizId == quiz._id.toString());
+      if (userAnswer && userAnswer.selectedAnswer === quiz.correctAnswer) {
+        score++;
+      }
+    });
 
-    const newQuizResult = new QuizResult({
-      user: MOCK_USER_ID,
-      lesson: lessonId,
-      score,
-      total: quizzes.length,
-    });
-    await newQuizResult.save();
-    res.status(201).send(newQuizResult);
-  } catch (error) {
+    // 🟢 โค้ดใหม่: การคำนวณเกณฑ์การผ่าน 70% 
+    const totalQuestions = quizzes.length;
+    const percentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+    const PASSING_GRADE = 70; // 70% ตามเกณฑ์ที่ต้องการ
+
+    const newQuizResult = new QuizResult({
+      user: MOCK_USER_ID,
+      lesson: lessonId,
+      score,
+      total: totalQuestions, // ใช้ totalQuestions แทน quizzes.length โดยตรง
+      percentage: parseFloat(percentage.toFixed(2)), // เก็บเปอร์เซ็นต์ (ทศนิยม 2 ตำแหน่ง)
+      passed: percentage >= PASSING_GRADE, // เช็คว่าผ่านเกณฑ์ 70% หรือไม่
+    });
+    await newQuizResult.save();
+    res.status(201).send(newQuizResult);
+  } catch (error) {
     res.status(500).send({ message: "Server Error", error: error.message });
   }
 });

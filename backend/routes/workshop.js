@@ -79,6 +79,31 @@ router.post(
 );
 
 // ---------------------------------------------------
+// API: (นักเรียน) ดู Workshop เฉพาะบทเรียนปัจจุบัน
+// ---------------------------------------------------
+router.get("/api/courses/:courseId/lessons/:lessonId/workshops/me", async (req, res) => {
+    try {
+        const { courseId, lessonId } = req.params;
+        const userId = MOCK_USER_ID;
+
+        // ค้นหา Workshop เฉพาะ User, Course, และ Lesson นี้
+        const workshop = await Workshop.findOne({
+            user: userId,
+            course: courseId,
+            lesson: lessonId,
+        })
+        .populate("course", "title")
+        .populate("lesson", "title");
+
+        // ส่งผลลัพธ์กลับไป (จะเป็น object หรือ null)
+        res.status(200).send({ success: true, data: workshop });
+    } catch (error) {
+        console.error("Error fetching user workshop:", error);
+        res.status(500).send({ message: "Server Error", error: error.message });
+    }
+});
+
+// ---------------------------------------------------
 // API:  (นักเรียน) ดู Workshop ทั้งหมดของตัวเอง
 // ---------------------------------------------------
 router.get("/api/workshops/me", async (req, res) => {

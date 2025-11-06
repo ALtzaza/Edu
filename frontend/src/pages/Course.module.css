@@ -1,0 +1,90 @@
+/* ส่วนหัว "Choose Your Dev Track" */
+.headerTitle {
+  font-size: 1.875rem; /* 3xl */
+  font-weight: 700; /* bold */
+  color: #f3f4f6; /* text-gray-100 */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.headerSubtitle {
+  font-size: 1.125rem; /* lg */
+  color: #9ca3af; /* text-gray-400 */
+  margin-bottom: 2rem; /* mb-8 */
+}
+
+/* Grid */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem; /* gap-6 */
+}
+
+/* ทำให้ Grid เป็น 2 คอลัมน์ เมื่อจอใหญ่ */
+@media (min-width: 768px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Card (ตัวลิงก์) */
+.cardLink {
+  display: block;
+  border-radius: 0.75rem; /* rounded-xl */
+  overflow: hidden; /* จำเป็น! */
+  background-color: #1f2937; /* bg-gray-800 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+  transition: transform 0.3s ease;
+}
+
+.cardLink:hover {
+  transform: scale(1.02); /* hover:scale-[1.02] */
+}
+
+/* รูปใน Card */
+.cardImage {
+  width: 100%;
+  height: 12rem; /* h-48 */
+  background-size: cover;
+  background-position: center;
+}
+
+/* เนื้อหาใน Card */
+.cardContent {
+  padding: 1.5rem; /* p-6 */
+  height: 12rem; /* h-48 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-size: 1.25rem; /* xl */
+  font-weight: 700; /* bold */
+  color: white;
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.cardDescription {
+  font-size: 0.875rem; /* sm */
+  color: #9ca3af; /* text-gray-400 */
+  
+  /* นี่คือโค้ด "จำกัด 2 บรรทัด" */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem; /* mt-4 */
+  font-size: 0.875rem; /* sm */
+  font-weight: 600; /* semibold */
+  color: #60a5fa; /* text-blue-400 */
+}
+
+.cardFooter span:hover {
+  text-decoration: underline;
+}

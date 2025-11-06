@@ -17,4 +17,31 @@ html, body, #root {
   
   /* 4. (สำคัญ) บอกให้พื้นหลังเป็นสี #10162F เสมอ */
   background-color: #10162F;
-}
+/* ขั้นที่ 1: Import ฟอนต์ (วางไว้บนสุดของไฟล์) */
+@import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Semi+Condensed:wght@400;500;600;700&display=swap');
+/* 
+ขั้นที่ 2: ตั้งค่า body */
+body {
+  
+  
+ 
+  /* font-family: 'Encode Sans Semi Condensed', sans-serif; */
+  /* ------------------------------- */
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* background-color: #111827; พื้นหลังเทาดำ */
+  /* color: #f3f4f6;           ตัวหนังสือขาวเทา */
+}}
+
+/* ลบขีดเส้นใต้ลิงก์ทั้งหมด
+a {
+  text-decoration: none;
+  color: inherit;
+} */
+
+/* ตั้งค่า box-sizing ให้ง่ายต่อการจัดเลย์เอาต์
+* {
+  box-sizing: border-box;
+} */
