@@ -1,83 +1,65 @@
-/* src/components/layout/Navbar.css (ฉบับแก้ไข V4) */
+/* src/components/layout/Navbar.css (ฉบับ V6 - สมบูรณ์) */
 
-/* 1. (แก้ไข) ธีมหลัก (แบ่ง ซ้าย/ขวา) */
+/* 1. (ธีมหลัก - V4) (มี sticky) */
 .navbar-container {
   display: flex;
-  justify-content: space-between; /* ⬅️ (ซ้าย / ขวา) */
+  justify-content: space-between; 
   align-items: center;
   padding: 0 2rem;
-  height: 100px;
+  height: 100px; /* (ความสูง 100px) */
   background-color: #1E1E1E; 
   color: #D4D4D4; 
   font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   border-bottom: 1px solid #333;
-
   position: sticky;
-  top:0;
-  z-index: 100;
+  top: 0;
+  z-index: 1000;
 }
 
-/* 2. (ใหม่) "ฝั่งซ้าย" (หุ้มโลโก้ + ลิงก์) */
+/* 2. (ฝั่งซ้าย - V4) */
 .navbar-left {
   display: flex;
   align-items: center;
 }
-
-/* 3. ⭐️ (ใหม่) "กล่อง" ที่ "ล็อค" โลโก้ ⭐️ */
-/* (นี่คือตัวแก้ปัญหา "ดัน") */
 .navbar-logo-container {
   display: flex;
   align-items: center;
-  /* (ตั้งความกว้างคงที่ ให้พอดี 10.5 ตัวอักษร + เคอร์เซอร์) */
-  width: 11ch; 
-  margin-right: 1.5rem; /* (ระยะห่างระหว่าง โลโก้ กับ Catalog) */
+  width: calc(10.5ch + 8px); /* (แก้บั๊ก V4.2) */
+  margin-right: 1.5rem; 
 }
-
-/* 4. ⭐️ (แก้ไข) โลโก้ (ตัวที่ "พิมพ์") ⭐️ */
 .navbar-logo {
   font-size: 1.5rem;
   font-weight: 700;
   text-decoration: none;
   display: inline-block;
-  
-  /* (ตัว Cursor กะพริบ) */
-  border-right: 3px solid #D4D4D4;
-  
+  border-right: none; 
   white-space: nowrap;
   overflow: hidden;
-  
-  /* ⭐️ (แก้ไข) Animation (V2) กลับมาแล้ว ⭐️ */
-  /* พิมพ์ 3.5วิ ➡️ ค้าง 4วิ ➡️ ลบ 3.5วิ ➡️ ค้าง 4วิ ➡️ วน */
-  animation: typing 3.5s steps(10) 4s infinite alternate, 
-             blink-caret .75s step-end infinite;
+  animation: typing 3.5s steps(10) 4s infinite alternate; 
 }
-
-/* 5. ⭐️ (สี) 3-4 สี (VS Code Colors) ⭐️ */
-.logo-class { color: #4EC9B0; }      /* 1. Teal */
-.logo-variable { color: #9CDCFE; }  /* 2. Light Blue */
-.logo-punctuation { color: #D4D4D4; } /* 3. White */
-
-/* 6. (Animation) "พิมพ์" (Keyframes เดิม) */
+.logo-class { color: #4EC9B0; }
+.logo-variable { color: #9CDCFE; }
+.logo-punctuation { color: #D4D4D4; }
+.logo-caret {
+  width: 3px;
+  height: 1.4rem; 
+  background-color: #D4D4D4;
+  margin-left: 5px;
+  animation: blink-caret .75s step-end infinite; 
+}
 @keyframes typing {
   from { width: 0 }
-  to { width: 11ch } /* (10.5ch = ความกว้าง 10.5 ตัวอักษร) */
+  to { width: 10.5ch } 
 }
-
-/* 7. (Animation) "เคอร์เซอร์กะพริบ" (Keyframes เดิม) */
 @keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: #D4D4D4; }
+  from, to { background-color: transparent }
+  50% { background-color: #D4D4D4; }
 }
-
-
-/* 8. (คงเดิม) ลิงก์กลาง (Center) */
 .navbar-links {
   display: flex;
   align-items: center;
   height: 100%;
 }
-
-/* 9. (คงเดิม) "กล่อง" หุ้มลิงก์ (แก้ "กดใช้งานยาก") */
 .nav-link-item {
   height: 100%;
   display: flex;
@@ -99,19 +81,20 @@
   color: #4EC9B0; 
 }
 
-/* 10. (แก้ไข) "ฝั่งขวา" (โปรไฟล์) */
+/* 3. ⭐️ (แก้ไข) "ฝั่งขวา" (โปรไฟล์) (V6) ⭐️ */
 .navbar-right {
   display: flex;
   align-items: center;
+  gap: 1rem; /* (เพิ่ม gap) */
 }
 .navbar-right a {
   color: #D4D4D4;
   text-decoration: none;
-  margin-right: 1rem;
+  margin-right: 0;
   transition: color 0.2s ease;
 }
 .navbar-right a:hover {
-  color: #C586C0; /* (สีม่วง VS Code) */
+  color: white; /* (สีม่วง) */
 }
 .navbar-avatar {
   width: 32px;
@@ -123,4 +106,70 @@
   justify-content: center;
   font-size: 0.8rem;
   color: #1E1E1E;
+  margin-left: 0.5rem; 
+}
+.logout-button {
+  background: none;
+  border: none;
+  color: #D4D4D4;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5rem;
+}
+.logout-button:hover {
+  color: #F44747; /* (สีแดง) */
+}
+
+/* 4. ⭐️ (ใหม่) Style ปุ่ม "Log In" (ลูกเล่น) (V6) ⭐️ */
+.navbar-login-button {
+  background-color: #569CD6; /* (สีฟ้า) */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(86, 156, 214, 0); 
+}
+.navbar-login-button:hover {
+  color: white; 
+  background-color: #1c48af; /* (สีเขียว) */
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(78, 201, 176, 0.7); 
+}
+
+/* 5. ⭐️ (ใหม่) Style "กระดิ่งแจ้งเตือน" (V6) ⭐️ */
+.notification-bell-container {
+  position: relative; 
+  cursor: pointer;
+  color: #D4D4D4;
+  transition: color 0.2s ease;
+  padding: 0.5rem; 
+}
+.notification-bell-container:hover {
+  color: #569CD6; 
+}
+.notification-bell-container .bi-envelope-fill {
+  font-size: 1.5rem; 
+}
+
+/* 6. ⭐️ (ใหม่) "จุดแดง" (Red Dot) (V6) ⭐️ */
+.notification-badge {
+  position: absolute;
+  top: 0px;  
+  right: 0px; 
+  width: 18px;
+  height: 18px;
+  background-color: #F44747; 
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 2px solid #1E1E1E; 
 }

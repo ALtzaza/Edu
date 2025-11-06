@@ -1,35 +1,58 @@
-// src/components/layout/Navbar.jsx (ฉบับแก้ไข V4)
+// src/components/layout/Navbar.jsx (ฉบับ V6 - สมบูรณ์)
 
-import React from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom';
-import './Navbar.css'; // (Import CSS V4 ที่เราเพิ่งแก้)
+import './Navbar.css'; 
+
+// 1. ⭐️ (สำคัญ) Import Hook "useAuth" (จาก "สมอง")
+import { useAuth } from '../../../../context/AuthContext.jsx'; 
+import api from '../../../../api/api.js'; 
+// (ต้อง npm install react-bootstrap-icons)
+import { EnvelopeFill } from 'react-bootstrap-icons'; 
+// (ต้อง npm install react-bootstrap)
+import { Dropdown } from 'react-bootstrap'; 
+
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // (ยิง API 'notifications' เมื่อ Login)
+  useEffect(() => {
+    if (user) {
+      const fetchNotifications = async () => {
+        try {
+          const res = await api.get('/notifications');
+          setUnreadCount(res.data.unreadCount || 0); 
+        } catch (err) {
+          console.error("Failed to fetch notifications:", err);
+        }
+      };
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 60000); 
+      return () => clearInterval(interval); 
+    } else {
+      setUnreadCount(0); 
+    }
+  }, [user]); 
+
   return (
     <nav className="navbar-container">
       
-      {/* 1. ⭐️ (แก้ไข) "ฝั่งซ้าย" (หุ้ม โลโก้ + ลิงก์) ⭐️ */}
+      {/* (ฝั่งซ้าย - V4) */}
       <div className="navbar-left">
-        
-        {/* 2. ⭐️ (ใหม่) "กล่อง" (ล็อคความกว้างโลโก้) ⭐️ */}
         <div className="navbar-logo-container">
           <Link to="/" className="navbar-logo" key={Math.random()}>
-            {/* 3. ⭐️ (ใหม่) โลโก้ 3 สี ⭐️ */}
             <span className="logo-class">Tid</span>
             <span className="logo-punctuation">_</span>
             <span className="logo-variable">Code</span>
             <span className="logo-punctuation">.</span>
-            
-
           </Link>
-          {/* (ย้าย Cursor ออกมาอยู่นอก <Link> เพื่อให้กะพริบตลอด) */}
           <span className="logo-caret"></span> 
         </div>
-
-        {/* 4. (คงเดิม) ลิงก์กลาง (ที่แก้ "กดใช้งานยาก" แล้ว) */}
         <div className="navbar-links">
           <div className="nav-link-item">
-            <Link to="/catalog">Catalog</Link>
+            <Link to="/courses">Catalog</Link>
           </div>
           <div className="nav-link-item">
             <Link to="/tid-lab">Tid_Lab</Link>
@@ -43,12 +66,74 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 5. ⭐️ (แก้ไข) "ฝั่งขวา" (โปรไฟล์) ⭐️ */}
+      {/* ⭐️ (แก้ไข) "ฝั่งขวา" (โปรไฟล์ / Login) ⭐️ */}
       <div className="navbar-right">
-        <Link to="/profile">Your_Profile</Link>
-        <div className="navbar-avatar">P</div>
-      </div>
+        
+        { user ? (
+          // ---------------------------------
+          // ⭐️ 1. (ถ้า "Login แล้ว") (Req 5 & 6)
+          // ---------------------------------
+          <>
+            {/* (กระดิ่ง) */}
+            <div className="notification-bell-container">
+              <EnvelopeFill />
+              {unreadCount > 0 && (
+                <span className="notification-badge">
+                  {unreadCount > 9 ? '9+' : unreadCount} 
+                </span>
+              )}
+            </div>
 
+            {/* ⭐️ (Dropdown โปรไฟล์) ⭐️ */}
+            <Dropdown align="end">
+              <Dropdown.Toggle 
+                as="div" 
+                className="navbar-avatar"
+                style={{ cursor: 'pointer' }}
+              >
+                {user.name ? user.name[0].toUpperCase() : "P"}
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu data-bs-theme="dark">
+                <Dropdown.ItemText>
+                  Signed in as: <br/>
+                  <strong>{user.name || user.username}</strong>
+                </Dropdown.ItemText>
+                <Dropdown.Divider />
+                <Dropdown.Item as={Link} to="/profile">
+                  จัดการโปรไฟล์ (Manage Profile)
+                </Dropdown.Item>
+                <Dropdown.Item as={Link} to="/my-courses">
+                  คอร์สของฉัน (My Courses)
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={logout} style={{ color: '#F44747' }}>
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </>
+
+        ) : (
+          // ---------------------------------
+          // ⭐️ 2. (ถ้า "ยังไม่ Login") (Req 4)
+          // ---------------------------------
+          <>
+            <Link to="/login" className="navbar-login-button">
+              Log In
+            </Link>
+            {/* (ปุ่ม Sign Up (Register)) */}
+            <Link 
+              to="/login?view=register" 
+              className="navbar-login-button" 
+              style={{ backgroundColor: '#4EC9B0' }}
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
+
+      </div>
     </nav>
   );
 };

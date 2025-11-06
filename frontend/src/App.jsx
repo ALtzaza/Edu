@@ -13,23 +13,27 @@ import HomePage from './page/HomePage/HomePage';
 import CoursesPage from './page/CoursesPage/CoursesPage';
 import CourseDetailPage from './pages/CourseDetailPage.jsx';  
 import CourseLessonPage from './pages/CourseLessonPage.jsx'; 
+import LoginPage from './page/LoginPage/LoginPage.jsx';
+import ForgotPasswordPage from './page/ForgotPasswordPage/ForgotPasswordPage.jsx';
+import ResetPasswordPage from './page/ResetPasswordPage/ResetPasswordPage.jsx';
 
-// import LoginPage from './pages/LoginPage/LoginPage';
-// import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+
 
 function App() {
   return (
     <BrowserRouter>
     
       <Routes>
-      
+      <Route path="login" element={<LoginPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
         {/* Route "Layout" (มี Navbar/Footer) */}
         <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} /> 
           {/* ⭐️ 3. (เปิด) หน้าแรก ⭐️ */}
           
           <Route path="courses" element={<CoursesPage />} />
-          <Route path="course/:id" element={<CourseDetailPage />} />
+          <Route path="courses/:id" element={<CourseDetailPage />} />
           <Route path="/lessons/:courseId/:lessonId" element={<CourseLessonPage />} />
           
           {/* (Route อื่นๆ ที่อยู่ใน Layout) */}
