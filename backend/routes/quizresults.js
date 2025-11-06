@@ -8,31 +8,34 @@ const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
 //ดูผลสอบ ของตัวเอง ในบทเรียนนั้นๆ (สำหรับนักเรียน)
 //  (แก้ไข) เปลี่ยนจาก /:lessonNum เป็น /:lessonId
 router.get("/api/lessons/:lessonId/results/me", async (req, res) => {
-  try {
-    const userId = MOCK_USER_ID;
-    //  (แก้ไข) รับ lessonId
-    const { lessonId } = req.params; //  (แก้ไข) ไม่ต้องค้นหา Lesson ก่อน, ใช้ lessonId ได้เลย
+  try {
+    const userId = MOCK_USER_ID;
+    const { lessonId } = req.params; 
 
-    const quizResults = await QuizResult.find({
-      user: userId,
-      lesson: lessonId, //  ใช้ lessonId ที่รับมา
-    });
-    res.status(200).send(quizResults);
-  } catch (error) {
-    //  (เพิ่ม) เพิ่มการดักจับ Error
-    if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid Lesson ID format" });
-    }
-    res.status(500).send({ message: "Server Error", error: error.message });
-  }
+    const quizResults = await QuizResult.find({
+      user: userId,
+      lesson: lessonId,
+    })
+    .populate("lesson", "title lessonNumber")
+    // 🟢 เพิ่มการจัดเรียงตามเวลาที่ส่งคำตอบจากใหม่ไปเก่า
+    .sort({ submittedAt: -1 }); 
+    
+    res.status(200).send(quizResults);
+  } catch (error) {
+    // ... [Error Handling เดิม] ...
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Lesson ID format" });
+    }
+    res.status(500).send({ message: "Server Error", error: error.message });
+  }
 });
-
 //ดูประวัติการทำแบบทดสอบทั้งหมด ของตัวเอง (สำหรับนักเรียน)
 // (Route นี้ไม่จำเป็นต้องแก้)
 router.get("/api/quizresults/me", async (req, res) => {
   try {
     const userId = MOCK_USER_ID;
-    const quizResults = await QuizResult.find({ user: userId });
+    const quizResults = await QuizResult.find({ user: userId })
+    .populate("lesson", "title lessonNumber")
     res.status(200).send(quizResults);
   } catch (error) {
     res.status(500).send({ message: "Server Error", error: error.message });

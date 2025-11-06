@@ -1,25 +1,53 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom'; // Outlet คือที่ที่เนื้อหาของ Page (เช่น Home) จะมาแสดง
-import Navbar from '../components/Navbar.jsx'; // 1. Import Navbar ที่เราสร้าง
-// import Footer from '../components/Footer.jsx'; // (ถ้าคุณมี Footer ก็ import มาด้วย)
+import React, { useState, useEffect } from 'react'; // <-- 1. Import useState, useEffect
+import { Outlet, useLocation } from 'react-router-dom';
+import Navbar from '../components/Navbar.jsx'; 
+import styles from './MainLayout.module.css'; 
 
-const MainLayout = () => {
+// Component PageHeader (ไม่ต้องแก้)
+const PageHeader = ({ title }) => {
+  if (!title) return null; // ถ้า title ว่าง = ไม่โชว์
+
   return (
-    <div className="flex flex-col min-h-screen">
-      
-      {/* 2. เรียกใช้ Navbar ไว้บนสุดของ Layout */}
-      <Navbar />
-
-      {/* 3. เนื้อหาของหน้า (เช่น Home, Blog) จะถูกเรนเดอร์ตรงนี้ */}
-      <main className="flex-grow">
-        <Outlet />
-      </main>
-
-      {/* 4. (ถ้ามี) เรียกใช้ Footer ไว้ล่างสุด */}
-      {/* <Footer /> */}
-
+    <div className={styles.pageHeader}>
+      <div className={styles.container}>
+        <h1 className={styles.headerTitle}>{title}</h1>
+      </div>
     </div>
   );
 };
 
-export default MainLayout;
+export default function MainLayout() {
+  const location = useLocation();
+  
+  // --- ⬇️ นี่คือส่วนที่เรา "ลืม" ใส่ ⬇️ ---
+
+  // 2. สร้าง "กล่องเก็บความจำ" (State) สำหรับ Title
+  const [pageTitle, setPageTitle] = useState(''); 
+
+  // 3. เมื่อ URL เปลี่ยน... ให้เรา "ลบ" Title เก่าทิ้ง
+  // (กันไม่ให้ Title ค้าง)
+  useEffect(() => {
+    setPageTitle(''); 
+  }, [location.pathname]); // ทำงานทุกครั้งที่ URL เปลี่ยน
+
+  // --- ⬆️ จบส่วนที่ลืม ⬆️ ---
+
+  return (
+    <div> 
+      <Navbar />
+      
+      {/* 4. ให้แบนเนอร์โชว์ Title จาก State */}
+      <PageHeader title={pageTitle} /> 
+      
+      <main className={styles.container}>
+        
+        {/* 5. (สำคัญที่สุด!) 
+            ส่ง "ตัวเปลี่ยน Title" (setPageTitle) 
+            ลงไปให้ "หน้าลูก" (Outlet) ทุกหน้า
+        */}
+        <Outlet context={{ setPageTitle }} /> 
+        
+      </main>
+    </div>
+  );
+}

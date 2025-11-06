@@ -29,17 +29,8 @@ const userSchema = new Schema({
 // -------- COURSE CATEGORIES --------
 const categorySchema = new Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ["user", "admin"], default: "user" },
-  avatar: String,
-  bio: String,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-
-  // เพิ่มสอง field นี้
-  averageRating: { type: Number, default: 0 },
-  reviewCount: { type: Number, default: 0 }
+  description: String,
+  createdAt: { type: Date, default: Date.now }
 });
 
 
@@ -87,7 +78,11 @@ const lessonSchema = new Schema(
     section: { type: Schema.Types.ObjectId, ref: "Section", required: true },
     quizzes: [{ type: Schema.Types.ObjectId, ref: "Quiz" }],
     order: { type: Number, default: 0 },
-    //  (แก้ไข) เพิ่ม field นี้เข้าไป 
+        type: { 
+        type: String, 
+        enum: ["content", "quiz", "workshop"], 
+        default: "content" 
+    }, 
     lessonNumber: { type: Number, index: true },
   },
   { timestamps: true }
@@ -134,11 +129,13 @@ const quizSchema = new Schema({
 
 // -------- QUIZ RESULTS --------
 const quizResultSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "User" },
-  lesson: { type: Schema.Types.ObjectId, ref: "Lesson" }, // Result is still per-lesson
-  score: Number,
-  total: Number, // Total questions attempted in this submission for this lesson
-  submittedAt: { type: Date, default: Date.now },
+  user: { type: Schema.Types.ObjectId, ref: "User" },
+  lesson: { type: Schema.Types.ObjectId, ref: "Lesson" },
+  score: Number,
+  total: Number,
+  percentage: Number, // 🟢 เพิ่ม: เก็บเปอร์เซ็นต์ที่ทำได้
+  passed: { type: Boolean, default: false }, // 🟢 เพิ่ม: ผ่านเกณฑ์หรือไม่
+  submittedAt: { type: Date, default: Date.now },
 });
 
 // -------- WORKSHOPS --------

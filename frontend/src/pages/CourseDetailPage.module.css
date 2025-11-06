@@ -1,0 +1,358 @@
+/* --- 1. โครงสร้าง Grid 2 คอลัมน์ --- */
+.pageContainer {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: 2rem; 
+}
+
+/* (ถ้าจอมือถือ) ให้กลายเป็น 1 คอลัมน์ */
+@media (max-width: 1024px) {
+  .pageContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- 2. คอลัมน์ซ้าย (เนื้อหาหลัก) --- */
+.mainContent {
+  /* ไม่มีอะไรพิเศษ */
+}
+
+.breadcrumbs {
+  font-size: 0.875rem;
+  color: #9ca3af; 
+  margin-bottom: 1.5rem;
+}
+.breadcrumbs span {
+  color: #f3f4f6; 
+  font-weight: 500;
+}
+
+.featureBanner {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem; 
+  background-color: #1f2937; 
+  margin-bottom: 1.5rem;
+  object-fit: cover;
+}
+
+/* Sub-Nav (Sticky) */
+.subNav {
+  display: flex;
+  gap: 1.5rem;
+  border-bottom: 1px solid #374151; 
+  margin-bottom: 1.5rem;
+  position: sticky;
+  top: 78px; /* ต้องเท่ากับความสูง Navbar */
+  background-color: #111827; 
+  z-index: 40; 
+}
+.subNavLink {
+  padding: 1rem 0;
+  font-weight: 600;
+  color: #9ca3af;
+  border-bottom: 2px solid transparent;
+}
+.subNavLinkActive {
+  composes: subNavLink; 
+  color: white;
+  border-bottom-color: #60a5fa; 
+}
+
+/* HTML DIB */
+.contentBody h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.contentBody p {
+  font-size: 1rem;
+  color: #d1d5db; 
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.contentBody ul {
+  list-style-type: none;
+  padding-left: 1rem;
+}
+.contentBody li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+  color: #d1d5db;
+}
+.contentBody li::before {
+  content: '✔';
+  color: #10B981; 
+  position: absolute;
+  left: 0;
+  top: 4px;
+  font-size: 1.1rem;
+}
+
+/* --- 3. คอลัมน์ขวา (Sidebar) --- */
+.sidebar {
+  /* ... (โค้ดเก่า) ... */
+}
+@media (max-width: 1024px) {
+  .sidebar {
+    grid-row-start: 1; 
+    margin-bottom: 2rem;
+  }
+}
+
+.sidebarCard {
+  background-color: #1f2937; 
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  position: sticky;
+  top: 100px; 
+  z-index: 30; 
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 1rem;
+}
+.price span { 
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.enrollButton {
+  background-color: #10B981; 
+  color: #0F0F0F; 
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.enrollButton:hover {
+  background-color: #059669;
+}
+
+/* Icon/Emoji Style */
+.metaIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+.metaEmoji {
+  width: 20px;
+  height: 20px;
+  font-size: 1.2rem; 
+  line-height: 1; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metaList {
+  list-style-type: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  border-top: 1px solid #374151;
+  padding-top: 1.5rem;
+}
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #d1d5db;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Tags */
+.tagGroup {
+  border-top: 1px solid #374151;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.tag {
+  background-color: #374151; 
+  color: #d1d5db;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Tools/Software */
+.toolsGroup {
+  border-top: 1px solid #374151; 
+  padding-top: 1.5rem; 
+  margin-top: 1.5rem; 
+}
+
+.toolsTitle {
+  font-size: 0.875rem; 
+  font-weight: 600; 
+  color: #9ca3af; 
+  margin-bottom: 1rem;
+}
+
+.toolsList {
+  list-style-type: none !important; 
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; 
+}
+
+.toolItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; 
+  font-size: 0.875rem; 
+  color: #d1d5db; 
+  font-weight: 500;
+}
+
+.toolIcon {
+  width: 20px; 
+  height: 20px; 
+  object-fit: contain;
+}
+
+
+/* --- 4. Curriculum (Dropdown/Accordion) Styles --- */
+.curriculumWrapper {
+  margin-top: 3rem; 
+}
+
+.curriculumTitle {
+  font-size: 1.75rem; 
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1.5rem; 
+}
+
+.curriculumList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; 
+}
+
+.sectionItem {
+  background-color: #1f2937; 
+  border-radius: 0.5rem; 
+  border: 1px solid #374151; 
+  overflow: hidden; 
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sectionHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sectionNumber {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #6b7280; 
+}
+
+.sectionTitle {
+  font-size: 1.125rem; 
+  font-weight: 600; 
+  color: white;
+}
+
+/* ✅ Animation: ลูกศร ^ v (ใช้ cubic-bezier) ✅ */
+.sectionToggle {
+  font-size: 1.5rem;
+  color: #9ca3af; 
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth/Elastic Transform */
+  transform: rotate(180deg); 
+}
+.sectionToggle.isOpen {
+  transform: rotate(0deg); 
+}
+
+
+/* ✅ Animation: สไลด์เนื้อหา (ใช้ Grid) ✅ */
+.sectionContentWrapper {
+  display: grid;
+  grid-template-rows: 0fr; /* (เริ่มต้น "สูง 0") */
+  /* cubic-bezier(0.25, 0.46, 0.45, 0.94) คือ easing function ที่ทำให้เกิดมิติ */
+  transition: grid-template-rows 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-top-color 0.4s ease-out;
+  border-top: 1px solid transparent; 
+}
+
+.sectionContentWrapper.isOpen {
+  grid-template-rows: 1fr; /* (ตอนเปิด "สไลด์" ออกมา) */
+  border-top-color: #374151;
+}
+
+.sectionContentInner {
+  overflow: hidden; 
+  padding: 0 1.5rem 1.5rem 1.5rem; 
+  margin-top: 0.5rem; 
+}
+
+/* สไตล์สำหรับ Lesson List */
+.sectionContentInner ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; 
+  padding-left: 1rem; 
+}
+
+.lessonItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #d1d5db; 
+  position: relative;
+  padding-left: 1.75rem; 
+  line-height: 1.7;
+}
+
+.lessonIcon {
+  font-size: 0.9rem;
+  width: 20px;
+  text-align: center;
+}
+
+.lessonText {
+  flex-grow: 1; 
+  font-size: 0.9rem;
+}
+
+.lessonDuration {
+  background-color: #f59e0b; 
+  color: #111827; 
+  font-size: 0.75rem; 
+  font-weight: 600; 
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px; 
+}

@@ -1,0 +1,60 @@
+.container {
+  width: 100%;
+  max-width: 1280px; /* 7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem; /* p-8 */
+}
+
+.pageHeader {
+  position: relative;
+  /* background-image: linear-gradient(to bottom right, #1A1A2E, #0F0F1A); */
+ height: 550px; /* h-64 */
+  display: flex;
+  align-items: center;
+  align-items: flex-start;
+  overflow: hidden;
+
+  background-image: url('/images/catalog-header-bg.png');
+background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+
+  
+  background-attachment: fixed;
+}
+
+.headerTitle {
+  position: relative;
+  z-index: 10;
+  font-size: 7rem; /* 6xl */
+  font-weight: 900; /* extrabold */
+  color: white;
+}
+
+/* วงกลมไล่สี (Glow effect) */
+/* .glowTopRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24rem; 
+  height: 24rem; 
+  background-color: #a855f7; 
+  border-radius: 9999px;
+  opacity: 0.2;
+  filter: blur(100px); 
+  transform: translate(50%, -50%);
+} */
+
+/* .glowBottomLeft {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 20rem; 
+  height: 20rem; 
+  background-color: #3b82f6;
+  border-radius: 9999px;
+  opacity: 0.2;
+  filter: blur(100px);
+  transform: translate(-50%, 50%);
+} */
