@@ -28,8 +28,8 @@ function App() {
         <Route index element={<HomePage />} /> 
           {/* ⭐️ 3. (เปิด) หน้าแรก ⭐️ */}
           
-          <Route path="courses" element={<CoursesPage />} />
-          <Route path="course/:id" element={<CourseDetailPage />} />
+          <Route path="catalog" element={<CoursesPage />} />
+          <Route path="courses/:id" element={<CourseDetailPage />} />
           <Route path="/lessons/:courseId/:lessonId" element={<CourseLessonPage />} />
           
           {/* (Route อื่นๆ ที่อยู่ใน Layout) */}

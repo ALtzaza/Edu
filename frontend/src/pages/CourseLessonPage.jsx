@@ -16,6 +16,13 @@ const LESSON_TYPE_WORKSHOP = 'workshop';
 const MAX_ATTEMPTS = 3; 
 const PASSING_GRADE = 70; 
 
+const [openSectionIndex, setOpenSectionIndex] = useState(null);
+
+const toggleSection = (index) => {
+  setOpenSectionIndex((prev) => (prev === index ? null : index));
+};
+
+
 
 // 💡 Helper Function เพื่อจัดโครงสร้างสารบัญให้ใช้งานง่าย
 const mapSectionsForSidebar = (sections, currentLessonId) => {
@@ -208,7 +215,12 @@ export default function CourseLessonPage() {
     // 🟢 ฟังก์ชันใหม่: ดึงข้อมูล Workshop ของผู้ใช้
     const fetchUserWorkshop = useCallback(async (courseId, lessonId) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}/lessons/${lessonId}/workshops/me`);
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}/lessons/${lessonId}/workshops/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (!response.ok) throw new Error("Failed to fetch workshop data");
             const result = await response.json();
             
@@ -226,7 +238,12 @@ export default function CourseLessonPage() {
     // 💡 แก้ไข fetchLesson ให้กำหนด isWorkshopLesson
     const fetchLesson = useCallback(async (id) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/lessons/${id}`);
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_BASE_URL}/api/lessons/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+});
             if (!response.ok) throw new Error("Lesson not found");
             const result = await response.json();
             if (result.success && result.data) {
@@ -247,7 +264,12 @@ export default function CourseLessonPage() {
     const fetchCourseSections = useCallback(
         async (id) => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/courses/${id}`);
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${API_BASE_URL}/api/courses/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 if (!response.ok) throw new Error("Course not found");
                 const result = await response.json();
                 if (result.success && result.data) {

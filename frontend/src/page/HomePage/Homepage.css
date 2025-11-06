@@ -13,7 +13,7 @@
     align-items: center;
     justify-content: space-between;
     min-height: 90vh;
-    padding: 2rem 5rem;
+    padding: 2rem 0;
     flex-wrap: wrap;
     background-image: url('/img/HeroHomePage.jpg'); 
     background-size: cover;       
@@ -247,7 +247,7 @@
   /* (คงเดิม) 2. About Section (V11) */
   /* -------------------- */
   .about-section {
-    padding: 6rem 5rem; 
+    padding: 6rem 0; 
     background-color: #182141; 
     display: flex;
     justify-content: center; 
@@ -297,7 +297,7 @@
   /* (คงเดิม) 3. Featured Courses (V15) */
   /* -------------------- */
   .featured-courses-section {
-    padding: 4rem 5rem;
+    padding: 4rem 0;
     text-align: center;
     background-color: #10162F; 
   }
@@ -366,7 +366,7 @@
   /* (คงเดิม) 4. Final CTA (V11) */
   /* -------------------- */
   .cta-section {
-    padding: 5rem 2rem;
+    padding: 5rem 0;
     text-align: center;
     background-color: #182141;
   }

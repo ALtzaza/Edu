@@ -109,7 +109,8 @@ router.delete("/:lessonId", authenticateJWT, isAdmin, async (req, res) => {
 router.get("/:lessonId",authenticateJWT,isEnrolled, async (req, res) => {
   try {
     const { lessonId } = req.params;
-
+    const userId = req.user.id;
+    
     // 💡 (เพิ่ม) ตรวจสอบว่า lessonId เป็น ObjectId ที่ถูกต้องหรือไม่
     if (!mongoose.Types.ObjectId.isValid(lessonId)) {
         return res.status(400).json({ success: false, message: "Lesson ID ไม่ถูกต้อง" });

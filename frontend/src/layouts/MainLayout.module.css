@@ -1,15 +1,23 @@
 .container {
   width: 100%;
-  max-width: 100%; /* 7xl */
+  max-width: 1280px; /* 7xl */
   margin-left: auto;
   margin-right: auto;;
-  padding: 0rem; /* p-8 */
+  padding: 0 1.5rem; /* p-8 */
+}
+
+.fullWidthContainer {
+    width: 100%;
+    max-width: 100%; /* ทำให้เต็มหน้าจอ */
+    padding: 0; /* ลบ padding ออก */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .pageHeader {
   position: relative;
   /* background-image: linear-gradient(to bottom right, #1A1A2E, #0F0F1A); */
- height: 750px; /* h-64 */
+ height: 550px; /* h-64 */
   display: flex;
   align-items: center;
   align-items: flex-start;

@@ -67,6 +67,23 @@
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
+
+.contentBody h3 {
+ font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.contentBody h4{
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+
 .contentBody p {
   font-size: 1rem;
   color: #d1d5db; 
