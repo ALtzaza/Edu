@@ -12,14 +12,32 @@ import {
     
     
 } from "../models/schema.models.js";
-
+import multer from "multer";
+import path from "path";
+import fs from 'fs';
 
 import { authenticateJWT } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = Router();
+const uploadDir = 'uploads/thumbnails/';
 
-// --- 1. GET /api/courses (หน้าร้านค้า - All Courses) ---
+fs.mkdirSync(uploadDir, { recursive: true });
+
+// ⭐️ 4. (แก้ไข) ตั้งค่า 'multer'
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir); // ⬅️ (ใช้ 'uploadDir' (V16))
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `thumb_${Date.now()}${ext}`);
+  }
+});
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } 
+});
 
 router.get("/", async (req, res) => {
     try {
@@ -129,36 +147,32 @@ router.get("/:id", async (req, res) => {
 
 
 // --- 3. POST /api/courses (สร้างคอร์สใหม่ - Admin) ---
-router.post("/", authenticateJWT, isAdmin, async (req, res) => {
+router.post("/", authenticateJWT, isAdmin, upload.single("thumbnail"), async (req, res) => {
     try {
-      
       const { 
-        category, 
-        title, 
-        description, 
-        thumbnail, 
-        price, 
-        difficulty 
-      } = req.body;
-  
+        category, title, description, price, difficulty 
+      } = req.body; 
       
       const instructorId = req.user.id; 
   
-      
       if (!category || !title || !price) {
         return res.status(400).json({ success: false, message: "กรุณาส่ง category, title และ price" });
       }
 
-      // 3. สร้างคอร์ส
+      let thumbnailUrl = null;
+      if (req.file) {
+        thumbnailUrl = req.file.path.replace(/\\/g, "/"); 
+      }
+
       const newCourse = new Course({
         category,
         title,
         description,
-        thumbnail,
+        thumbnail: thumbnailUrl, 
         price,
         difficulty,
-        instructor: instructorId, // ⬅ใส่ ID ของ Admin (Mock)
-        sections: [] // ⬅ตอนสร้างครั้งแรก สารบัญยังว่าง
+        instructor: instructorId,
+        sections: [] 
       });
   
       await newCourse.save();
@@ -175,29 +189,30 @@ router.post("/", authenticateJWT, isAdmin, async (req, res) => {
 
 
 // --- 4. PUT /api/courses/:id (อัปเดตคอร์ส - Admin) ---
-router.put("/:id", authenticateJWT, isAdmin, async (req, res) => {
+router.put("/:id", authenticateJWT, isAdmin, upload.single("thumbnail"), async (req, res) => {
     try {
         const { id } = req.params;
-        // รับข้อมูลทั้งหมดที่ Admin อาจจะแก้
         const { 
-            category, 
-            title, 
-            description, 
-            thumbnail, 
-            price, 
-            difficulty 
+            category, title, description, price, difficulty 
         } = req.body;
+
+        const updateData = { 
+            category, title, description, price, difficulty 
+        };
+
+        if (req.file) {
+            updateData.thumbnail = req.file.path.replace(/\\/g, "/");
+        }
 
         const updatedCourse = await Course.findByIdAndUpdate(
             id,
-            { category, title, description, thumbnail, price, difficulty },
-            { new: true, runValidators: true } // {new: true} = ส่งข้อมูลใหม่กลับไป
+            updateData, 
+            { new: true, runValidators: true } 
         );
 
         if (!updatedCourse) {
             return res.status(404).json({ success: false, message: "ไม่พบคอร์ส" });
         }
-
         res.json({ 
             success: true, 
             message: "อัปเดตคอร์สสำเร็จ", 

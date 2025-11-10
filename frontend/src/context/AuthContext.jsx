@@ -48,13 +48,13 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  // 4. (ฟังก์ชัน "Logout")
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user'); // (ลบ User ที่เก็บไว้ด้วย)
+    localStorage.removeItem('user'); 
     delete api.defaults.headers.common['Authorization'];
     setToken(null);
     setUser(null);
+    window.location.href = '/';
   };
 
   // (ถ้ายังโหลด/เช็ค Token ไม่เสร็จ ให้แสดง Loading...)
