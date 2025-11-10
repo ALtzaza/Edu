@@ -1,35 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import AuthPage from "./pages/AuthPage/AuthPage.jsx";
+import PurchasesPage from "./pages/PurchasesPage/PurchasesPage";
+import CoursesPage from "./pages/CoursesPage/CoursesPage";
+import PurchaseFlowPage from "./pages/PurchasesPage/PurchaseFlowPage";
+// import ForgotPassword from "./components/ForgotPassword";
+// import ResetPassword from "./components/ResetPassword";
 
-function App() {
-  const [count, setCount] = useState(0)
+const query = new URLSearchParams(window.location.search);
+const token = query.get("token");
 
+console.log("reset token =", token); // ใช้ตรวจสอบได้
+
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<AuthPage />} />
+      <Route path="/purchases" element={<PurchasesPage />} />
+      <Route path="/courses" element={<CoursesPage />} />
+      <Route path="/purchase/:courseId" element={<PurchaseFlowPage />} />
+      {/* <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} /> */}
+    </Routes>
+  );
 }
-
-export default App

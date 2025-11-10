@@ -21,7 +21,7 @@ import reviewRoutes from './routes/reviews.js';
 import purchaseRoutes from './routes/purchases.js';
 import adminRoutes from "./routes/admin.js";
 //import adminCourseRoutes from "./routes/adminCourse.js";
-//import testRoutes from './routes/test.js';  
+import testRoute from './routes/test.js';  
 
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
@@ -37,6 +37,8 @@ const app = express();
 // 4. Middleware
 app.use(cors()); // เปิดรับการเชื่อมต่อจาก Origin อื่นๆ
 app.use(express.json()); // ทำให้ Express อ่าน JSON body ได้
+
+app.use("/api/test", testRoute);
 
 // --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) --- 
 app.use('/api/categories', categoryRoutes);

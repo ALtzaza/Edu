@@ -34,7 +34,7 @@ router.post("/forgot-password", async (req, res) => {
     // สำหรับโปรเจกต์ demo → ส่ง response token กลับ (ปกติส่งทาง email)
     res.json({
       message: "สร้างลิงก์รีเซ็ตรหัสผ่านเรียบร้อย",
-      resetLink: `http://localhost:3000/reset-password?token=${resetToken}`
+      resetLink: `http://localhost:5173/reset-password?token=${resetToken}`
     });
   } catch (err) {
     res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
