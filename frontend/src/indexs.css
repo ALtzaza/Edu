@@ -1,0 +1,14 @@
+body {
+  /* margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh; */
+
+   /* 👇 เพิ่มส่วนนี้เพื่อใช้รูปภาพแทนสีพื้นหลัง */
+  background-image: url('/Background01.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+}
