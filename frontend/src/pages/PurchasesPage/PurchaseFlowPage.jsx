@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Card, Button, Spinner, Form } from "react-bootstrap";
-import Navbar from "../../components/Navbar";
+
 import "./PurchaseFlowPage.css";
 
 export default function PurchasePage() {
@@ -87,7 +87,7 @@ export default function PurchasePage() {
   if (loading) {
     return (
       <>
-        <Navbar />
+        
         <div className="text-center py-5">
           <Spinner animation="border" variant="primary" />
         </div>
@@ -98,7 +98,7 @@ export default function PurchasePage() {
   if (!course) {
     return (
       <>
-        <Navbar />
+       
         <Container className="text-center py-5">
           <h5>❌ ไม่พบคอร์สที่เลือก</h5>
         </Container>
@@ -108,7 +108,7 @@ export default function PurchasePage() {
 
   return (
     <>
-      <Navbar />
+     
       <Container className="purchase-container">
         <Card className="purchase-card shadow-sm">
           <Card.Body>

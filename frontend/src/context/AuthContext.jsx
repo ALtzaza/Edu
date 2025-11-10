@@ -1,48 +1,39 @@
-// src/context/AuthContext.jsx
+// src/context/AuthContext.jsx (V6 - เพิ่ม 'updateUser')
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import api from '../api/api'; // (Import ตัวกลาง API)
+import api from '../api/api'; 
 
-// 1. สร้าง "กล่อง" Context
 const AuthContext = createContext(null);
 
-// 2. (สำคัญ) สร้าง "ตัวหุ้ม" (Provider)
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // (ข้อมูล User ที่ Login)
-  const [token, setToken] = useState(localStorage.getItem('token')); // (Token)
-  const [loading, setLoading] = useState(true); // (เพิ่ม Loading State)
+  const [user, setUser] = useState(null); 
+  const [token, setToken] = useState(localStorage.getItem('token')); 
+  const [loading, setLoading] = useState(true); 
 
-  // (useEffect นี้ จะ "โหลด" Token/User เก่า ตอนเปิดเว็บครั้งแรก)
   useEffect(() => {
     const validateToken = async () => {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         try {
-          // 1. แปะ Token ใน Header (เผื่อไว้)
           api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-          
-          // 2. ⭐️ (สำคัญ) ยิง API (ของเพื่อน) เพื่อ "เช็ค" ว่า Token นี้ยังใช้ได้มั้ย
-          // (API 'GET /profile' ใน routes/users.js)
+          // (API 'GET /profile' (V2))
           const res = await api.get('/users/profile'); 
-          
-          setUser(res.data.user); // 3. ถ้าใช้ได้ ➡️ เก็บ User
+          setUser(res.data.user); 
           setToken(storedToken);
-
         } catch (err) {
-          // 4. ถ้า Token หมดอายุ ➡️ ลบทิ้ง
           localStorage.removeItem('token');
           setToken(null);
           setUser(null);
         }
       }
-      setLoading(false); // (โหลดเสร็จแล้ว)
+      setLoading(false); 
     };
     validateToken();
   }, []);
 
-  // 3. (ฟังก์ชัน "Login" ที่หน้า Login จะเรียกใช้)
   const login = (userData, userToken) => {
     localStorage.setItem('token', userToken);
+    localStorage.setItem('user', JSON.stringify(userData)); 
     api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
     setToken(userToken);
     setUser(userData);
@@ -56,24 +47,27 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     window.location.href = '/';
   };
+  
+  // ⭐️ (ใหม่) (V6) ⭐️
+  // (ฟังก์ชัน "อัปเดต" (V6) (เฉพาะ 'user' 
+  //  (สำหรับ 'ProfilePage' (V2))))
+  const updateUser = (newUserData) => {
+    setUser(newUserData); // (อัปเดต "สมอง")
+    localStorage.setItem('user', JSON.stringify(newUserData)); // (อัปเดต "LocalStorage")
+  };
 
-  // (ถ้ายังโหลด/เช็ค Token ไม่เสร็จ ให้แสดง Loading...)
   if (loading) {
-    return (
-      <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#10162F', color: 'white' }}>
-        Loading Application...
-      </div>
-    );
+    return <div>Loading Application...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    // ⭐️ (แก้ไข) "เพิ่ม" 'updateUser' (V6) เข้าไปใน 'value' ⭐️
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// 5. (Hook) สร้าง Hook "useAuth" (เพื่อให้ Navbar เรียกใช้ง่ายๆ)
 export const useAuth = () => {
   return useContext(AuthContext);
 };

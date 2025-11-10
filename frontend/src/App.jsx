@@ -27,6 +27,7 @@ import ManageCoursesPage from './page/AdminPage/ManageCoursesPage/ManageCoursesP
 import ManageCategoriesPage from './page/AdminPage/ManageCategoriesPage/ManageCategoriesPage.jsx';
 import ManageContentPage from './page/AdminPage/ManageContentPage/ManageContentPage.jsx';
 import ManageUsersPage from './page/AdminPage/ManageUsersPage/ManageUsersPage.jsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 
 function App() {
   return (
@@ -57,8 +58,9 @@ function App() {
           <Route path="/lessons/:courseId/:lessonId" element={<CourseLessonPage />} />
           <Route path="/purchases" element={<PurchasesPage />} />
           <Route path="/purchase/:courseId" element={<PurchaseFlowPage />} />
+        
           {/* (Route อื่นๆ ที่อยู่ใน Layout) */}
-          {/* <Route path="courses" element={<CoursesPage />} /> */}
+          <Route path="Profile" element={<ProfilePage/>} />
           {/* <Route path="login" element={<LoginPage />} /> */}
         </Route>
         

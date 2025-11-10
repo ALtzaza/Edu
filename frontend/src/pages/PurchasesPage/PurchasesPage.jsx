@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, ProgressBar, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+
 import "./PurchasesPage.css";
 
 export default function PurchasesPage() {
@@ -81,14 +81,14 @@ export default function PurchasesPage() {
   if (loading)
     return (
       <>
-        <Navbar />
+       
         <p className="loading-text">⏳ กำลังโหลดข้อมูลคำสั่งซื้อ...</p>
       </>
     );
 
   return (
     <>
-      <Navbar />
+      
       <Container className="purchase-container">
         <h3 className="purchase-title">รายการคำสั่งซื้อของฉัน</h3>
 

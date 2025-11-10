@@ -100,11 +100,11 @@ const Navbar = () => {
                   <strong>{user.name || user.username}</strong>
                 </Dropdown.ItemText>
                 <Dropdown.Divider />
-                <Dropdown.Item as={Link} to="/profile">
+                <Dropdown.Item as={Link} to="/Profile">
                   จัดการโปรไฟล์ (Manage Profile)
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/my-courses">
-                  คอร์สของฉัน (My Courses)
+                <Dropdown.Item as={Link} to="/purchases">
+                  คำสั่งซื้อของฉัน (My Purchases)
                 </Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={logout} style={{ color: '#F44747' }}>
