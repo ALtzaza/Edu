@@ -1,0 +1,75 @@
+/* src/layouts/AdminLayout.css */
+
+.admin-layout-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #10162F; /* (สีธีมหลัก) */
+    color: #D4D4D4;
+    font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  }
+  
+  /* 1. (Sidebar - เมนูซ้าย) */
+  .admin-sidebar {
+    flex: 0 0 250px; /* (ความกว้าง 250px "คงที่") */
+    background-color: #1E1E1E; /* (สี Navbar) */
+    padding: 2rem;
+    border-right: 1px solid #333;
+  }
+  
+  .admin-sidebar-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+  .admin-sidebar-header p {
+    font-size: 0.9rem;
+    color: #aeb9e1;
+  }
+  
+  .admin-sidebar hr {
+    border-color: #333;
+    margin: 1.5rem 0;
+  }
+  
+  /* (เมนู) */
+  .admin-nav-link {
+    display: block;
+    color: #D4D4D4;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .admin-nav-link:hover {
+    background-color: #2a3661; /* (สีพื้นหลัง Form) */
+    color: white;
+  }
+  /* (ปุ่ม Logout) */
+  .admin-logout-button {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #F44747; /* (สีแดง) */
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .admin-logout-button:hover {
+    background-color: rgba(244, 71, 71, 0.1);
+  }
+  
+  
+  /* 2. (Content - เนื้อหาขวา) */
+  .admin-content {
+    flex: 1; /* (กว้างเต็มที่เหลือ) */
+    padding: 2rem 3rem;
+    overflow-y: auto; /* (ถ้าเนื้อหายาว ให้ Scroll) */
+  }

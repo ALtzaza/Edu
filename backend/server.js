@@ -1,18 +1,23 @@
+// server.js (ฉบับ V29 - แก้บั๊ก 404/E11000/Hang)
 
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+
+
+
+// ⭐️ 1. (แก้ไข) Import ให้ถูกต้อง
 import categoryRoutes from "./routes/categories.js";
 import courseRoutes from "./routes/courses.js";
-import sectionRouter from "./routes/section.js";
-import lessonRouter from "./routes/lesson.js";
+import sectionRouter from "./routes/section.js"; 
+// ⭐️ (สำคัญ!) "ใช้" 'lesson.js' (V16) (ตัวแก้บั๊ก E11000)
+import lessonRouter from "./routes/lesson.js"; // ⬅️ (เอกพจน์)
 import progressRoutes from "./routes/progresses.js";
 import notificationRoutes from "./routes/notificates.js";
-// import testRoutes from "./routes/test.js";
-
+// (Import V1 ที่เหลือ)
 import quiz from './routes/quizzes.js';
-import lesson from './routes/lessons.js';
+// ⭐️ (ลบ 'import lesson' (V1) ที่ "ซ้ำ" ทิ้ง)
 import quizresults from './routes/quizresults.js';
 import certificateRoutes from './routes/certificates.js';
 import workShopRoutes from './routes/workshop.js';
@@ -20,80 +25,49 @@ import userRoutes from './routes/users.js';
 import reviewRoutes from './routes/reviews.js';
 import purchaseRoutes from './routes/purchases.js';
 import adminRoutes from "./routes/admin.js";
-//import adminCourseRoutes from "./routes/adminCourse.js";
-import testRoute from './routes/test.js';  
 
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
+if (!MONGO_URI) { /* ... (Error) ... */ }
 
-if (!MONGO_URI) {
-  console.error('❌ ไม่พบ MONGO_URI ในไฟล์ .env');
-  process.exit(1);
-}
-
-// 3. สร้างแอป Express
 const app = express();
 
+// ⭐️ 2. (CORS V21)
+const corsOptions = {
+  origin: "http://localhost:5173", 
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], 
+  allowedHeaders: ["Content-Type", "Authorization"] 
+};
+// (Logger V27)
 app.use((req, res, next) => {
   console.log(`--- LOGGER: ได้รับ ${req.method} Request มาที่: ${req.originalUrl} ---`);
   next();
 });
+app.use(cors(corsOptions)); 
 
-const corsOptions = {
-  // 1. อนุญาต Frontend (Port 5173)
-  origin: "http://localhost:5173", 
-  
-  // 2. อนุญาต Methods เหล่านี้
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], 
-  
-  // 3. ⭐️ (สำคัญที่สุด) อนุญาต Header 'Authorization'
-  allowedHeaders: ["Content-Type", "Authorization"] 
-};
+// 3. Middlewares
+app.use(express.json()); 
+app.use('/uploads', express.static('uploads')); 
 
-
-// 4. Middleware
-app.use(cors(corsOptions)); // เปิดรับการเชื่อมต่อจาก Origin อื่นๆ
-
-app.use(express.json()); // ทำให้ Express อ่าน JSON body ได้
-
-app.use("/api/test", testRoute);
-
-// --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) --- 
+// --- 4. ⭐️ (แก้ไข) API Routes (จัดกลุ่มใหม่) --- 
 app.use('/api/categories', categoryRoutes);
 app.use('/api/courses', courseRoutes);
-app.use('/api/sections', sectionRouter);
-app.use('/api/lessons', lessonRouter);
+app.use('/api/sections', sectionRouter); 
+// ⭐️ (สำคัญ!) "ชี้" (Route) /api/lessons (พหูพจน์) ➡️ ไปที่ 'lessonRouter' (V16)
+app.use('/api/lessons', lessonRouter); // ⬅️ (แก้ Path เป็น พหูพจน์)
 app.use('/api/progresses', progressRoutes);
 app.use('/api/notifications', notificationRoutes);
-//  5. เพิ่มบรรทัดนี้: ทำให้โฟลเดอร์ 'uploads' เป็น Public (Static) 
-// นี่คือบรรทัดที่จะทำให้คุณ "เปิดไฟล์" ที่อัปโหลดได้
-// โดยจะแมป URL: /uploads/abc.zip -> ไปยังไฟล์ในโฟลเดอร์: [project]/uploads/abc.zip
-app.use('/uploads', express.static('uploads'));
-// เปิดให้เรียกไฟล์จาก /uploads
-app.use("/uploads", express.static("uploads"));
-
-
-// --- 5. API Routes (จะถูกเพิ่มที่นี่ในอนาคต) ---
 app.use("/api/admin", adminRoutes);
-//app.use("/api/admin/courses", adminCourseRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes); 
 app.use("/api/reviews", reviewRoutes);
 app.use('/api/purchases', purchaseRoutes);
+app.use('/api/quizzes', quiz); 
+app.use('/api/quizresults', quizresults); 
+app.use('/api/certificates', certificateRoutes); 
+app.use('/api/workshops', workShopRoutes);
+// ⭐️ (ลบ 'app.use('/', lesson)' (V1) ที่ "ชน" กัน ทิ้ง)
 
-
-// --- 6. API Routes
-// app.use('/', testRoutes);
-app.use('/', quiz);
-app.use('/', lesson);
-app.use('/', quizresults);
-app.use('/', certificateRoutes);
-app.use('/', workShopRoutes);
-
-
-
-
-
-// --- 7. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
+// --- 5. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ เชื่อมต่อ MongoDB สำเร็จ!');
@@ -105,4 +79,3 @@ mongoose.connect(MONGO_URI)
     console.error('❌ เชื่อมต่อ MongoDB ไม่สำเร็จ:', err.message);
     process.exit(1);
   });
-
