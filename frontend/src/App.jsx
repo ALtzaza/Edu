@@ -18,6 +18,7 @@ import ForgotPasswordPage from './page/ForgotPasswordPage/ForgotPasswordPage.jsx
 import ResetPasswordPage from './page/ResetPasswordPage/ResetPasswordPage.jsx';
 import PurchaseFlowPage from "./pages/PurchasesPage/PurchaseFlowPage";
 import PurchasesPage from "./pages/PurchasesPage/PurchasesPage";
+// import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 
 import AdminLayout from './layouts/AdminLayout.jsx';
 import AdminRoute from './routes/AdminRoutes.jsx';
