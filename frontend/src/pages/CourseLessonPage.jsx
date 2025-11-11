@@ -463,6 +463,13 @@ export default function CourseLessonPage() {
         return () => clearInterval(interval);
     }, [courseId, fetchProgress]);
 
+    // 🟢 (Improved) ตั้ง Page Title เมื่อ lesson โหลดสำเร็จ
+    useEffect(() => {
+        if (lesson && setPageTitle) {
+            setPageTitle(lesson.title);
+        }
+    }, [lesson, setPageTitle]);
+
     useEffect(() => {
         if (!courseSections || courseSections.length === 0) return;
 
@@ -549,14 +556,11 @@ export default function CourseLessonPage() {
             }, 300);
         }
     };
-    // --- Loading & Error States ---
-    if (loading) return <div>กำลังโหลดบทเรียน...</div>;
-    if (error || !lesson) {
-        setPageTitle("ไม่พบบทเรียน");
-        return <div>ไม่สามารถเข้าถึงบทเรียนนี้ได้: {error}</div>;
-    }
-
-    // 💡 เตรียม Data สำหรับ Sidebar
+    // --- Loading & Error States ---
+    if (loading) return <div>กำลังโหลดบทเรียน...</div>;
+    if (error || !lesson) {
+        return <div>ไม่สามารถเข้าถึงบทเรียนนี้ได้: {error}</div>;
+    }    // 💡 เตรียม Data สำหรับ Sidebar
     const mappedSections = mapSectionsForSidebar(courseSections, lesson._id);
     const isQuizLesson = lesson.quizzes && lesson.quizzes.length > 0;
 

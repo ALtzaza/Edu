@@ -1,9 +1,9 @@
 .container {
   width: 100%;
-  max-width: 1280px; /* 7xl */
+  max-width: 100%; /* 7xl */
   margin-left: auto;
   margin-right: auto;;
-  padding: 0 1.5rem; /* p-8 */
+  padding: 0 ; /* p-8 */
 }
 
 .fullWidthContainer {

@@ -22,7 +22,7 @@ const populateQuizDetails = (query) => {
 };
 
 // API สำหรับ "สร้าง Quiz ใหม่สำหรับบทเรียน"
-router.post("/api/lessons/:lessonId/quizzes", async (req, res) => {
+router.post("/:lessonId/quizzes", async (req, res) => {
   try {
     const { lessonId } = req.params; // รับ ObjectId ของ Lesson // 1. ค้นหา Lesson ด้วย ObjectId
 
@@ -68,7 +68,7 @@ router.post("/api/lessons/:lessonId/quizzes", async (req, res) => {
 
 // API สำหรับ "ดึง Quiz ทั้งหมดของบทเรียน"
 //  (แก้ไข) เปลี่ยนจาก /:lessonNum เป็น /:lessonId
-router.get("/api/lessons/:lessonId/quizzes", async (req, res) => {
+router.get("/:lessonId/quizzes", async (req, res) => {
   try {
     //  (แก้ไข) เปลี่ยนจาก lessonNum เป็น lessonId
     const { lessonId } = req.params;
@@ -93,7 +93,7 @@ router.get("/api/lessons/:lessonId/quizzes", async (req, res) => {
   }
 });
 
-router.put("/api/quizzes/:quizId", async (req, res) => {
+router.put("/:quizId", async (req, res) => {
   try {
     const { quizId } = req.params;
     const { question, choices, correctAnswer } = req.body; //  ลบ lessonNum ออก
@@ -118,7 +118,7 @@ router.put("/api/quizzes/:quizId", async (req, res) => {
   }
 });
 
-router.delete("/api/quizzes/:quizId", async (req, res) => {
+router.delete("/:quizId", async (req, res) => {
   try {
     const { quizId } = req.params;
     const deletedQuiz = await Quiz.findByIdAndDelete(quizId);
@@ -141,7 +141,7 @@ router.delete("/api/quizzes/:quizId", async (req, res) => {
 //API สำหรับการทำแบบทดสอบ (Taking the Quiz)
 
 // สำหรับ "นักเรียน" (ซ่อนเฉลย)
-router.get("/api/lessons/:lessonId/quizzes/take", async (req, res) => {
+router.get("/:lessonId/quizzes/take", async (req, res) => {
   try {
     const { lessonId } = req.params; // 🟢 เปลี่ยนจาก lessonNum เป็น lessonId
     const lesson = await Lesson.findById(lessonId); // 🟢 ใช้ findById() ซึ่งเร็วกว่า
@@ -168,7 +168,7 @@ router.get("/api/lessons/:lessonId/quizzes/take", async (req, res) => {
 const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
 
 // (API /submit นี้ใช้ quizId อยู่แล้ว ซึ่งถูกต้อง ไม่ต้องแก้ครับ)
-router.post("/api/lessons/:lessonId/quizzes/submit", async (req, res) => {
+router.post("/:lessonId/quizzes/submit", async (req, res) => {
   try {
     const { lessonId } = req.params;
 

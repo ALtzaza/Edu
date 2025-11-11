@@ -61,10 +61,10 @@ app.use("/api/admin", adminRoutes);
 app.use('/api/users', userRoutes); 
 app.use("/api/reviews", reviewRoutes);
 app.use('/api/purchases', purchaseRoutes);
-app.use('/api/quizzes', quiz); 
-app.use('/api/quizresults', quizresults); 
+app.use('/api/lessons', quiz);              // 🟢 Changed: was '/api/quizzes'
+app.use('/api/lessons', quizresults);       // 🟢 Changed: was '/api/quizresults'
 app.use('/api/certificates', certificateRoutes); 
-app.use('/api/workshops', workShopRoutes);
+app.use('/api/courses', workShopRoutes);    // 🟢 Changed: was '/api/workshops'
 // ⭐️ (ลบ 'app.use('/', lesson)' (V1) ที่ "ชน" กัน ทิ้ง)
 
 // --- 5. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---

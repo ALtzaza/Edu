@@ -2,7 +2,8 @@
 .pageContainer {
   display: grid;
   grid-template-columns: 2.5fr 1fr;
-  gap: 2rem; 
+  gap: 2rem;
+  margin: 50px; 
 }
 
 /* (ถ้าจอมือถือ) ให้กลายเป็น 1 คอลัมน์ */
