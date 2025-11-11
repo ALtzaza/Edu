@@ -1,21 +1,22 @@
-// src/pages/LoginPage/LoginPage.jsx (V3 - สมบูรณ์)
+// src/pages/LoginPage/LoginPage.jsx (V4 - Smart Redirect)
 
-import React, { useState, useEffect } from 'react'; // ⭐️ (เพิ่ม useEffect)
-// (เพิ่ม 'useLocation' (V3) เพื่ออ่าน ?view=register)
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion'; 
 import api from '../../api/api'; 
-import { useAuth } from '../../context/AuthContext'; // ⭐️ (Import "สมอง")
-import './LoginPage.css'; // (Import CSS V3)
+import { useAuth } from '../../context/AuthContext'; 
+import './LoginPage.css'; 
 
-// ⭐️ (Form 1: Login)
-const LoginForm = ({ onLoginSuccess }) => {
+// ⭐️ (Form 1: Login - แก้ไข)
+// (ลบ 'onLoginSuccess' ➡️ เพิ่ม 'useNavigate')
+const LoginForm = () => {
   const [login, setLoginField] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   
-  const { login: authLogin } = useAuth(); // ⭐️ (ดึงฟังก์ชัน "login" จาก "สมอง")
+  const { login: authLogin } = useAuth(); // (ดึง "สมอง")
+  const navigate = useNavigate(); // ⭐️ (ย้าย 'navigate' มาไว้ที่นี่)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,10 +33,15 @@ const LoginForm = ({ onLoginSuccess }) => {
         password: password 
       });
       
-      // ⭐️ (สำคัญ!) (เรียก "สมอง" ให้อัปเดต Navbar)
+      // 1. (เรียก "สมอง" ให้อัปเดต Navbar)
       authLogin(res.data.user, res.data.token); 
       
-      onLoginSuccess(); // (สั่งให้แม่ (LoginPage) เปลี่ยนหน้า)
+      // 2. ⭐️ (แก้ไข) "เช็ค Role" ก่อน "เด้ง" ⭐️
+      if (res.data.user.role === 'admin') {
+        navigate('/admin/dashboard'); // ⬅️ (ถ้า Admin ➡️ ไป Dashboard)
+      } else {
+        navigate('/'); // ⬅️ (ถ้า Student ➡️ ไป หน้าแรก)
+      }
 
     } catch (err) {
       setError(err.response?.data?.message || "เกิดข้อผิดพลาด");
@@ -76,7 +82,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   );
 };
 
-// ⭐️ (Form 2: Register)
+// ⭐️ (Form 2: Register - ไม่แก้ไข)
 const RegisterForm = ({ onRegisterSuccess }) => {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState(''); 
@@ -95,7 +101,6 @@ const RegisterForm = ({ onRegisterSuccess }) => {
     setLoading(true);
     setError(null);
     try {
-      // (API จริง) ยิง API (routes/users.js)
       await api.post('/users/register', { 
         name: name,
         surname: surname, 
@@ -106,11 +111,10 @@ const RegisterForm = ({ onRegisterSuccess }) => {
       });
       
       alert("สมัครสมาชิกสำเร็จ! กรุณา Login");
-      onRegisterSuccess(); // (สั่งให้แม่ (LoginPage) สลับกลับมาหน้า Login)
+      onRegisterSuccess(); 
 
     } catch (err) {
       setError(err.response?.data?.message || "เกิดข้อผิดพลาด");
-    } finally {
       setLoading(false);
     }
   };
@@ -155,19 +159,18 @@ const RegisterForm = ({ onRegisterSuccess }) => {
 };
 
 
-// ⭐️ (Component หลัก: LoginPage)
+// ⭐️ (Component หลัก: LoginPage - แก้ไข)
 const LoginPage = () => {
   const [isLoginView, setIsLoginView] = useState(true); 
-  const navigate = useNavigate(); 
-  const location = useLocation(); // (V3)
+  // (เรา "ไม่" ใช้ 'navigate' ที่นี่แล้ว)
+  const location = useLocation(); 
 
-  // (V3) (useEffect นี้ จะ "ดัก" ?view=register จาก Navbar)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get('view') === 'register') {
       setIsLoginView(false);
     }
-  }, [location.search]); // (ทำงานเมื่อ URL Query เปลี่ยน)
+  }, [location.search]); 
 
   return (
     <div className="login-page-container">
@@ -196,10 +199,8 @@ const LoginPage = () => {
 
         <AnimatePresence mode="wait">
           {isLoginView ? (
-            <LoginForm 
-              key="login" 
-              onLoginSuccess={() => navigate('/')} 
-            />
+            // ⭐️ (แก้ไข) ลบ onLoginSuccess ออก
+            <LoginForm key="login" />
           ) : (
             <RegisterForm 
               key="register" 

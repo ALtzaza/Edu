@@ -16,9 +16,18 @@ import CourseLessonPage from './pages/CourseLessonPage.jsx';
 import LoginPage from './page/LoginPage/LoginPage.jsx';
 import ForgotPasswordPage from './page/ForgotPasswordPage/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './page/ResetPasswordPage/ResetPasswordPage.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
+import PurchaseFlowPage from "./pages/PurchasesPage/PurchaseFlowPage";
+import PurchasesPage from "./pages/PurchasesPage/PurchasesPage";
+// import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 
-
+import AdminLayout from './layouts/AdminLayout.jsx';
+import AdminRoute from './routes/AdminRoutes.jsx';
+import DashboardPage from '../src/page/AdminPage/DashboardPage/DashboardPage.jsx';
+import ManageCoursesPage from './page/AdminPage/ManageCoursesPage/ManageCoursesPage.jsx';
+import ManageCategoriesPage from './page/AdminPage/ManageCategoriesPage/ManageCategoriesPage.jsx';
+import ManageContentPage from './page/AdminPage/ManageContentPage/ManageContentPage.jsx';
+import ManageUsersPage from './page/AdminPage/ManageUsersPage/ManageUsersPage.jsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 
 function App() {
   return (
@@ -28,6 +37,17 @@ function App() {
       <Route path="login" element={<LoginPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      
+
+
+
+
+
+
+
+
+
         {/* Route "Layout" (มี Navbar/Footer) */}
         <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} /> 
@@ -36,17 +56,28 @@ function App() {
           <Route path="courses" element={<CoursesPage />} />
           <Route path="courses/:id" element={<CourseDetailPage />} />
           <Route path="/lessons/:courseId/:lessonId" element={<CourseLessonPage />} />
-          <Route path="admin" element={<AdminDashboard />} />
-          
+          <Route path="/purchases" element={<PurchasesPage />} />
+          <Route path="/purchase/:courseId" element={<PurchaseFlowPage />} />
+        
           {/* (Route อื่นๆ ที่อยู่ใน Layout) */}
-          {/* <Route path="courses" element={<CoursesPage />} /> */}
+          <Route path="Profile" element={<ProfilePage/>} />
           {/* <Route path="login" element={<LoginPage />} /> */}
         </Route>
         
        
+        <Route element={<AdminRoute />}> {/* ⬅️ 1. "ยาม" หุ้ม */}
+          <Route path="/admin" element={<AdminLayout />}> {/* ⬅️ 2. "โครงสร้าง Admin" หุ้ม */}
+            {/* 3. "ไส้ใน" Admin */}
+            <Route index element={<DashboardPage />} /> 
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="manage-courses" element={<ManageCoursesPage />} />
+            <Route path="manage-categories" element={<ManageCategoriesPage />} />
+            <Route path="manage-content/:courseId" element={<ManageContentPage />} />
+            <Route path="manage-users" element={<ManageUsersPage />} />
+          </Route>
+        </Route>
 
-        {/* (Route 404 - ปิดไว้ก่อนได้ถ้ายังไม่สร้าง) */}
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
+        
           
       </Routes>
     </BrowserRouter>

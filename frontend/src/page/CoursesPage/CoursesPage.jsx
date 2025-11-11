@@ -183,23 +183,30 @@ const CoursesPage = () => {
         </ThemeProvider>
       </div>
 
-      {/* -------------------- 2. ส่วนแสดงผลคอร์ส (Grid) -------------------- */}
       <div className="courses-grid-container">
         <div className="track-section" style={{ textAlign: 'left', marginBottom: '2rem' }}>
           <h2>Choose Your Dev Track</h2>
         </div>
 
-        {/* (Grid ที่เชื่อม API 'courses') */}
+        {/* ⭐️ (แก้ไข) (Grid ที่เชื่อม API 'courses') ⭐️ */}
         <div className="courses-grid">
+          
           {loading ? (
+            // 1. ⭐️ (ถ้า Loading) ⭐️
             <p style={{ color: 'white' }}>Loading courses...</p>
+            
           ) : courses.length > 0 ? (
+            // 2. ⭐️ (ถ้า "ไม่" Loading "และ" "มี" คอร์ส) ⭐️
             courses.map(course => (
               <Link to={`/courses/${course._id}`} key={course._id} style={{ textDecoration: 'none' }}>
                 <div className="course-card">
                   <div 
                     className="course-card-image"
-                    style={{ backgroundImage: course.thumbnail ? `url(${course.thumbnail})` : 'none' }}
+                    style={{ 
+                      backgroundImage: course.thumbnail 
+                        ? `url(http://localhost:3000/${course.thumbnail.replace(/^\//, '')})` 
+                        : 'none' 
+                    }}
                   >
                     {!course.thumbnail && "C"}
                   </div>
@@ -210,12 +217,15 @@ const CoursesPage = () => {
                 </div>
               </Link>
             ))
+            
           ) : (
-            <p>ไม่พบคอร์สที่ตรงกับการค้นหา</p> // (ถ้าค้นหาไม่เจอ)
+            // 3. ⭐️ (ถ้า "ไม่" Loading "และ" "ไม่" มีคอร์ส) ⭐️
+            <p>ไม่พบคอร์สที่ตรงกับการค้นหา</p> 
           )}
-        </div>
-      </div>
-    </div>
+          
+        </div> {/* (ปิด .courses-grid) */}
+      </div> {/* (ปิด .courses-grid-container) */}
+    </div> /* (ปิด .catalog-page-container) */
   );
 };
 

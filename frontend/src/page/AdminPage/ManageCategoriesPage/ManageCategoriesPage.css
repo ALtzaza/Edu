@@ -1,0 +1,146 @@
+/* src/pages/Admin/AdminPage.css (V1) */
+
+.admin-page-container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
+  }
+  
+  /* --- 1. (Form) --- */
+  .admin-form-container {
+    background-color: #1E1E1E;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    margin-bottom: 2rem;
+  }
+  
+  .admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* (แบ่ง 2 คอลัมน์) */
+    gap: 1.5rem;
+  }
+  @media (max-width: 768px) {
+    .admin-form-grid {
+      grid-template-columns: 1fr; /* (มือถือ = 1 คอลัมน์) */
+    }
+  }
+  
+  .admin-form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .admin-form-group label {
+    color: #aeb9e1;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-form-input,
+  .admin-form-select,
+  .admin-form-textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background-color: #2a3661; 
+    border: 1px solid #333;
+    color: #D4D4D4;
+    border-radius: 8px;
+  }
+  .admin-form-input:focus,
+  .admin-form-select:focus,
+  .admin-form-textarea:focus {
+    outline: none;
+    border-color: #569CD6; 
+    box-shadow: 0 0 10px rgba(86, 156, 214, 0.5); 
+  }
+  
+  .admin-form-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  /* (ปุ่ม Submit) */
+  .admin-submit-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background-color: #4EC9B0; /* (สีเขียว) */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    grid-column: 1 / -1; /* (กิน 2 คอลัมน์) */
+    justify-self: end; /* (ไปทางขวา) */
+  }
+  .admin-submit-button:hover {
+    background-color: #569CD6; 
+  }
+  
+  /* --- 2. (Table) --- */
+  .admin-table-container {
+    width: 100%;
+    overflow-x: auto; /* (ถ้าล้น ➡️ Scroll แนวนอน) */
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse; /* (เส้นขอบติดกัน) */
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    vertical-align: middle;
+  }
+  .admin-table th {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background-color: #2a3661;
+  }
+  
+  .admin-table td {
+    color: #aeb9e1;
+  }
+  
+  .admin-table .thumbnail-preview {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .admin-table .actions-cell {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .action-button {
+    padding: 0.5rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  .manage-button {
+    background-color: #569CD6; /* (สีฟ้า) */
+    color: white;
+  }
+  .edit-button {
+    background-color: #DCDCAA; /* (สีเหลือง) */
+    color: #1E1E1E;
+  }
+  .delete-button {
+    background-color: #F44747; /* (สีแดง) */
+    color: white;
+  }

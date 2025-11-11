@@ -1,35 +1,90 @@
-// backend/routes/admin.js
-import express from "express";
-import { isAdmin } from "../middleware/roleMiddleware.js";
+// routes/admin.js (V3 - เพิ่ม "Manage Users")
+
+import { Router } from "express";
+import { User, Course, Purchase } from "../models/schema.models.js"; 
 import { authenticateJWT } from "../middleware/authMiddleware.js";
-import { getAllUsers, getUserById, updateUserRole, deleteUser } from "../controllers/adminController.js";
-import { getAllPurchases, getPurchaseById, updatePurchaseStatus, cancelPurchase, registerPurchaseForUser } from "../controllers/adminPurchaseController.js";
-import { getAllReviews, getReviewById, deleteReview } from "../controllers/adminReviewController.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
 
-const router = express.Router();
+const router = Router();
 
-// ดึง user ทั้งหมด
-router.get("/users", authenticateJWT, isAdmin, getAllUsers);
+// --- 1. (API "วิเคราะห์" (V2) - (คงเดิม)) ---
+router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // ... (โค้ด 'GET /stats' (V2) ... ถูกต้องแล้ว)
+    const [
+      totalUsers,
+      totalCourses,
+      pendingOrders,
+      salesData
+    ] = await Promise.all([
+      User.countDocuments({ role: "student" }),
+      Course.countDocuments(),
+      Purchase.countDocuments({ status: "pending" }),
+      Purchase.aggregate([
+        { $match: { status: "paid" } },
+        { $group: { _id: null, totalSales: { $sum: "$amount" } } }
+      ])
+    ]);
+    const totalSales = salesData.length > 0 ? salesData[0].totalSales : 0;
+    res.json({
+      success: true,
+      stats: { totalUsers, totalCourses, totalSales, pendingOrders }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-// ดึง user รายคน
-router.get("/users/:id", authenticateJWT, isAdmin, getUserById);
+// --- 2. ⭐️ (ใหม่) GET /api/admin/users (V3) (ดึง "User ทั้งหมด") ⭐️ ---
+router.get("/users", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // (ดึง User ทั้งหมด (ยกเว้น 'password') 
+    //  และ "เรียง" (Sort) ตาม 'role' (admin ขึ้นก่อน))
+    const users = await User.find()
+      .select("-password -resetPasswordToken -resetPasswordExpire")
+      .sort({ role: 1, createdAt: -1 });
+      
+    res.json({ success: true, data: users });
+    
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
-// เปลี่ยน role user
-router.put("/users/:id/role", authenticateJWT, isAdmin, updateUserRole);
+// --- 3. ⭐️ (ใหม่) DELETE /api/admin/users/:id (V3) (Admin "ลบ" User) ⭐️ ---
+// (API 'DELETE /delete' (V2) ใน 'users.js' (V2) 
+//  มัน "ลบตัวเอง" ➡️ แต่ API นี้ (V3) "ลบคนอื่น")
+router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const { id: userIdToDelete } = req.params;
+    const adminId = req.user.id;
 
-// ลบ user
-router.delete("/users/:id", authenticateJWT , isAdmin, deleteUser);
+    // (ป้องกัน "Admin ลบ Admin" (V3))
+    if (userIdToDelete === adminId) {
+      return res.status(403).json({ success: false, message: "ไม่สามารถลบตัวเองได้" });
+    }
 
-// --- Admin purchase route ---
-router.get("/purchases", authenticateJWT, isAdmin, getAllPurchases);
-router.get("/purchases/:id", authenticateJWT, isAdmin, getPurchaseById);
-router.put("/purchases/:id/status", authenticateJWT, isAdmin, updatePurchaseStatus);
-router.put("/purchases/:id/cancel", authenticateJWT, isAdmin, cancelPurchase);
-router.post("/purchases/register", authenticateJWT, isAdmin, registerPurchaseForUser);
+    // (ลบ "จริง" (V3))
+    // const deletedUser = await User.findByIdAndDelete(userIdToDelete);
+    
+    // (หรือ "Deactivate" (V2))
+    const deactivatedUser = await User.findByIdAndUpdate(
+      userIdToDelete,
+      { role: "deactivated" }, 
+      { new: true }
+    );
 
-// --- Admin review route ---
-router.get("/reviews", authenticateJWT, isAdmin, getAllReviews);
-router.get("/reviews/:id", authenticateJWT, isAdmin, getReviewById);
-router.delete("/reviews/:id", authenticateJWT, isAdmin, deleteReview);
+    if (!deactivatedUser) {
+      return res.status(404).json({ success: false, message: "ไม่พบผู้ใช้" });
+    }
+    res.json({ 
+      success: true, 
+      message: `ปิดใช้งาน (Deactivate) ผู้ใช้ ${deactivatedUser.username} สำเร็จ`
+    });
+
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 export default router;

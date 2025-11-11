@@ -1,0 +1,66 @@
+/* src/pages/Admin/DashboardPage.css (V1) */
+
+.dashboard-container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2rem;
+  }
+  
+  /* (Grid Layout) */
+  .stat-card-grid {
+    display: grid;
+    /* (4 คอลัมน์) */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* (การ์ดสรุป) */
+  .stat-card {
+    background-color: #1E1E1E; /* (สี VS Code) */
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .stat-card-icon {
+    font-size: 2.5rem;
+    padding: 0.8rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* (สีไอคอน) */
+  .icon-users {
+    color: #569CD6; /* (สีฟ้า) */
+    background-color: rgba(86, 156, 214, 0.1);
+  }
+  .icon-courses {
+    color: #4EC9B0; /* (สีเขียว) */
+    background-color: rgba(78, 201, 176, 0.1);
+  }
+  .icon-sales {
+    color: #DCDCAA; /* (สีเหลือง) */
+    background-color: rgba(220, 220, 170, 0.1);
+  }
+  .icon-pending {
+    color: #CE9178; /* (สีส้ม) */
+    background-color: rgba(206, 145, 120, 0.1);
+  }
+  
+  .stat-card-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #aeb9e1;
+    margin: 0;
+  }
+  .stat-card-info .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+  }
