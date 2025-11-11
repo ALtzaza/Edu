@@ -173,10 +173,16 @@
 /* 5.1 Progress Header */
 .progressHeader {
     background-color: #1f2937; 
-    padding: 20px 25px 10px 25px;
+    padding: 20px 25px 15px 25px;
     color: #9ca3af; 
     font-weight: 600;
     border-bottom: 1px solid #374151; 
+}
+.progressHeaderTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 }
 .progressBarWrapper {
     width: 100%;
@@ -197,42 +203,82 @@
     color: #9ca3af;
     margin-bottom: 5px;
 }
-.progressTextRight {
-    font-size: 1.1em;
-    text-align: right;
-    color: #f59e0b; 
+.progressPercentage {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #f59e0b;
+}
+.progressMeta {
+    font-size: 0.85em;
+    color: #9ca3af;
+    margin-bottom: 12px;
 }
 
 
 /* 5.2 Lesson List Core */
 .sidebarContent {
-    padding: 15px 25px /* Padding บน/ล่าง */
+    padding: 15px 25px; /* Padding บน/ล่าง */
 }
 
 .section {
     margin-bottom: 5px;
     padding: 0; /* ลบ padding ออกจาก section */
+    border-bottom: 1px solid #232f3f;
+}
+.section:last-child {
+    border-bottom: none;
 }
 
-.sectionTitle {
-    font-size: 1.125rem;
-    color: white; 
+.activeSection {
+    border-left: 3px solid #f59e0b;
+}
+
+.sectionToggle {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
     font-weight: 600;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    padding: 0 25px 5px 25px; /* กำหนด Padding ให้ Title */
-    border-bottom: 1px solid #374151; 
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.sectionToggle:hover {
+    background-color: #273244;
+    color: #f3f4f6;
+}
+.sectionToggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+.sectionToggleActive {
+    color: #f59e0b;
+}
+.sectionToggleLabel {
+    flex: 1;
+    text-align: left;
+}
+.toggleIcon {
+    margin-left: 12px;
+    font-size: 0.9em;
+    transition: transform 0.2s ease;
+}
+.toggleIconOpen {
+    transform: rotate(180deg);
 }
 
 .lessonList {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 5px 0;
 }
 
 .lessonItem {
-    /* 🟢 ใช้ Margin ติดลบเพื่อให้ Item วิ่งไปชิดขอบซ้ายสุดของ Sidebar Content */
-    width: calc(100% + 25px); 
+    width: 100%; 
     position: relative;
     transition: background-color 0.2s ease; 
 }
@@ -260,7 +306,6 @@
 /* 🟢 Active Lesson Fix (แก้ปัญหาขอบขาว/เทา) */
 .activeLesson {
     background-color: #374151; /* สีพื้นหลังเน้น */
-    margin-left: 0; /* ⬅️ แก้ไข: ลบ margin-left เพื่อใช้ background-color เต็ม */
     width: 100%;
     position: relative; 
 }

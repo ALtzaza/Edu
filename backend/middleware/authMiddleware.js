@@ -34,7 +34,9 @@ export const isEnrolled = async (req, res, next) => {
   try {
     // ⭐️ (Debug Log 1) ⭐️
     console.log("--- DEBUG: isEnrolled รันแล้ว ---");
-    
+    console.log("--- DEBUG: req.params =", req.params);
+    console.log("--- DEBUG: req.query =", req.query);
+    console.log("--- DEBUG: req.body =", req.body);
     
 
     const userId = req.user.id;
@@ -44,39 +46,62 @@ export const isEnrolled = async (req, res, next) => {
 
     if (req.params.courseId) {
       // 1. หาจาก URL (เช่น GET /api/progress/:courseId)
+      console.log("--- DEBUG: Found courseId in req.params");
       courseId = req.params.courseId;
     } 
     else if (req.query.courseId) {
      
+      console.log("--- DEBUG: Found courseId in req.query");
       courseId = req.query.courseId;
     } 
+    else if (req.body && req.body.courseId) {
+      // ⭐️ (แก้) เพิ่มการตรวจสอบ body.courseId (Frontend อาจส่งมาผ่าน body)
+      console.log("--- DEBUG: Found courseId in req.body");
+      courseId = req.body.courseId;
+    }
     else if (req.params.lessonId) {
+      console.log("--- DEBUG: Found lessonId in req.params, looking up course");
       
       const lesson = await Lesson.findById(req.params.lessonId);
-      if (lesson) courseId = lesson.course;
+      if (lesson) {
+        console.log("--- DEBUG: Lesson found, courseId =", lesson.course);
+        courseId = lesson.course;
+      } else {
+        console.log("--- DEBUG: Lesson NOT found for ID:", req.params.lessonId);
+      }
     } 
-    else if (req.body.lessonId) {
+    else if (req.body && req.body.lessonId) {
+      console.log("--- DEBUG: Found lessonId in req.body, looking up course");
       
       const lesson = await Lesson.findById(req.body.lessonId);
-      if (lesson) courseId = lesson.course;
+      if (lesson) {
+        console.log("--- DEBUG: Lesson found, courseId =", lesson.course);
+        courseId = lesson.course;
+      } else {
+        console.log("--- DEBUG: Lesson NOT found for ID:", req.body.lessonId);
+      }
     }
 
     
     if (!courseId) {
+      console.error("--- ERROR: Could not determine courseId");
       return res.status(400).json({ 
         success: false, 
         message: "ไม่สามารถระบุคอร์สสำหรับตรวจสอบสิทธิ์ได้" 
       });
     }
 
+    console.log("--- DEBUG: Checking purchase for user:", userId, "course:", courseId);
     const purchase = await Purchase.findOne({
       user: userId,
-      course: courseId,
+      course: courseId.toString(),
       status: "paid" // 
     });
 
+    console.log("--- DEBUG: Purchase found:", purchase ? "YES" : "NO");
    
     if (!purchase) {
+      console.error("--- ERROR: User not enrolled in course");
      
       return res.status(403).json({ 
         success: false, 
@@ -84,10 +109,11 @@ export const isEnrolled = async (req, res, next) => {
       });
     }
 
-   
+    console.log("--- DEBUG: isEnrolled passed, calling next()");
     next();
 
   } catch (err) {
+    console.error("--- ERROR in isEnrolled middleware:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };

@@ -16,6 +16,7 @@ import CourseLessonPage from './pages/CourseLessonPage.jsx';
 import LoginPage from './page/LoginPage/LoginPage.jsx';
 import ForgotPasswordPage from './page/ForgotPasswordPage/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './page/ResetPasswordPage/ResetPasswordPage.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 
 
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="courses" element={<CoursesPage />} />
           <Route path="courses/:id" element={<CourseDetailPage />} />
           <Route path="/lessons/:courseId/:lessonId" element={<CourseLessonPage />} />
+          <Route path="admin" element={<AdminDashboard />} />
           
           {/* (Route อื่นๆ ที่อยู่ใน Layout) */}
           {/* <Route path="courses" element={<CoursesPage />} /> */}

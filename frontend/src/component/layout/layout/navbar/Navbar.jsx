@@ -63,6 +63,11 @@ const Navbar = () => {
           <div className="nav-link-item">
             <Link to="/reviews">Review</Link>
           </div>
+          {user?.role === 'admin' && (
+            <div className="nav-link-item">
+              <Link to="/admin">Admin</Link>
+            </div>
+          )}
         </div>
       </div>
 

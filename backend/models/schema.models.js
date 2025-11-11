@@ -77,16 +77,19 @@ const lessonSchema = new Schema(
     course: { type: Schema.Types.ObjectId, ref: "Course", required: true },
     section: { type: Schema.Types.ObjectId, ref: "Section", required: true },
     quizzes: [{ type: Schema.Types.ObjectId, ref: "Quiz" }],
-    order: { type: Number, default: 0 },
+    order: { type: Number, required: true },
         type: { 
         type: String, 
         enum: ["content", "quiz", "workshop"], 
         default: "content" 
     }, 
     lessonNumber: { type: Number, index: true },
+    
   },
   { timestamps: true }
 );
+
+lessonSchema.index({ section: 1, lessonNumber: 1 }, { unique: true });
 
 // -------- PURCHASES --------
 const purchaseSchema = new Schema({
@@ -189,7 +192,7 @@ const progressSchema = new Schema({
     course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
   
     // ⭐️ 1. (แก้ไข) ต้องเป็น Array (ไม่ใช่ Number)
-    lessonsCompleted: [{ type: Schema.Types.ObjectId, ref: 'Lesson' }],
+    lessonsCompleted: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }],
   
     totalLessons: { type: Number, default: 0 }, 
     percentage: { type: Number, default: 0 },

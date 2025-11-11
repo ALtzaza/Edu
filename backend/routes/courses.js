@@ -108,7 +108,7 @@ router.get("/:id", async (req, res) => {
                 path: 'sections', // 1. ดึง Sections
                 populate: {
                     path: 'lessons', // 2. ดึง Lessons ที่อยู่ในแต่ละ Section
-                    select: 'title'  // เอาแค่ "ชื่อ" Lesson มาแสดงเป็นสารบัญ
+                    select: 'title type quizzes'  // เอาแค่ "ชื่อ" Lesson มาแสดงเป็นสารบัญ
                 }
             })
             .populate('category', 'name')

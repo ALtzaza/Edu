@@ -16,18 +16,39 @@ router.post("/mark-complete", authenticateJWT, isEnrolled, async (req, res) => {
     try {
       const { lessonId } = req.body;
       const userId = req.user.id;
+      
+      console.log("--- DEBUG mark-complete: lessonId =", lessonId, "userId =", userId);
   
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
+          console.error("--- ERROR: Lesson not found for lessonId:", lessonId);
           return res.status(404).json({ success: false, message: "ไม่พบบทเรียน" });
       }
+      
       const courseId = lesson.course;
+      if (!courseId) {
+          console.error("--- ERROR: Lesson has no course field:", lesson);
+          return res.status(400).json({ success: false, message: "บทเรียนไม่เชื่อมต่อกับคอร์สใดๆ" });
+      }
+      
+      console.log("--- DEBUG: courseId from lesson =", courseId);
       
       // ⭐️ 1. (แก้ไข) ⭐️
       // "ย้าย" Logic การนับ TotalLessons 
       // (จากใน 'if (!progress)') ให้ออกมาอยู่ "ข้างนอก"
       // เพื่อให้มัน "นับใหม่ทุกครั้ง" ที่ยิง API นี้
-      const parentCourse = await Course.findById(courseId).populate('sections');
+      const parentCourse = await Course.findById(courseId).populate({
+          path: 'sections',
+          populate: {
+              path: 'lessons'
+          }
+      });
+      
+      if (!parentCourse) {
+          console.error("--- ERROR: Parent course not found for courseId:", courseId);
+          return res.status(404).json({ success: false, message: "ไม่พบคอร์ส" });
+      }
+      
       let totalLessons = 0;
       if (parentCourse && parentCourse.sections) {
           parentCourse.sections.forEach(section => {
@@ -37,24 +58,30 @@ router.post("/mark-complete", authenticateJWT, isEnrolled, async (req, res) => {
           });
       }
       const safeTotalLessons = totalLessons > 0 ? totalLessons : 1; // (กันหารด้วย 0)
+      
+      console.log("--- DEBUG: totalLessons =", safeTotalLessons);
   
       // 4. "Find or Create" Progress
       let progress = await Progress.findOne({ user: userId, course: courseId });
       
       if (!progress) {
+        console.log("--- DEBUG: Creating new progress record");
         progress = new Progress({
           user: userId,
           course: courseId,
           lessonsCompleted: [],
           totalLessons: safeTotalLessons // ⬅️ (ใช้เลขที่เพิ่งนับ)
         });
+        await progress.save(); // ⬅️ บันทึกครั้งแรก
       } else {
+        console.log("--- DEBUG: Found existing progress, updating totalLessons");
         // ⭐️ 2. (แก้ไข) ⭐️
         // ถ้า Progress "มีอยู่แล้ว" ให้อัปเดต 'totalLessons' เป็นเลขใหม่
         progress.totalLessons = safeTotalLessons;
       }
   
       // 5. เพิ่ม ID บทเรียนลงใน Array
+      console.log("--- DEBUG: Adding lessonId to lessonsCompleted");
       await progress.updateOne({ $addToSet: { lessonsCompleted: lessonId } });
   
       // 6. ดึงข้อมูล Progress ล่าสุด (ตอนนี้จะ Find เจอแล้ว)
@@ -68,9 +95,11 @@ router.post("/mark-complete", authenticateJWT, isEnrolled, async (req, res) => {
       progress.lastWatched = lessonId;
       await progress.save(); // ⬅️ บันทึก % ใหม่ และ totalLessons ใหม่
       
+      console.log("--- DEBUG: Progress saved successfully");
       res.json({ success: true, message: "อัปเดต Progress สำเร็จ", data: progress });
   
     } catch (err) {
+      console.error("--- ERROR in mark-complete:", err);
       res.status(500).json({ success: false, message: err.message });
     }
   });

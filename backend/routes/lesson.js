@@ -23,9 +23,10 @@ router.post("/", authenticateJWT, isAdmin, async (req, res) => {
     } //  (เพิ่ม) Logic ใหม่: นับจำนวน Lesson ที่มีอยู่แล้วใน "คอร์ส" นี้ // เราใช้ 'parentSection.course' (ID ของคอร์ส) ในการนับ
 
     const existingLessonCount = await Lesson.countDocuments({
-      course: parentSection.course,
+      section: sectionId,
     });
     const nextLessonNumber = existingLessonCount + 1; // 0+1=1, 1+1=2, ...
+    const nextOrder = nextLessonNumber;
 
     const newLesson = new Lesson({
       title,
@@ -34,6 +35,7 @@ router.post("/", authenticateJWT, isAdmin, async (req, res) => {
       section: sectionId,
       course: parentSection.course,
       lessonNumber: nextLessonNumber, //  (เพิ่ม) ใส่เลขที่นับได้ตรงนี้
+      order: nextOrder,
       type: type || "content", // 🟢 ตั้งค่า type, default เป็น content
     });
     await newLesson.save(); // (สำคัญ) ต้อง push _id เข้า Array ของ Section ด้วย
@@ -103,35 +105,44 @@ router.delete("/:lessonId", authenticateJWT, isAdmin, async (req, res) => {
 
 
 router.get("/:lessonId",authenticateJWT,isEnrolled, async (req, res) => {
-  try {
-    const { lessonId } = req.params;
+  try {
+    const { lessonId } = req.params;
     const userId = req.user.id;
     
-    // 💡 (เพิ่ม) ตรวจสอบว่า lessonId เป็น ObjectId ที่ถูกต้องหรือไม่
-    if (!mongoose.Types.ObjectId.isValid(lessonId)) {
-        return res.status(400).json({ success: false, message: "Lesson ID ไม่ถูกต้อง" });
-    }
+    console.log("--- DEBUG GET lesson: lessonId =", lessonId, "userId =", userId);
+    
+    // 💡 (เพิ่ม) ตรวจสอบว่า lessonId เป็น ObjectId ที่ถูกต้องหรือไม่
+    if (!mongoose.Types.ObjectId.isValid(lessonId)) {
+        console.error("--- ERROR: Invalid lesson ID format:", lessonId);
+        return res.status(400).json({ success: false, message: "Lesson ID ไม่ถูกต้อง" });
+    }
 
     // 💡 เราต้องการแค่ lesson object, ไม่จำเป็นต้อง populate quizzes ถ้ามันเป็น workshop
-    const lesson = await Lesson.findById(lessonId); 
-    
-    if (!lesson) {
-      return res.status(404).json({ success: false, message: "ไม่พบบทเรียน" });
-    }
+    const lesson = await Lesson.findById(lessonId); 
+    
+    console.log("--- DEBUG: Lesson found:", lesson ? "YES" : "NO");
+    
+    if (!lesson) {
+      console.error("--- ERROR: Lesson not found for ID:", lessonId);
+      return res.status(404).json({ success: false, message: "ไม่พบบทเรียน" });
+    }
 
     // 🟢 (เพิ่ม) ถ้าบทเรียนเป็น Quiz, ให้ Populate quizzes
     if (lesson.type === 'quiz') {
+        console.log("--- DEBUG: Lesson is quiz type, populating quizzes");
         await lesson.populate('quizzes');
     }
 
     // 🟢 (เพิ่ม) ถ้าบทเรียนเป็น Quiz, ให้ Populate quizzes
     if (lesson.type === "quiz") {
+      console.log("--- DEBUG: Lesson is quiz type (duplicate check), populating quizzes");
       await lesson.populate("quizzes");
     }
 
+    console.log("--- DEBUG: Returning lesson successfully");
     res.json({ success: true, data: lesson });
   } catch (err) {
-    console.error("Error fetching lesson:", err); // เพิ่ม log ที่นี่
+    console.error("--- ERROR in GET lesson:", err); // เพิ่ม log ที่นี่
     res
       .status(500)
       .json({
@@ -142,6 +153,4 @@ router.get("/:lessonId",authenticateJWT,isEnrolled, async (req, res) => {
     
   }
 
-});
-
-export default router;
+});export default router;

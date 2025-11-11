@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }) => {
     delete api.defaults.headers.common['Authorization'];
     setToken(null);
     setUser(null);
+    window.location.href = '/';
   };
 
   // (ถ้ายังโหลด/เช็ค Token ไม่เสร็จ ให้แสดง Loading...)

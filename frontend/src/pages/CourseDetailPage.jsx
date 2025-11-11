@@ -5,14 +5,30 @@ import styles from './CourseDetailPage.module.css';
 // --- Database จำลอง (Mock Data) ถูกลบออก ---
 // ********* MOCK DATA ถูกลบออก *********
 
+const getBannerSrc = (thumb) => {
+    const t = (thumb || '').trim();
+    return t ? t : '/images/default-banner.png';
+  };
+
+
 // ฟังก์ชันสำหรับแปลง Section/Lesson Data (ใช้ในภายหลังเพื่อแสดงสารบัญ)
 const mapSectionsForDisplay = (sections) => {
-    // ในที่นี้เราจะรวมการนับชั่วโมงและบทเรียน
+    // รวมจำนวนบทเรียน, แบบทดสอบ และเวิร์กชอปจากข้อมูลจริง
     let totalLessons = 0;
-    // เราจะดึงเฉพาะข้อมูลที่จำเป็นจากโครงสร้าง API ของคุณ
+    let totalQuizzes = 0;
+    let totalWorkshops = 0;
+
     const mappedSections = sections.map(section => {
         const lessons = section.lessons || [];
         totalLessons += lessons.length;
+
+        // นับ quiz/workshop ต่อบท ถ้า type ไม่ได้เซ็ต ให้เดาว่าบทที่มี quizzes > 0 คือ quiz
+        lessons.forEach(lesson => {
+            const isQuizLesson = lesson.type === 'quiz' || (Array.isArray(lesson.quizzes) && lesson.quizzes.length > 0);
+            const isWorkshopLesson = lesson.type === 'workshop';
+            if (isQuizLesson) totalQuizzes += 1;
+            if (isWorkshopLesson) totalWorkshops += 1;
+        });
         
         return {
             title: section.title,
@@ -23,7 +39,7 @@ const mapSectionsForDisplay = (sections) => {
         };
     });
 
-    return { mappedSections, totalLessons };
+    return { mappedSections, totalLessons, totalQuizzes, totalWorkshops };
 }
 
 
@@ -124,14 +140,15 @@ export default function CourseDetailPage() {
     const totalDurationText = 'ยังไม่ระบุ'; // 💡 คุณต้องคำนวณหรือเพิ่ม field ใน Backend
     
     // 💡 การจัดการสารบัญ (Sections/Lessons)
-    const { mappedSections, totalLessons } = mapSectionsForDisplay(course.sections || []);
+    const { mappedSections, totalLessons, totalQuizzes, totalWorkshops } = mapSectionsForDisplay(course.sections || []);
 
     // 💡 Mock/Hardcoded Meta Data (ควรรวมเข้ากับ API ถ้าเป็นไปได้)
     const metaData = [
-        { icon: '📚', text: `${totalLessons} บทเรียน` }, // ⬅ ใช้ค่าที่คำนวณ
-        { icon: '🕒', text: totalDurationText }, // ⬅ ต้องคำนวณ/ดึงจาก API
-        { icon: '📋', text: 'แบบทดสอบ 8 ชุด' }, // ⬅ Mock
-        { icon: '/images/certificate.png', text: 'ประกาศนียบัตรเมื่อจบคอร์ส' } // ⬅ Mock
+        { icon: '📚', text: `${totalLessons} บทเรียน` },
+        { icon: '🧪', text: `${totalQuizzes} แบบทดสอบ` },
+        { icon: '🛠️', text: `${totalWorkshops} เวิร์กชอป` },
+        { icon: '🕒', text: totalDurationText },
+        { icon: '/images/certificate.png', text: 'ประกาศนียบัตรเมื่อจบคอร์ส' }
     ];
     
     // *️⃣ โครงสร้างเนื้อหาหลัก (Content Body)
@@ -171,10 +188,11 @@ export default function CourseDetailPage() {
                     <span> {course.title}</span>
                 </nav>
 
-                <img 
-                    src={course.thumbnail || '/images/default-banner.png'} // ⬅ ใช้ thumbnail
-                    alt={course.title} 
-                    className={styles.featureBanner} 
+                <img
+                src={getBannerSrc(course.thumbnail)}
+                alt={course.title}
+                className={styles.featureBanner}
+                onError={(e) => { e.currentTarget.src = '/images/default-banner.png'; }}
                 />
 
                 <nav className={styles.subNav}>

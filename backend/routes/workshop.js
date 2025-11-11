@@ -1,6 +1,6 @@
 import express from "express";
 // (แก้ไข) import 'Lesson' เพิ่มเข้ามา
-import { Workshop, User, Course, Lesson } from "../models/schema.models.js";
+import { Workshop, User, Course, Lesson, Progress } from "../models/schema.models.js";
 import multer from "multer";
 import path from "path";
 
@@ -150,10 +150,9 @@ router.get("/api/courses/:courseId/workshops", async (req, res) => {
 
 // ---------------------------------------------------
 // API: (Admin) "ตรวจงาน" (ให้ Feedback และ Status)
-// (ไม่ต้องแก้ไข)
+// (แก้ไข) เพิ่ม Logic สำหรับอัปเดต Progress เมื่อ Approve
 // ---------------------------------------------------
 router.put("/api/workshops/:workshopId/review", async (req, res) => {
-  // ... (โค้ดส่วนนี้เหมือนเดิม 100% เพราะทำงานโดยใช้ workshopId)
   try {
     const { workshopId } = req.params;
     const { feedback, status } = req.body;
@@ -169,6 +168,12 @@ router.put("/api/workshops/:workshopId/review", async (req, res) => {
         .json({ message: 'Invalid status. Must be "approved" or "rejected".' });
     }
 
+    // (แก้ไข) ค้นหา Workshop ก่อนเพื่อได้ข้อมูล user, course, lesson
+    const workshop = await Workshop.findById(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ message: "Workshop not found" });
+    }
+
     const updatedWorkshop = await Workshop.findByIdAndUpdate(
       workshopId,
       {
@@ -179,8 +184,59 @@ router.put("/api/workshops/:workshopId/review", async (req, res) => {
       { new: true }
     );
 
-    if (!updatedWorkshop) {
-      return res.status(404).json({ message: "Workshop not found" });
+    // (แก้ไข) ⭐️ ถ้า Status เป็น "approved" ให้อัปเดต Progress ด้วย ⭐️
+    if (status === "approved") {
+      const { user, course, lesson } = workshop;
+      
+      console.log("--- DEBUG Workshop Approve: user =", user, "course =", course, "lesson =", lesson);
+      
+      // หา Progress หรือสร้างใหม่
+      let progress = await Progress.findOne({ user, course });
+      
+      if (!progress) {
+        console.log("--- DEBUG: Progress not found, creating new one");
+        // ถ้ายังไม่มี Progress ให้สร้างใหม่
+        const parentCourse = await Course.findById(course).populate({
+          path: 'sections',
+          populate: { path: 'lessons' }
+        });
+        
+        let totalLessons = 0;
+        if (parentCourse && parentCourse.sections) {
+          parentCourse.sections.forEach(section => {
+            if (section.lessons) {
+              totalLessons += section.lessons.length;
+            }
+          });
+        }
+        
+        progress = new Progress({
+          user,
+          course,
+          totalLessons: totalLessons > 0 ? totalLessons : 1,
+          lessonsCompleted: [lesson]
+        });
+        await progress.save();
+        console.log("--- DEBUG: Created new progress, totalLessons =", progress.totalLessons, "lessonsCompleted =", progress.lessonsCompleted.length);
+      } else {
+        console.log("--- DEBUG: Progress found, updating with $addToSet");
+        // ถ้ามีอยู่แล้ว ให้ใช้ $addToSet เพื่อเพิ่ม lesson (ป้องกันซ้ำและทำงานกับ ObjectId ได้ถูกต้อง)
+        await Progress.updateOne(
+          { _id: progress._id },
+          { $addToSet: { lessonsCompleted: lesson } }
+        );
+        // Re-fetch หลังจาก update
+        progress = await Progress.findById(progress._id);
+        console.log("--- DEBUG: After $addToSet, lessonsCompleted.length =", progress.lessonsCompleted.length);
+      }
+      
+      // คำนวณ percentage ใหม่
+      const completedCount = progress.lessonsCompleted.length;
+      progress.percentage = (completedCount / progress.totalLessons) * 100;
+      if (progress.percentage > 100) progress.percentage = 100;
+      
+      await progress.save();
+      console.log("--- DEBUG: Progress saved with percentage =", progress.percentage, "completedCount =", completedCount, "totalLessons =", progress.totalLessons);
     }
 
     res.status(200).send(updatedWorkshop);
