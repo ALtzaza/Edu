@@ -1,0 +1,198 @@
+/* src/pages/LoginPage/LoginPage.css (V3 - Animated Background) */
+
+/* ⭐️ (เพิ่ม) Keyframes สำหรับ "พื้นหลังเคลื่อนไหว" ⭐️ */
+@keyframes animated-background-wave {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  /* (Keyframes "shake" ... เหมือนเดิม) */
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+  
+  /* ⭐️ (แก้ไข) .login-page-container ⭐️ */
+  .login-page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* ⭐️ (เพิ่ม) พื้นหลัง Gradient 4 สี (เคลื่อนไหว) ⭐️ */
+    background: linear-gradient(
+      -45deg, 
+      #10162F, /* (สีหลักของคุณ) */
+      #182141, /* (สีเข้ม) */
+      #1a1e62, /* (สี VS Code) */
+      #10162F  /* (กลับมาสีหลัก) */
+    );
+    background-size: 400% 400%; /* (ขยาย Gradient 4 เท่า) */
+    
+    /* (เรียก Animation) */
+    animation: animated-background-wave 15s ease infinite; 
+    padding: 2rem;
+  }
+  
+  .login-form-container {
+    max-width: 450px;
+    width: 100%;
+    padding: 2.5rem;
+    background-color: #1E1E1E; 
+    border: 1px solid #333;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    overflow: hidden; 
+  }
+  
+  /* 1. "ปุ่ม Toggle" (สลับ) */
+  .auth-toggle-buttons {
+    display: flex;
+    position: relative;
+    background-color: #2a3661; 
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  .toggle-button {
+    flex: 1;
+    padding: 0.8rem;
+    background: none;
+    border: none;
+    color: #aeb9e1; 
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    z-index: 2; 
+    transition: color 0.3s ease;
+  }
+  .toggle-button.active {
+    color: white; 
+  }
+  
+  /* 2. "Backdrop" (ที่เลื่อนไปมา) */
+  .active-backdrop {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: calc(50% - 4px); 
+    border-radius: 6px;
+    z-index: 1; 
+    transition: transform 0.3s ease-out, background-color 0.3s ease; 
+    
+    background-color: #569CD6; 
+    transform: translateX(0);
+  }
+  .auth-toggle-buttons[data-active="register"] .active-backdrop {
+    transform: translateX(calc(100% - 4px));
+    background-color: #4EC9B0; 
+  }
+  
+  
+  /* 3. (Style Form ... เหมือนเดิม) */
+  .auth-form h1 {
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .form-group label {
+    color: #aeb9e1;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .form-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background-color: #2a3661; 
+    border: 1px solid #333;
+    color: #D4D4D4;
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: #569CD6; 
+    box-shadow: 0 0 10px rgba(86, 156, 214, 0.5); 
+  }
+  
+  /* (ปุ่ม Submit) */
+  .submit-button {
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(86, 156, 214, 0);
+  }
+  .submit-button:disabled {
+    background-color: #333;
+    cursor: not-allowed;
+  }
+  
+  .login-form .submit-button {
+    background-color: #569CD6; 
+    color: white;
+  }
+  .login-form .submit-button:hover {
+    background-color: #4EC9B0; 
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(78, 201, 176, 0.7); 
+  }
+  
+  .register-form .submit-button {
+    background-color: #4EC9B0; 
+    color: white;
+  }
+  .register-form .submit-button:hover {
+    background-color: #569CD6; 
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(86, 156, 214, 0.7);
+  }
+  
+  
+  /* (ลิงก์ "ลืมรหัสผ่าน") */
+  .forgot-password-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #aeb9e1;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .forgot-password-link:hover {
+    color: #569CD6;
+    text-decoration: underline;
+  }
+  
+  /* (Error Message) */
+  .error-message {
+    color: #F44747; 
+    background-color: rgba(244, 71, 71, 0.1);
+    border: 1px solid #F44747;
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    animation: shake 0.5s ease-in-out;
+  }

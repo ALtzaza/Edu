@@ -1,0 +1,48 @@
+.auth-container {
+  min-height: 100vh;
+  background-color: #10162f;
+  padding: 0;
+  margin: 0;
+}
+
+.auth-card {
+  width: 500px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-tab {
+  font-size: 36px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #a0a0a0;
+  border-bottom: 4px solid transparent;
+  padding-bottom: 8px;
+  margin-right: 20px;
+  transition: 0.2s;
+}
+
+.auth-tab.active {
+  color: #10162f;
+  border-bottom: 4px solid #10162f;
+}
+
+.auth-btn {
+  width: 100%;
+  background: #10162f !important;
+  border: none !important;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.auth-link {
+  margin-top: 10px;
+  text-align: right;
+  color: #10162f;
+  font-weight: bold;
+  cursor: pointer;
+}

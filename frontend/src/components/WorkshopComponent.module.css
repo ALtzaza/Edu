@@ -1,0 +1,243 @@
+/* src/components/WorkshopComponent.module.css - DARK THEME */
+
+:root {
+    /* Dark Theme Base */
+    --bg-dark: #1f2937; /* พื้นหลัง Component */
+    --surface-dark: #27293d; /* พื้นผิวภายใน (Status Card, Input) */
+    --text-light: #f8f9fa; /* ข้อความหลัก */
+    --text-muted: #9fa8b0; /* ข้อความรอง */
+    --border-dark: #000000; /* เส้นขอบ */
+    
+    /* Functional Colors */
+    --primary-color: #5d9cec; /* Blue for action/title */
+    --primary-hover: #4a8ed8;
+    --success-color: #48c78e; /* Green */
+    --success-bg: rgba(72, 199, 142, 0.1);
+    --pending-color: #ffda6a; /* Yellow/Orange */
+    --pending-bg: rgba(255, 218, 106, 0.1);
+    --rejected-color: #f14668; /* Red */
+    --rejected-bg: rgba(241, 70, 104, 0.1);
+    --info-color: #5bc0de; 
+    --info-bg: rgba(91, 192, 222, 0.1);
+}
+
+.workshopContainer {
+    padding: 35px 40px;
+    background-color: var(--bg-dark); /* 🌟 พื้นหลังหลักสีเข้ม */
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin-top: 30px;
+    border: 1px solid var(--border-dark);
+    font-family: 'Tahoma', 'Kanit', sans-serif;
+    color: var(--text-light); /* ข้อความสว่าง */
+}
+
+.workshopTitle {
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-size: 2.1em; 
+    font-weight: 700;
+}
+
+.workshopDescription {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--border-dark);
+    font-size: 1.05em;
+}
+
+/* --- Status Cards --- */
+
+.statusBox {
+    margin-bottom: 30px;
+}
+
+.statusCard {
+    padding: 20px 30px;
+    border-radius: 12px;
+    font-size: 1em;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: var(--surface-dark); /* 🌟 พื้นผิวภายในสีเข้มขึ้นเล็กน้อย */
+    border: 1px solid transparent;
+}
+
+.statusCard h4 {
+    margin: 0;
+    font-size: 1.25em;
+    font-weight: 600;
+}
+.statusCard p {
+    color: var(--text-muted);
+}
+
+.statusIcon {
+    font-size: 2.2em; 
+    line-height: 1;
+}
+
+.statusApproved {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 4px var(--success-bg);
+}
+.statusApproved .statusIcon { color: var(--success-color); }
+.statusApproved h4 { color: var(--success-color); }
+
+.statusPending {
+    border-color: var(--pending-color);
+    box-shadow: 0 0 0 4px var(--pending-bg);
+}
+.statusPending .statusIcon { color: var(--pending-color); }
+.statusPending h4 { color: var(--pending-color); }
+
+.statusRejected {
+    border-color: var(--rejected-color);
+    box-shadow: 0 0 0 4px var(--rejected-bg);
+}
+.statusRejected .statusIcon { color: var(--rejected-color); }
+.statusRejected h4 { color: var(--rejected-color); }
+
+.statusNotSubmitted {
+    border-color: var(--border-dark);
+}
+.statusNotSubmitted .statusIcon { color: var(--text-muted); }
+.statusNotSubmitted h4 { color: var(--text-light); }
+
+
+.feedback {
+    margin: 15px 0 0 0;
+    padding: 15px 20px;
+    border-left: 5px solid var(--rejected-color);
+    background-color: var(--rejected-bg); 
+    font-style: italic;
+    color: var(--text-light);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95em;
+}
+
+
+/* --- Submission Form --- */
+
+.submissionForm {
+    padding-top: 30px;
+    border-top: 1px dashed var(--border-dark); 
+}
+
+.fileLabel {
+    font-weight: 600;
+    color: var(--text-light);
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* ทำให้ Input File ดูดีขึ้นใน Dark Mode */
+.fileInput {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    background-color: var(--surface-dark); /* 🌟 Input พื้นหลังสีเข้ม */
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1em;
+    transition: border-color 0.2s;
+}
+.fileInput:hover {
+    border-color: var(--primary-color);
+}
+
+
+.selectedFile {
+    font-size: 0.95em;
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.selectedFile span {
+    color: var(--text-muted);
+}
+
+.message {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1em;
+    color: var(--text-light);
+}
+
+.errorMessage {
+    background-color: var(--rejected-bg);
+    border: 1px solid var(--rejected-color);
+    color: var(--rejected-color);
+}
+
+.infoMessage {
+    background-color: var(--info-bg);
+    border: 1px solid var(--info-color);
+    color: var(--info-color);
+}
+
+.submitButton {
+    background-color: var(--primary-color);
+    color: var(--bg-dark); /* ปุ่มสีสว่าง ตัวอักษรสีเข้ม */
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(85, 150, 255, 0.2);
+}
+
+.submitButton:hover:not([disabled]) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(85, 150, 255, 0.4);
+}
+
+.submitButton:disabled {
+    background-color: var(--surface-dark);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+}
+
+.noteResubmit {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 15px;
+    font-style: italic;
+}
+
+.noResubmitMessage {
+    padding: 20px 30px;
+    background-color: var(--success-bg);
+    border: 1px solid var(--success-color);
+    border-radius: 12px;
+    color: var(--success-color);
+    font-weight: 600;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.noResubmitMessage p {
+    margin: 0;
+}
+.noResubmitMessage .statusIcon {
+    font-size: 2.2em;
+}

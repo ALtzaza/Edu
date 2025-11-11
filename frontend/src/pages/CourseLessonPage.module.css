@@ -1,0 +1,395 @@
+/* CourseLessonPage.module.css (ฉบับสมบูรณ์) */
+
+/* --- 1. GENERAL CONTAINERS & LAYOUT --- */
+.pageContainer {
+    /* ใช้สีพื้นหลังเดียวกับ CourseDetailPage */
+    background-color: #111827; 
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.contentWrapper {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px; 
+    gap: 30px;
+}
+
+.mainLessonContent {
+    flex-grow: 1;
+    max-width: 800px;
+    min-width: 0; 
+}
+
+
+/* --- 2. HEADER & NAVIGATION --- */
+.lessonHeader {
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+}
+
+.lessonTitle {
+    font-size: 2em;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.backToCourse {
+    /* สีลิงก์โทนฟ้า/น้ำเงิน */
+    color: #60a5fa; 
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.2s;
+}
+.backToCourse:hover {
+    color: #3b82f6;
+}
+
+/* --- 3. VIDEO PLAYER --- */
+.videoPlayer {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* อัตราส่วน 16:9 */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 25px;
+    border-radius: 0.75rem; /* ขอบโค้งมน */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+.videoFrame, .noVideoPlaceholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0.75rem;
+}
+.noVideoPlaceholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1f2937;
+    color: #9ca3af;
+    font-size: 1.2em;
+}
+
+/* --- 4. CONTENT BODY & PLACEHOLDERS --- */
+.contentBody {
+    line-height: 1.7;
+    padding: 20px 0;
+    color: #d1d5db; 
+}
+
+/* 🟢 สไตล์สำหรับกรอบ "บทเรียนนี้ไม่มีเนื้อหา..." */
+.noContentPlaceholder {
+    padding: 30px;
+    background-color: #1f2937; 
+    border: 1px solid #374151; 
+    border-left: 5px solid #60a5fa; /* แถบสีน้ำเงินด้านซ้าย */
+    border-radius: 0.75rem;
+    margin-top: 20px;
+    text-align: center;
+    color: #d1d5db;
+}
+
+/* --- Quiz Start Screen Styles --- */
+.quizStartContainer {
+    background-color: #1f2937;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    color: #e5e7eb;
+    margin-top: 30px; 
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #374151; 
+}
+.quizTitle {
+    font-size: 2.2em;
+    color: #f59e0b;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.resultContainer {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid; 
+    background-color: #2b3543;
+    font-size: 1em;
+}
+.resultContainer h4 {
+    margin-top: 0;
+    color: #d1d5db;
+    font-size: 1.1em;
+}
+.resultSuccess { border-left-color: #10b981; }
+.resultFail { border-left-color: #ef4444; }
+.startQuizButton {
+    background-color: #f59e0b;
+    color: #1f2937;
+    padding: 16px 35px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-top: 30px;
+    width: 100%;
+}
+.startQuizButton:hover { background-color: #d97706; }
+.disabledButton {
+    background-color: #4b5563;
+    color: #9ca3af;
+    padding: 16px 35px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-top: 30px;
+    width: 100%;
+    cursor: not-allowed;
+}
+
+/* --- 5. SIDEBAR (สารบัญ) --- */
+.sidebar {
+    width: 350px;
+    flex-shrink: 0;
+    background-color: #1f2937; /* สีพื้นหลัง Sidebar: Dark Slate */
+    border-radius: 0.75rem; /* ขอบโค้งมน */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    padding: 0; /* ต้องเป็น 0 */
+    overflow: hidden; 
+    color: #e5e7eb;
+}
+
+/* 5.1 Progress Header */
+.progressHeader {
+    background-color: #1f2937; 
+    padding: 20px 25px 15px 25px;
+    color: #9ca3af; 
+    font-weight: 600;
+    border-bottom: 1px solid #374151; 
+}
+.progressHeaderTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.progressBarWrapper {
+    width: 100%;
+    height: 6px;
+    background-color: #374151;
+    border-radius: 3px;
+    margin: 8px 0 12px 0;
+    overflow: hidden;
+}
+.progressBar {
+    height: 100%;
+    background: #10B981; /* สีเขียว */
+    border-radius: 3px;
+    transition: width 1s ease-out;
+}
+.progressText {
+    font-size: 0.9em;
+    color: #9ca3af;
+    margin-bottom: 5px;
+}
+.progressPercentage {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #f59e0b;
+}
+.progressMeta {
+    font-size: 0.85em;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+
+
+/* 5.2 Lesson List Core */
+.sidebarContent {
+    padding: 15px 25px; /* Padding บน/ล่าง */
+}
+
+.section {
+    margin-bottom: 5px;
+    padding: 0; /* ลบ padding ออกจาก section */
+    border-bottom: 1px solid #232f3f;
+}
+.section:last-child {
+    border-bottom: none;
+}
+
+.activeSection {
+    border-left: 3px solid #f59e0b;
+}
+
+.sectionToggle {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.sectionToggle:hover {
+    background-color: #273244;
+    color: #f3f4f6;
+}
+.sectionToggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+.sectionToggleActive {
+    color: #f59e0b;
+}
+.sectionToggleLabel {
+    flex: 1;
+    text-align: left;
+}
+.toggleIcon {
+    margin-left: 12px;
+    font-size: 0.9em;
+    transition: transform 0.2s ease;
+}
+.toggleIconOpen {
+    transform: rotate(180deg);
+}
+
+.lessonList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 5px 0;
+}
+
+.lessonItem {
+    width: 100%; 
+    position: relative;
+    transition: background-color 0.2s ease; 
+}
+
+.lessonLink {
+    display: flex;
+    align-items: center;
+    /* 🟢 กำหนด Padding ด้านซ้าย/ขวา ของ Link */
+    padding: 12px 25px 12px 25px; 
+    text-decoration: none;
+    color: #d1d5db;
+    position: relative; 
+    z-index: 1; 
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+}
+
+/* 🟢 Hover Effect */
+.lessonLink:hover {
+    background-color: #2a3544; 
+    color: #f3f4f6;
+    transform: none; 
+}
+
+/* 🟢 Active Lesson Fix (แก้ปัญหาขอบขาว/เทา) */
+.activeLesson {
+    background-color: #374151; /* สีพื้นหลังเน้น */
+    width: 100%;
+    position: relative; 
+}
+
+.activeLesson .lessonLink {
+    background-color: transparent; 
+    color: #f59e0b; /* สีข้อความเน้น */
+    font-weight: 600;
+    padding-left: 30px; /* ⬅️ ปรับ Padding ด้านซ้าย */
+}
+
+/* 🟢 สร้างแถบสีส้มที่ชิดซ้ายสุด (::before) */
+.activeLesson .lessonLink::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0; 
+    width: 5px; 
+    height: 100%;
+    background-color: #f59e0b; 
+    border-radius: 0; 
+    z-index: 2; 
+}
+
+.lessonIcon {
+    margin-right: 10px;
+    font-size: 1.1em;
+    color: #9ca3af; 
+}
+.activeLesson .lessonIcon {
+    color: #f59e0b;
+}
+
+/* 🟢 กำจัด Outline/Box-Shadow เมื่อ Focus */
+.lessonLink:focus {
+    outline: none; 
+    box-shadow: none;
+}
+
+
+/* --- 6. DISCUSSION SECTION --- */
+.discussionSection {
+    padding: 25px;
+    margin-top: 20px;
+    border-top: 1px solid #374151;
+    text-align: center;
+}
+.discussButton {
+    background-color: #ef4444; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.discussButton:hover {
+    background-color: #dc2626;
+    transform: scale(1.02);
+}
+
+/* 7. Footer Navigation (ถ้ามีการใช้) */
+.lessonNav {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+    border-top: 1px solid #374151;
+    margin-top: 20px;
+}
+.navButton {
+    background-color: #60a5fa;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.navButton:hover:not(:disabled) {
+    background-color: #3b82f6;
+}
+.navButton:disabled {
+    background-color: #374151;
+    color: #9ca3af;
+    cursor: not-allowed;
+}

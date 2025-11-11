@@ -1,0 +1,117 @@
+/* src/pages/Admin/ManageContentPage.css (V1) */
+
+.content-page-container {
+    display: grid;
+    /* (แบ่ง 2 คอลัมน์: 1fr (Syllabus) | 2fr (Editor)) */
+    grid-template-columns: 1fr 2fr; 
+    gap: 2rem;
+    height: calc(100vh - 100px); /* (สูงเต็มจอ - (ลบ Navbar)) */
+  }
+  /* ( responsiveness - ถ้าจอมือถือ ให้เป็น 1 คอลัมน์) */
+  @media (max-width: 992px) {
+    .content-page-container {
+      grid-template-columns: 1fr; 
+    }
+  }
+  
+  /* --- 1. (Syllabus - สารบัญ (ซ้าย)) --- */
+  .syllabus-container {
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    overflow-y: auto; /* (Scroll ถ้าล้น) */
+  }
+  .syllabus-container h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+  }
+  .syllabus-container .course-title {
+    font-size: 1rem;
+    color: #aeb9e1;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* (ปุ่ม "เพิ่มบท") */
+  .add-section-btn {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #4EC9B0; /* (สีเขียว) */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* (สารบัญ - Dropdown (Accordion)) */
+  /* (เราจะใช้ Style 'dark' (V6) ที่เราเคยทำใน ClassroomPage) */
+  .syllabus-accordion .accordion-item {
+    background-color: #10162F !important;
+    border: 1px solid #333 !important;
+    color: #D4D4D4 !important;
+    margin-bottom: 0.5rem;
+  }
+  .syllabus-accordion .accordion-header button {
+    font-weight: 600;
+    color: white !important;
+    background-color: #2a3661 !important;
+  }
+  .syllabus-accordion .accordion-body {
+    padding: 1rem 1.5rem;
+    background-color: #1E1E1E;
+  }
+  
+  /* (บทเรียนย่อย (Lesson) ข้างใน) */
+  .syllabus-lesson {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0.5rem;
+    border-radius: 6px;
+    color: #aeb9e1;
+    cursor: pointer;
+  }
+  .syllabus-lesson:hover {
+    background-color: #2a3661;
+  }
+  .lesson-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .lesson-actions .icon-btn {
+    background: none;
+    border: none;
+    color: #aeb9e1;
+  }
+  .lesson-actions .icon-btn:hover {
+    color: white;
+  }
+  
+  
+  /* --- 2. (Editor - ตัวแก้ไข (ขวา)) --- */
+  .editor-container {
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    overflow-y: auto; /* (Scroll ถ้าล้น) */
+  }
+  
+  .editor-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    flex-direction: column;
+    color: #555;
+    font-size: 1.2rem;
+  }
+  .editor-placeholder .icon {
+    font-size: 4rem;
+  }
+  

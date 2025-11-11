@@ -1,0 +1,67 @@
+/* ลิงก์ "กลับไปหน้าหมวดหมู่" */
+.backLink {
+  font-size: 0.875rem; /* text-sm */
+  color: #60a5fa; /* text-blue-400 */
+  text-decoration: none;
+}
+.backLink:hover {
+  text-decoration: underline;
+}
+
+/* หัวข้อ (Category: Web Development) */
+.headerTitle {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700; /* bold */
+  color: #f3f4f6; /* text-gray-100 */
+  margin-top: 0.5rem; /* mt-2 */
+}
+
+/* คำอธิบาย (คอร์สทั้งหมด...) */
+.headerSubtitle {
+  font-size: 1rem; /* text-base */
+  color: #9ca3af; /* text-gray-400 */
+  margin-bottom: 2rem; /* mb-8 (ให้เท่ากับหน้า catalog) */
+}
+
+/* กล่องที่คลุมการ์ดทั้งหมด */
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem; /* gap-4 */
+}
+
+/* ทำให้ Grid เป็น 2 คอลัมน์ เมื่อจอใหญ่ */
+@media (min-width: 768px) {
+  .courseGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/*
+ * นี่คือ Card สำหรับ "คอร์ส"
+ * ทำให้เป็น "แนวเดี๋ยวกัน" (Dark Mode)
+*/
+.courseCard {
+  display: block;
+  background-color: #1f2937; /* bg-gray-800 */
+  padding: 1.5rem; /* p-6 */
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.courseCard:hover {
+  transform: scale(1.02);
+}
+
+.courseTitle {
+  font-size: 1.25rem; /* xl */
+  font-weight: 700; /* bold */
+  color: white; /* text-white */
+  margin-bottom: 0.25rem;
+}
+
+.courseDescription {
+  font-size: 0.875rem; /* sm */
+  color: #9ca3af; /* text-gray-400 */
+}

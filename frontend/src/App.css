@@ -1,0 +1,15 @@
+/* src/index.css */
+
+/* 1. รีเซ็ตขอบทั้งหมด */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. ตั้งค่าให้ html และ body เต็มจอ */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  /* (ตั้งค่า font หลักที่นี่ก็ได้ ถ้าต้องการ) */
+}

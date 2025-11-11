@@ -1,0 +1,378 @@
+/* src/pages/HomePage/HomePage.css (ฉบับ V18 - Codepen Mock) */
+
+.homepage-container {
+    width: 100%;
+    background-color: #10162F;
+    color: #D4D4D4;
+    font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    overflow-x: hidden;
+  }
+  
+  .hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 90vh;
+    padding: 2rem 0;
+    flex-wrap: wrap;
+    background-image: url('/img/HeroHomePage.jpg'); 
+    background-size: cover;       
+    background-position: center;  
+    background-repeat: no-repeat; 
+    position: relative; 
+    z-index: 1; 
+    gap: 3rem; 
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); 
+    z-index: -1; 
+  }
+  .hero-content {
+    flex: 1;
+    min-width: 300px;
+    max-width: 700px; 
+    z-index: 2; 
+  }
+    
+  /* ⭐️ (คงเดิม) Glitch V9 (ด้านซ้าย) ⭐️ */
+  .hero-glitch-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    margin-bottom: 1.5rem; 
+  }
+  .stack {
+    display: grid;
+    grid-template-columns: 1fr;
+    color: #FAFAFA;
+    position: relative;
+    font-weight: 700;
+  }
+  .stack-mission {
+    font-size: 4rem; 
+    margin-bottom: 0.5rem;
+  }
+  .stack-journey {
+    font-size: 3.5rem;
+    letter-spacing: .1em;
+    white-space: nowrap; 
+  }
+  .stack span {
+    font-weight: bold;
+    grid-row-start: 1;
+    grid-column-start: 1;
+    font-size: inherit; 
+    --stack-height: calc(100% / var(--stacks) - 1px);
+    --inverse-index: calc(calc(var(--stacks) - 1) - var(--index));
+    --clip-top: calc(var(--stack-height) * var(--index));
+    --clip-bottom: calc(var(--stack-height) * var(--inverse-index));
+    clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
+    animation: 
+      stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 120ms), 
+      glitch 3s ease infinite 2s alternate-reverse; 
+  }
+  .stack span:nth-child(odd) { --glitch-translate: 8px; }
+  .stack span:nth-child(even) { --glitch-translate: -8px; }
+  @keyframes stack {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%);
+      text-shadow: -2px 3px 0 #F44747, 2px -3px 0 #569CD6; 
+    };
+    60% { opacity: 0.5; transform: translateX(50%); }
+    80% {
+      transform: none;
+      opacity: 1;
+      text-shadow: 2px -3px 0 #F44747, -2px 3px 0 #569CD6; 
+    }
+    100% { text-shadow: none; }
+  }
+  @keyframes glitch {
+    0% {
+      text-shadow: -2px 3px 0 #F44747, 2px -3px 0 #569CD6;
+      transform: translate(var(--glitch-translate));
+    }
+    2% { text-shadow: 2px -3px 0 #F44747, -2px 3px 0 #569CD6; }
+    4%, 10% {  text-shadow: none; transform: none; } 
+    11% { text-shadow: 2px -3px 0 #F44747, -2px 3px 0 #569CD6; }
+    13% { text-shadow: -2px 3px 0 #F44747, 2px -3px 0 #569CD6; }
+    15%, 100% { text-shadow: none; transform: none; }
+  }
+  .hero-content p {
+    font-size: 1.2rem;
+    color: #e0e0e0; 
+    margin-bottom: 2rem;
+    max-width: 500px;
+    z-index: 2; 
+  }
+  .cta-button {
+    background-color: #569CD6;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 2; 
+  }
+  .cta-button:hover {
+    background-color: #4EC9B0;
+    transform: translateY(-3px);
+  }
+    
+  /* ⭐️ (แก้ไข) 1. "กล่องโค้ด" (ด้านขวา V19 - Tilted) ⭐️ */
+  .hero-codepen-mock {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    z-index: 2;
+    
+    position: relative; /* ⬅️ (สำคัญ) ทำให้ลูก (absolute) อ้างอิงจากแม่ */
+    min-height: 400px;  /* ⬅️ (จองที่) */
+  }
+    
+  /* ⭐️ (แก้ไข) 2. "กล่องโค้ดเดี่ยวๆ" (.code-box) ⭐️ */
+  .code-box {
+    background-color: #282C34; 
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    overflow: hidden; 
+    
+    /* ⭐️ (แก้ไข) 3. (การจัดวาง) ⭐️ */
+    position: absolute; /* ⬅️ (ลอย) */
+    width: 80%; /* (กว้าง 80% ของแม่) */
+    transition: transform 0.3s ease;
+  }
+  .code-box:hover {
+      transform: scale(1.05) !important; /* (ขยายตอน Hover) */
+      z-index: 10 !important; /* (ให้ลอยทับอันอื่น) */
+  }
+  
+  /* ⭐️ (ใหม่) 4. (จัดตำแหน่ง 3 กล่อง) (แบบ Codepen) ⭐️ */
+  
+  /* กล่อง 1: HTML */
+  .code-box:nth-child(1) {
+    top: 0;
+    left: 0;
+    transform: rotate(-6deg) translateX(10px);
+    z-index: 1;
+  }
+  
+  /* กล่อง 2: SCSS (ที่ผม Mock ไว้) */
+  .code-box:nth-child(2) {
+    top: 100px;
+    left: 40px; /* (เยื้อง) */
+    transform: rotate(4deg);
+    z-index: 2; /* (ทับอันอื่น) */
+  }
+  
+  /* กล่อง 3: JS (Typing) */
+  .code-box:nth-child(3) {
+    top: 200px;
+    left: 10px;
+    transform: rotate(-3deg);
+    z-index: 1;
+  }
+    
+  /* ⭐️ (คงเดิม) 5. "หัวกล่อง" (ที่มีปุ่ม) ⭐️ */
+  .code-box-header {
+    height: 30px;
+    background-color: #3B4048; 
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+  .code-box-header .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px; 
+  }
+  .code-box-header .dot.red { background-color: #FF605C; }
+  .code-box-header .dot.yellow { background-color: #FFBD44; }
+  .code-box-header .dot.green { background-color: #00CA4E; }
+    
+  /* ⭐️ (คงเดิม) 6. "เนื้อหาโค้ด" ⭐️ */
+  .code-content {
+    padding: 0.8rem 1rem;
+    font-family: 'Consolas', 'Monaco', monospace; 
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #D4D4D4; 
+  }
+  .code-content pre {
+    margin: 0;
+  }
+  /* (สี Syntax Highlight) */
+  .code-content .token-tag { color: #569CD6; }
+  .code-content .token-attr { color: #9CDCFE; }
+  .code-content .token-string { color: #CE9178; }
+  .code-content .token-comment { color: #6A9955; }
+  .code-content .token-function { color: #DCDCAA; }
+  .code-content .token-const { color: #4EC9B0; }
+  .code-content .token-punctuation { color: #D4D4D4; }
+  .code-content .token-keyword { color: #C586C0; }
+  .code-content .token-selector { color: #D7BA7D; }
+    
+  /* ⭐️ (คงเดิม) 7. "กล่อง JS" (สำหรับพิมพ์ดีด) ⭐️ */
+  .typing-box-js {
+    min-height: 90px;
+    display: inline-block;
+    white-space: pre-wrap; 
+  }
+  .typing-box-js .cursor {
+    background-color: #D4D4D4;
+    width: 2px;
+    height: 1.1em;
+    display: inline-block;
+    animation: blink-caret-js .8s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  @keyframes blink-caret-js {
+    from, to { background-color: transparent }
+    50% { background-color: #D4D4D4; }
+  }
+  
+  
+  /* -------------------- */
+  /* (คงเดิม) 2. About Section (V11) */
+  /* -------------------- */
+  .about-section {
+    padding: 6rem 0; 
+    background-color: #182141; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+  }
+  .about-content {
+    flex: 1;
+    min-width: 300px;
+    max-width: 600px;
+    text-align: left;
+  }
+  .about-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  .about-content p {
+    font-size: 1.1rem;
+    color: #aeb9e1;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  .about-content .cta-button {
+    background-color: #007BFF; 
+  }
+  .about-content .cta-button:hover {
+    background-color: #4EC9B0; 
+    transform: translateY(-3px);
+  }
+  .about-graphic {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    height: 250px;
+    background-color: #1E1E1E;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+  }
+  
+  /* -------------------- */
+  /* (คงเดิม) 3. Featured Courses (V15) */
+  /* -------------------- */
+  .featured-courses-section {
+    padding: 4rem 0;
+    text-align: center;
+    background-color: #10162F; 
+  }
+  .featured-courses-section h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 3rem;
+    color: white; 
+  }
+  .course-card-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem; 
+    margin-bottom: 4rem; 
+    flex-wrap: wrap; 
+  }
+  .course-card-wrapper:nth-child(even) { 
+    flex-direction: row-reverse; 
+  }
+  .course-image-container {
+    flex: 1;
+    max-width: 500px; 
+    min-width: 300px;
+    border-radius: 10px;
+    overflow: hidden; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  .course-image-mock {
+    width: 100%;
+    height: 250px; 
+    background-color: #333; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #D4D4D4;
+    font-weight: 600;
+    transition: transform 0.6s ease-out;
+    background-size: cover;
+    background-position: center;
+  }
+  .course-card-wrapper:hover .course-image-mock {
+    transform: scale(1.1); 
+  }
+  .course-content-container {
+    flex: 1;
+    max-width: 500px; 
+    min-width: 300px;
+    text-align: left;
+  }
+  .course-content-container h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white; 
+  }
+  .course-content-container p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #aeb9e1; 
+    margin-bottom: 1.5rem;
+  }
+  
+  /* -------------------- */
+  /* (คงเดิม) 4. Final CTA (V11) */
+  /* -------------------- */
+  .cta-section {
+    padding: 5rem 0;
+    text-align: center;
+    background-color: #182141;
+  }
+  .cta-section h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white; 
+    margin-bottom: 2rem;
+  }
