@@ -1,6 +1,7 @@
 // routes/lessons.js (V16 - แก้บั๊ก Duplicate Key)
 
 import { Router } from "express";
+import mongoose from "mongoose";
 import { Lesson, Section, Course } from "../models/schema.models.js"; 
 import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";

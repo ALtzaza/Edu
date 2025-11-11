@@ -27,7 +27,7 @@ const MOCK_ADMIN_ID = "660000000000000000000001";
 // (แก้ไข) เปลี่ยน Route ให้รับ lessonId ด้วย
 // ---------------------------------------------------
 router.post(
-  "/api/courses/:courseId/lessons/:lessonId/workshops",
+  "/:courseId/lessons/:lessonId/workshops",
   upload.single("workshopFile"),
   async (req, res) => {
     try {
@@ -81,7 +81,7 @@ router.post(
 // ---------------------------------------------------
 // API: (นักเรียน) ดู Workshop เฉพาะบทเรียนปัจจุบัน
 // ---------------------------------------------------
-router.get("/api/courses/:courseId/lessons/:lessonId/workshops/me", async (req, res) => {
+router.get("/:courseId/lessons/:lessonId/workshops/me", async (req, res) => {
     try {
         const { courseId, lessonId } = req.params;
         const userId = MOCK_USER_ID;
@@ -104,9 +104,9 @@ router.get("/api/courses/:courseId/lessons/:lessonId/workshops/me", async (req, 
 });
 
 // ---------------------------------------------------
-// API:  (นักเรียน) ดู Workshop ทั้งหมดของตัวเอง
+// API:  (นักเรียน) ดู Workshop ทั้งหมดของตัวเอง
 // ---------------------------------------------------
-router.get("/api/workshops/me", async (req, res) => {
+router.get("/me", async (req, res) => {
   try {
     const userId = MOCK_USER_ID;
 
@@ -124,7 +124,7 @@ router.get("/api/workshops/me", async (req, res) => {
 // API: (Admin) ดู Workshop ทั้งหมดใน Course
 // (กรองตาม status หรือ lessonId ได้)
 // ---------------------------------------------------
-router.get("/api/courses/:courseId/workshops", async (req, res) => {
+router.get("/:courseId/workshops", async (req, res) => {
   try {
     const { courseId } = req.params; // (แก้ไข) รับ lessonId เพิ่มมาเผื่อกรอง
     const { status, lessonId } = req.query; // (แก้ไข) สร้างตัวกรอง (Filter)
@@ -152,7 +152,7 @@ router.get("/api/courses/:courseId/workshops", async (req, res) => {
 // API: (Admin) "ตรวจงาน" (ให้ Feedback และ Status)
 // (แก้ไข) เพิ่ม Logic สำหรับอัปเดต Progress เมื่อ Approve
 // ---------------------------------------------------
-router.put("/api/workshops/:workshopId/review", async (req, res) => {
+router.put("/:workshopId/review", async (req, res) => {
   try {
     const { workshopId } = req.params;
     const { feedback, status } = req.body;
@@ -249,7 +249,7 @@ router.put("/api/workshops/:workshopId/review", async (req, res) => {
 // API: (Admin) "ลบ" Workshop
 // (ไม่ต้องแก้ไข)
 // ---------------------------------------------------
-router.delete("/api/workshops/:workshopId", async (req, res) => {
+router.delete("/:workshopId", async (req, res) => {
   // ... (โค้ดส่วนนี้เหมือนเดิม 100% เพราะทำงานโดยใช้ workshopId)
   try {
     const { workshopId } = req.params;
