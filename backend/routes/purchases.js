@@ -268,9 +268,61 @@ router.get("/:id", authenticateJWT, async (req, res) => {
 //   }
 // });
 
+// router.post("/:id/pay", authenticateJWT, async (req, res) => {
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+//   try {
+//     const purchase = await Purchase.findById(req.params.id).session(session);
+//     if (!purchase) {
+//       await session.abortTransaction();
+//       session.endSession();
+//       return res.status(404).json({ message: "ไม่พบคำสั่งซื้อ" });
+//     }
+
+//     // ถ้าเป็น manual (แนบสลิป) — ห้าม owner mark paid เอง
+//     if (purchase.paymentMethod === "manual" && req.user.role !== "admin") {
+//       await session.abortTransaction();
+//       session.endSession();
+//       return res.status(403).json({ message: "รายการนี้ต้องรอการอนุมัติจาก admin (manual payment)" });
+//     }
+
+//     // เจ้าของหรือ admin สามารถ mark paid สำหรับ non-manual (หรือ admin สามารถ approve manual)
+//     if (!isOwnerOrAdmin(req.user, purchase.user) && req.user.role !== "admin") {
+//       await session.abortTransaction();
+//       session.endSession();
+//       return res.status(403).json({ message: "ไม่มีสิทธิ์ทำรายการนี้" });
+//     }
+
+//     if (purchase.status === "paid") {
+//       await session.abortTransaction();
+//       session.endSession();
+//       return res.status(400).json({ message: "คำสั่งซื้อถูกชำระแล้ว" });
+//     }
+
+//     // ทำการอัปเดตสถานะเป็น paid
+//     purchase.status = "paid";
+//     purchase.paymentRef = req.body.paymentRef || `manual_${Date.now()}`;
+//     purchase.purchasedAt = Date.now();
+//     await purchase.save({ session });
+
+//     // (optionally) ให้สิทธิ์เข้าคอร์สที่นี่
+
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     res.json({ message: "ชำระเงินสำเร็จ", purchase });
+//   } catch (err) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     res.status(500).json({ message: "เกิดข้อผิดพลาด", error: err.message });
+//   }
+// });
+
+// POST /api/purchases/:id/pay
 router.post("/:id/pay", authenticateJWT, async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
+
   try {
     const purchase = await Purchase.findById(req.params.id).session(session);
     if (!purchase) {
@@ -279,11 +331,13 @@ router.post("/:id/pay", authenticateJWT, async (req, res) => {
       return res.status(404).json({ message: "ไม่พบคำสั่งซื้อ" });
     }
 
-    // ถ้าเป็น manual (แนบสลิป) — ห้าม owner mark paid เอง
+    // ถ้าเป็น manual (แนบสลิป) — ห้าม user mark paid เอง
     if (purchase.paymentMethod === "manual" && req.user.role !== "admin") {
       await session.abortTransaction();
       session.endSession();
-      return res.status(403).json({ message: "รายการนี้ต้องรอการอนุมัติจาก admin (manual payment)" });
+      return res.status(403).json({
+        message: "รายการนี้ต้องรอการอนุมัติจาก admin (manual payment)",
+      });
     }
 
     // เจ้าของหรือ admin สามารถ mark paid สำหรับ non-manual (หรือ admin สามารถ approve manual)
@@ -299,9 +353,9 @@ router.post("/:id/pay", authenticateJWT, async (req, res) => {
       return res.status(400).json({ message: "คำสั่งซื้อถูกชำระแล้ว" });
     }
 
-    // ทำการอัปเดตสถานะเป็น paid
+    // ⭐️ ขั้นตอนนี้แก้ไขให้ปลอดภัย
     purchase.status = "paid";
-    purchase.paymentRef = req.body.paymentRef || `manual_${Date.now()}`;
+    purchase.paymentRef = req.body?.paymentRef || `manual_${Date.now()}`;
     purchase.purchasedAt = Date.now();
     await purchase.save({ session });
 
