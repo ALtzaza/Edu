@@ -1,146 +1,153 @@
-/* src/pages/Admin/AdminPage.css (V1) */
+/* Container */
+.manage-users-container {
+  min-height: 100vh;
+  padding: 50px 40px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  color: #e2e8f0;
+}
 
-.admin-page-container h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #333;
-    padding-bottom: 1rem;
-  }
-  
-  /* --- 1. (Form) --- */
-  .admin-form-container {
-    background-color: #1E1E1E;
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid #333;
-    margin-bottom: 2rem;
-  }
-  
-  .admin-form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* (แบ่ง 2 คอลัมน์) */
-    gap: 1.5rem;
-  }
-  @media (max-width: 768px) {
-    .admin-form-grid {
-      grid-template-columns: 1fr; /* (มือถือ = 1 คอลัมน์) */
-    }
-  }
-  
-  .admin-form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .admin-form-group label {
-    color: #aeb9e1;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .admin-form-input,
-  .admin-form-select,
-  .admin-form-textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    background-color: #2a3661; 
-    border: 1px solid #333;
-    color: #D4D4D4;
-    border-radius: 8px;
-  }
-  .admin-form-input:focus,
-  .admin-form-select:focus,
-  .admin-form-textarea:focus {
-    outline: none;
-    border-color: #569CD6; 
-    box-shadow: 0 0 10px rgba(86, 156, 214, 0.5); 
-  }
-  
-  .admin-form-textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-  
-  /* (ปุ่ม Submit) */
-  .admin-submit-button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    background-color: #4EC9B0; /* (สีเขียว) */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    grid-column: 1 / -1; /* (กิน 2 คอลัมน์) */
-    justify-self: end; /* (ไปทางขวา) */
-  }
-  .admin-submit-button:hover {
-    background-color: #569CD6; 
-  }
-  
-  /* --- 2. (Table) --- */
-  .admin-table-container {
-    width: 100%;
-    overflow-x: auto; /* (ถ้าล้น ➡️ Scroll แนวนอน) */
-  }
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse; /* (เส้นขอบติดกัน) */
-    background-color: #1E1E1E;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  .admin-table th,
-  .admin-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #333;
-    vertical-align: middle;
-  }
-  .admin-table th {
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
-    background-color: #2a3661;
-  }
-  
-  .admin-table td {
-    color: #aeb9e1;
-  }
-  
-  .admin-table .thumbnail-preview {
-    width: 100px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-  
-  .admin-table .actions-cell {
-    display: flex;
-    gap: 0.5rem;
-  }
-  .action-button {
-    padding: 0.5rem 0.8rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s ease;
-  }
-  .manage-button {
-    background-color: #569CD6; /* (สีฟ้า) */
-    color: white;
-  }
-  .edit-button {
-    background-color: #DCDCAA; /* (สีเหลือง) */
-    color: #1E1E1E;
-  }
-  .delete-button {
-    background-color: #F44747; /* (สีแดง) */
-    color: white;
-  }
+/* Header */
+.manage-users-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #ffffff;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 0.75rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Table wrapper */
+.users-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  background-color: rgba(30,41,59,0.9);
+  padding: 15px;
+}
+
+/* Table */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.users-table th {
+  background-color: #334155;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 2px solid #1d4ed8;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.users-table td {
+  padding: 0.95rem 1.25rem;
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  word-wrap: break-word;
+}
+
+.users-table tbody tr {
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.users-table tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Avatar */
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  transition: all 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+}
+
+/* Role labels */
+.role-admin {
+  color: #4EC9B0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.role-student {
+  color: #e2e8f0;
+}
+
+.role-deactivated {
+  color: #F44747;
+}
+
+/* Action buttons */
+.btn-delete-user {
+  padding: 0.55rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.btn-delete-user:hover {
+  background-color: #dc2626;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 5px 14px rgba(0,0,0,0.4);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .manage-users-container { padding: 30px 20px; }
+  .users-table th, .users-table td { padding: 0.85rem 1rem; font-size: 0.9rem; }
+  .user-avatar { width: 38px; height: 38px; font-size: 1rem; }
+  .btn-delete-user { padding: 0.45rem 0.9rem; font-size: 0.85rem; }
+}
+
+@media (max-width: 600px) {
+  .manage-users-container { padding: 20px 10px; }
+  .users-table th, .users-table td { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+  .user-avatar { width: 32px; height: 32px; font-size: 0.85rem; }
+  .btn-delete-user { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
+}
+
+/* แถว clickable */
+.clickable-row {
+  cursor: pointer; /* เปลี่ยน cursor */
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+  transform: translateY(-1px);
+}

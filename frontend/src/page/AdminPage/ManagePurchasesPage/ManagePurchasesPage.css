@@ -1,0 +1,140 @@
+/* สีหลักและพื้นหลัง */
+.manage-purchases-container {
+  min-height: 100vh;
+  padding: 30px;
+  font-family: "Apercu", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  background: linear-gradient(135deg, #10162F, #1a1f3b);
+  color: #f0f0f0;
+}
+
+/* Header */
+.manage-purchases-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.manage-purchases-header h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Button */
+.mp-button {
+  background-color: #3a57af;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.mp-button:hover {
+  background-color: #526ecb;
+}
+
+/* Table */
+.mp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #1c213a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mp-table th,
+.mp-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.mp-table th {
+  background-color: #2a2f50;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.mp-table tr:nth-child(even) {
+  background-color: #1a1f3b;
+}
+
+.mp-table tr:hover {
+  background-color: #2a2f50;
+}
+
+/* Status badge */
+.mp-badge {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mp-badge.pending { background-color: #f5a623; color: #000; }
+.mp-badge.paid { background-color: #27ae60; color: #fff; }
+.mp-badge.cancelled { background-color: #e74c3c; color: #fff; }
+.mp-badge.refunded { background-color: #3498db; color: #fff; }
+
+/* Modal overlay */
+.mp-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6); /* ด้านหลังมืดครึ่งหนึ่ง */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.mp-modal .modal-content {
+  background-color: #1a1f3b;
+  color: #f0f0f0;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  animation: popup 0.2s ease-out;
+}
+
+/* Modal header */
+.mp-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a2f50;
+  margin-bottom: 15px;
+}
+
+.mp-modal .modal-header h5 {
+  margin: 0;
+}
+
+/* Modal body image */
+.mp-modal .modal-body {
+  text-align: center;
+}
+
+.mp-modal .modal-body img {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* Animation */
+@keyframes popup {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

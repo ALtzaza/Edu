@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, ProgressBar, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  ProgressBar,
+  Form,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import "./PurchasesPage.css";
@@ -81,21 +89,22 @@ export default function PurchasesPage() {
   if (loading)
     return (
       <>
-       
         <p className="loading-text">⏳ กำลังโหลดข้อมูลคำสั่งซื้อ...</p>
       </>
     );
 
   return (
     <>
-      
       <Container className="purchase-container">
         <h3 className="purchase-title">รายการคำสั่งซื้อของฉัน</h3>
 
         {purchases.length === 0 ? (
           <div className="no-purchase">
             <p>ยังไม่มีคำสั่งซื้อ</p>
-            <Button className="purchase-btn" onClick={() => navigate("/courses")}>
+            <Button
+              className="purchase-btn"
+              onClick={() => navigate("/courses")}
+            >
               ไปดูคอร์สเรียน
             </Button>
           </div>
@@ -103,7 +112,11 @@ export default function PurchasesPage() {
           <Row className="justify-content-center">
             {purchases.map((p) => (
               <Col md={6} key={p._id}>
-                <Card className="purchase-card">
+                <Card
+                  className="purchase-card"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/courses/${p.course?._id}`)}
+                >
                   <Row>
                     <Col xs={4} className="thumbnail-wrap">
                       <img
@@ -113,12 +126,18 @@ export default function PurchasesPage() {
                       />
                     </Col>
                     <Col xs={8}>
-                      <h5 className="course-title">{p.course?.title || "คอร์สนี้ถูกลบแล้ว"}</h5>
+                      <h5 className="course-title">
+                        {p.course?.title || "คอร์สนี้ถูกลบแล้ว"}
+                      </h5>
                       <p className="price">ราคา: {p.course?.price || 0} บาท</p>
 
                       <p className="status">
                         สถานะ:{" "}
-                        <span className={`status-badge status-${p.status || "pending"}`}>
+                        <span
+                          className={`status-badge status-${
+                            p.status || "pending"
+                          }`}
+                        >
                           {p.status === "paid"
                             ? "ชำระแล้ว"
                             : p.status === "pending"
@@ -143,6 +162,7 @@ export default function PurchasesPage() {
                             target="_blank"
                             rel="noreferrer"
                             className="slip-link"
+                            onClick={(e) => e.stopPropagation()} // ไม่ให้คลิก link ไป course ด้วย
                           >
                             ดูสลิป
                           </a>
