@@ -1,11 +1,44 @@
 // routes/admin.js (V3 - เพิ่ม "Manage Users")
 
 import { Router } from "express";
+import multer from "multer";
 import { User, Course, Purchase } from "../models/schema.models.js"; 
 import { authenticateJWT } from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
 
+import { getAllUsers, getUserById, updateUserByAdmin, updateUserRole, deleteUser } from "../controllers/adminController.js";
+
+
+import {
+  getAllPurchases,
+  getPurchaseById,
+  updatePurchaseStatus,
+  cancelPurchase,
+  registerPurchaseForUser
+} from "../controllers/adminPurchaseController.js"; // หรือไฟล์ที่คุณเก็บฟังก์ชันเหล่านี้
+
+
 const router = Router();
+
+// --- Multer Setup สำหรับ avatar ---
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/avatars/"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
+});
+const upload = multer({ storage });
+
+// --- Users (Admin) ---
+router.get("/users/:id", authenticateJWT, isAdmin, getUserById);
+router.put("/users/:id", authenticateJWT, isAdmin, upload.single("avatar"), updateUserByAdmin);
+router.delete("/users/:id", deleteUser);
+
+// --- Purchases (Admin) ---
+router.get("/purchases", authenticateJWT, isAdmin, getAllPurchases);
+router.get("/purchases/:id", authenticateJWT, isAdmin, getPurchaseById);
+router.put("/purchases/:id/status", authenticateJWT, isAdmin, updatePurchaseStatus);
+router.put("/purchases/:id/cancel", authenticateJWT, isAdmin, cancelPurchase);
+router.post("/purchases/register", authenticateJWT, isAdmin, registerPurchaseForUser);
+
 
 // --- 1. (API "วิเคราะห์" (V2) - (คงเดิม)) ---
 router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {

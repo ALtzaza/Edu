@@ -30,6 +30,8 @@ import ManageContentPage from './page/AdminPage/ManageContentPage/ManageContentP
 import ManageUsersPage from './page/AdminPage/ManageUsersPage/ManageUsersPage.jsx';
 import ManageQuizPage from './page/AdminPage/ManageQuizPage/ManageQuizPage.jsx';
 import ManageAprooveWorkshopPage from './page/AdminPage/ManageAprooveWorkshopPage/ManageAprooveWorkshopPage.jsx';
+import ManageUserProfilePage from './page/AdminPage/ManageUsersPages/ManageUserProfilePage.jsx';
+import ManagePurchasesPage from './page/AdminPage/ManagePurchasesPage/ManagePurchasesPage.jsx';
 import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 
 function App() {
@@ -80,6 +82,8 @@ function App() {
             <Route path="manage-categories" element={<ManageCategoriesPage />} />
             <Route path="manage-content/:courseId" element={<ManageContentPage />} />
             <Route path="manage-users" element={<ManageUsersPage />} />
+            <Route path="manage-users/:id" element={<ManageUserProfilePage />} />
+            <Route path="manage-purchases" element={<ManagePurchasesPage />} />
           </Route>
         </Route>
 
