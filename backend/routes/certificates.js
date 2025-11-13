@@ -3,6 +3,7 @@ import { Certificate, User, Course } from "../models/schema.models.js";
 
 import { getCertificateHtml } from "../utils/htmlTemplate.js";
 import { generatePdfFromHtml } from "../utils/pdfGenerator.js";
+import { authenticateJWT } from "../middleware/authMiddleware.js";
 
 
 const router = express.Router();
@@ -11,15 +12,19 @@ const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
 const MOCK_ADMIN_ID = "660000000000000000000001";
 
 // API: (นักเรียน) ดูใบ Certificate ทั้งหมดของตัวเอง
-router.get("/api/certificates/me", async (req, res) => {
+// ต้องมี auth middleware ที่ set req.user
+router.get("/me", authenticateJWT, async (req, res) => {
   try {
-    // (ในอนาคต: const userId = req.user._id;)
-    const userId = MOCK_USER_ID;
-
+    const userId = req.user?._id || req.user?.id;
+    console.log("--- GET /me ---");
+    console.log("userId:", userId);
+    
+    if (!userId) {
+      return res.status(401).send({ message: "Unauthorized: No user info" });
+    }
     const certificates = await Certificate.find({ user: userId })
-      .populate("course", "title instructor") // ดึง "title" และ "instructor" จาก Model 'Course'
-      .populate("approvedBy", "name"); // ดึง "name" จาก Model 'User' (ที่เป็น Admin)
-
+      .populate("course", "title instructor")
+      .populate("approvedBy", "name");
     res.status(200).send(certificates);
   } catch (error) {
     res.status(500).send({ message: "Server Error", error: error.message });
@@ -28,8 +33,8 @@ router.get("/api/certificates/me", async (req, res) => {
 
 
 
-// API: ดาวน์โหลด Certificate เป็น PDFun 
-router.get("/api/certificates/:id/download", async (req, res) => {
+// API: ดาวน์โหลด Certificate เป็น PDF
+router.get("/:id/download", async (req, res) => {
   try {
     const cert = await Certificate.findById(req.params.id);
     if (!cert || !cert.certificateData) {
@@ -67,94 +72,79 @@ router.get("/api/certificates/:id/download", async (req, res) => {
 });
 
 
-// API: (Admin) ออก Certificate ให้ User (เวอร์ชันอัปเกรด)
-router.post("/api/certificates", async (req, res) => {
+// API: (นักเรียน) ขอ Certificate ให้ตัวเอง (ต้องเรียนครบ)
+// ต้องมี auth middleware ที่ set req.user
+router.post("/", authenticateJWT, async (req, res) => {
   try {
-    const { userId, courseId } = req.body;
+    const userId = req.user?._id || req.user?.id;
+    const { courseId } = req.body;
     const adminId = MOCK_ADMIN_ID;
-
+    
+    console.log("--- POST /api/certificates ---");
+    console.log("userId:", userId);
+    console.log("courseId:", courseId);
+    console.log("req.user:", req.user);
+    
     if (!userId || !courseId) {
-      return res
-        .status(400)
-        .json({ message: "userId and courseId are required" });
+      return res.status(400).json({ message: "userId (from token) and courseId are required" });
     }
-
-    const existingCert = await Certificate.findOne({
-      user: userId,
-      course: courseId,
-    });
+    
+    const existingCert = await Certificate.findOne({ user: userId, course: courseId });
     if (existingCert) {
       return res.status(409).json({ message: "Certificate already exists" });
     }
-
-    // -----  Logic 
-
-    //  ดึงข้อมูล "ชื่อ" จริงเพื่อใช้ใน PDF
-    console.log("Fetching user and course data...");
+    
+    // ดึงข้อมูล "ชื่อ" จริงเพื่อใช้ใน PDF
     const user = await User.findById(userId).select("name");
     const course = await Course.findById(courseId).select("title");
-
+    
+    console.log("user found:", !!user, user?.name);
+    console.log("course found:", !!course, course?.title);
+    
     if (!user || !course) {
       return res.status(404).json({ message: "User or Course not found" });
     }
-
+    
     const issueDate = new Date();
-
-    // สร้าง HTML สำหรับ Certificate
-    console.log("Generating HTML...");
-    const htmlContent = getCertificateHtml(user.name, course.title, issueDate);
-
-    //  สร้าง PDF Buffer 
-    console.log("Generating PDF Buffer...");
-    const pdfBuffer = await generatePdfFromHtml(htmlContent);
-
-    // แปลง Buffer เป็น Base64 String
-    const pdfBase64 = pdfBuffer.toString("base64");
-
-    // ----- ‼จบ Logic 
-
-    const newCertificate = new Certificate({
-      user: userId,
-      course: courseId,
-      certificateData: pdfBase64,
-      approvedBy: adminId,
-      issueDate: issueDate,
-    });
-
-    await newCertificate.save();
-    // ส่งข้อมูลที่ populate แล้วกลับไปให้ client
-    const populatedCert = await Certificate.findById(newCertificate._id)
-      .populate("course", "title instructor")
-      .populate("approvedBy", "name");
-
-    res.status(201).send(populatedCert);
+    
+    try {
+      const htmlContent = getCertificateHtml(user.name, course.title, issueDate);
+      console.log("HTML generated, starting PDF generation...");
+      
+      const pdfBuffer = await generatePdfFromHtml(htmlContent);
+      console.log("PDF generated successfully, size:", pdfBuffer.length);
+      
+      const pdfBase64 = pdfBuffer.toString("base64");
+      
+      const newCertificate = new Certificate({
+        user: userId,
+        course: courseId,
+        certificateData: pdfBase64,
+        approvedBy: adminId,
+        issueDate: issueDate,
+      });
+      
+      await newCertificate.save();
+      console.log("Certificate saved with ID:", newCertificate._id);
+      
+      const populatedCert = await Certificate.findById(newCertificate._id)
+        .populate("course", "title instructor")
+        .populate("approvedBy", "name");
+      
+      res.status(201).send(populatedCert);
+    } catch (pdfError) {
+      console.error("Error in PDF generation:", pdfError);
+      throw new Error(`PDF generation failed: ${pdfError.message}`);
+    }
   } catch (error) {
     console.error("Error in POST /api/certificates:", error);
     res.status(500).send({ message: "Server Error", error: error.message });
   }
 });
 
-// API:(Admin) ดู Certificate ทั้งหมดที่ออกให้ Course นี้
-
-router.get("/api/courses/:courseId/certificates", async (req, res) => {
-  try {
-    const { courseId } = req.params;
-
-    // ค้นหา Certificate ทั้งหมดที่ "course" field ตรงกับ courseId
-    const certificates = await Certificate.find({ course: courseId }).populate(
-      "user",
-      "name"
-    ); // ดึง "name" ของ User (นักเรียน)
-
-    res.status(200).send(certificates);
-  } catch (error) {
-    res.status(500).send({ message: "Server Error", error: error.message });
-  }
-});
-
 // API:(Admin) "ยกเลิก/ลบ" Certificate
 
-router.delete("/api/certificates/:certId", async (req, res) => {
+router.delete("/:certId", async (req, res) => {
   try {
     const { certId } = req.params;
 

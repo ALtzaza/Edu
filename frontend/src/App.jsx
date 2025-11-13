@@ -27,6 +27,8 @@ import ManageCoursesPage from './page/AdminPage/ManageCoursesPage/ManageCoursesP
 import ManageCategoriesPage from './page/AdminPage/ManageCategoriesPage/ManageCategoriesPage.jsx';
 import ManageContentPage from './page/AdminPage/ManageContentPage/ManageContentPage.jsx';
 import ManageUsersPage from './page/AdminPage/ManageUsersPage/ManageUsersPage.jsx';
+import ManageQuizPage from './page/AdminPage/ManageQuizPage/ManageQuizPage.jsx';
+import ManageAprooveWorkshopPage from './page/AdminPage/ManageAprooveWorkshopPage/ManageAprooveWorkshopPage.jsx';
 import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
 
 function App() {
@@ -71,6 +73,8 @@ function App() {
             <Route index element={<DashboardPage />} /> 
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="manage-courses" element={<ManageCoursesPage />} />
+            <Route path="manage-quizzes" element={<ManageQuizPage />} />
+            <Route path="manage-workshop" element={<ManageAprooveWorkshopPage />} />
             <Route path="manage-categories" element={<ManageCategoriesPage />} />
             <Route path="manage-content/:courseId" element={<ManageContentPage />} />
             <Route path="manage-users" element={<ManageUsersPage />} />

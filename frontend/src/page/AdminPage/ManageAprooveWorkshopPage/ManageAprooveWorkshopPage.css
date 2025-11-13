@@ -1,0 +1,177 @@
+/* ใช้ธีมเดียวกับ ManageCoursesPage */
+.admin-page-container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 1rem;
+}
+
+/* --- Table Layout --- */
+.admin-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background-color: #2a3661;
+  color: white;
+  font-weight: 600;
+}
+
+.admin-table td {
+  color: #aeb9e1;
+}
+
+/* --- Feedback Textarea --- */
+.admin-feedback-textarea {
+  width: 100%;
+  background-color: #2a3661;
+  color: #d4d4d4;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.5rem;
+  min-height: 80px;
+  resize: vertical;
+  font-size: 0.9rem;
+}
+
+.admin-feedback-textarea:focus {
+  outline: none;
+  border-color: #569cd6;
+  box-shadow: 0 0 10px rgba(86, 156, 214, 0.4);
+}
+
+/* --- Status Badge --- */
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.status-badge.approved {
+  background-color: #4ec9b0;
+  color: #1e1e1e;
+}
+
+.status-badge.rejected {
+  background-color: #f44747;
+  color: white;
+}
+
+.status-badge.pending {
+  background-color: #dcdca9;
+  color: #1e1e1e;
+}
+
+/* --- Buttons --- */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.approve-button {
+  background-color: #4ec9b0;
+  color: #1e1e1e;
+}
+
+.approve-button:hover {
+  background-color: #3da895;
+}
+
+.reject-button {
+  background-color: #f44747;
+  color: white;
+}
+
+.reject-button:hover {
+  background-color: #d63c3c;
+}
+
+/* --- Loading / Error --- */
+.admin-loading,
+.admin-error {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #aeb9e1;
+  margin-top: 2rem;
+}
+
+/* --- Filter Tabs --- */
+.filter-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-tab {
+  background-color: #2a3661;
+  border: none;
+  color: #aeb9e1;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.filter-tab.active {
+  background-color: #4ec9b0;
+  color: #1e1e1e;
+}
+
+.filter-tab:hover {
+  background-color: #3a4a7a;
+}
+/* ปุ่มลบ */
+.delete-button {
+  background-color: #b22222;
+}
+
+.delete-button:hover {
+  background-color: #d03b3b;
+}
+.download-button {
+  background-color: #4b7bec;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.download-button:hover {
+  background-color: #3867d6;
+}

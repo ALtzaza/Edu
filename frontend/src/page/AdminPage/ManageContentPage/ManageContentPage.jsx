@@ -16,6 +16,7 @@ const ContentForm = ({ courseId, sectionId, lessonToEdit, onUpdateSuccess }) => 
   const [title, setTitle] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [content, setContent] = useState('');
+  const [lessonType, setLessonType] = useState('content'); // 🟢 ใหม่: quiz, workshop, content
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -25,6 +26,7 @@ const ContentForm = ({ courseId, sectionId, lessonToEdit, onUpdateSuccess }) => 
       setTitle(lessonToEdit.title);
       setVideoUrl(lessonToEdit.videoUrl || '');
       setContent(lessonToEdit.content || '');
+      setLessonType(lessonToEdit.type || 'content'); // 🟢 ดึง type ปัจจุบัน
       console.log("--- DEBUG (ContentForm): โหมด 'แก้ไข' Lesson", lessonToEdit._id);
     } 
     else if (sectionId) {
@@ -32,6 +34,7 @@ const ContentForm = ({ courseId, sectionId, lessonToEdit, onUpdateSuccess }) => 
       setTitle('');
       setVideoUrl('');
       setContent('');
+      setLessonType('content'); // 🟢 ตั้งค่าเริ่มต้น
       console.log("--- DEBUG (ContentForm): โหมด 'สร้าง' Lesson (ใน Section:", sectionId, ")");
     } 
     else {
@@ -55,10 +58,10 @@ const ContentForm = ({ courseId, sectionId, lessonToEdit, onUpdateSuccess }) => 
       else if (formType === 'lesson') {
         if (lessonToEdit) {
           console.log("--- DEBUG (ContentForm): 1. ยิง API 'PUT /lessons/:id' (แก้ไข Lesson)...");
-          res = await api.put(`/lessons/${lessonToEdit._id}`, { title, videoUrl, content });
+          res = await api.put(`/lessons/${lessonToEdit._id}`, { title, videoUrl, content, type: lessonType }); // 🟢 เพิ่ม type
         } else {
           console.log("--- DEBUG (ContentForm): 1. ยิง API 'POST /lessons' (สร้าง Lesson)...");
-          res = await api.post('/lessons', { title, videoUrl, content, sectionId });
+          res = await api.post('/lessons', { title, videoUrl, content, sectionId, type: lessonType }); // 🟢 เพิ่ม type
         }
       }
       
@@ -88,6 +91,21 @@ const ContentForm = ({ courseId, sectionId, lessonToEdit, onUpdateSuccess }) => 
         
         {formType === 'lesson' && (
           <>
+            {/* 🟢 ใหม่: เลือก Lesson Type */}
+            <div className="admin-form-group">
+              <label htmlFor="lesson-type">ประเภทบทเรียน (Lesson Type)</label>
+              <select 
+                id="lesson-type" 
+                className="admin-form-input" 
+                value={lessonType} 
+                onChange={(e) => setLessonType(e.target.value)}
+              >
+                <option value="content">📝 Content (วิดีโอ + เนื้อหา)</option>
+                <option value="quiz">❓ Quiz (แบบทดสอบ)</option>
+                <option value="workshop">🛠️ Workshop (การปฏิบัติการ)</option>
+              </select>
+            </div>
+
             <div className="admin-form-group">
               <label htmlFor="content-videoUrl">Video URL (YouTube)</label>
               <input type="text" id="content-videoUrl" className="admin-form-input" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />

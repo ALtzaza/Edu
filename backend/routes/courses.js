@@ -8,8 +8,8 @@ import {
     Lesson,
     Review,
     Progress,
-    Purchase  
-    
+    Purchase,
+    Certificate  
     
 } from "../models/schema.models.js";
 import multer from "multer";
@@ -258,5 +258,21 @@ router.delete("/:id", authenticateJWT, isAdmin, async (req, res) => {
     }
 });
 
+// API:(Admin) ดู Certificate ทั้งหมดที่ออกให้ Course นี้
+router.get("/:courseId/certificates", async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    // ค้นหา Certificate ทั้งหมดที่ "course" field ตรงกับ courseId
+    const certificates = await Certificate.find({ course: courseId }).populate(
+      "user",
+      "name"
+    ); // ดึง "name" ของ User (นักเรียน)
+
+    res.status(200).send(certificates);
+  } catch (error) {
+    res.status(500).send({ message: "Server Error", error: error.message });
+  }
+});
 
 export default router;

@@ -28,10 +28,9 @@ const QuizResultModal = ({ result, onClose, onRetake }) => {
                 )}
 
                 <div className={styles.modalActions}>
-                    {/* 🟢 ปุ่ม "กลับสู่บทเรียน" เรียก onClose (ซึ่งคือ onQuizFinished ของ Parent) */}
-                    <button onClick={onClose} className={styles.closeButton}>
-                        กลับสู่บทเรียน
-                    </button>
+<button onClick={() => onClose(result)} className={styles.closeButton}>
+    กลับสู่บทเรียน
+</button>
                     
                     {/* ปุ่ม "ทำควิซอีกครั้ง" */}
                     {!isPassed && (
@@ -64,7 +63,18 @@ export default function QuizComponent({ lessonId, lessonTitle, courseId, onQuizF
         setError(null);
         setQuizResult(null); // รีเซ็ตผลลัพธ์หากกดทำซ้ำ/โหลดใหม่
         try {
-            const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/quizzes/take`);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("กรุณาเข้าสู่ระบบก่อน");
+                setLoading(false);
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/quizzes/take`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (!response.ok) throw new Error("Failed to fetch quizzes");
             
             const fetchedQuizzes = await response.json();
@@ -108,10 +118,22 @@ export default function QuizComponent({ lessonId, lessonTitle, courseId, onQuizF
         }));
 
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("กรุณาเข้าสู่ระบบก่อน");
+                setIsSubmitting(false);
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/quizzes/submit`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ answers: answersPayload }),
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ 
+                    answers: answersPayload,
+                    courseId: courseId }),
             });
 
             if (!response.ok) throw new Error("Submission failed");

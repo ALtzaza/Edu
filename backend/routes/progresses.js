@@ -89,11 +89,14 @@ router.post("/mark-complete", authenticateJWT, isEnrolled, async (req, res) => {
       
       // 7. คำนวณ % ใหม่ (ด้วย 'totalLessons' ที่อัปเดตแล้ว)
       const completedCount = progress.lessonsCompleted.length;
-      progress.percentage = (completedCount / progress.totalLessons) * 100;
-      if (progress.percentage > 100) progress.percentage = 100;
+      const safeTotalForCalc = Math.max(progress.totalLessons, completedCount); // ✅ ป้องกัน > 100%
+      progress.percentage = (completedCount / safeTotalForCalc) * 100;
+      progress.percentage = Math.min(100, Math.max(0, progress.percentage)); // ✅ Clamp 0-100
   
       progress.lastWatched = lessonId;
       await progress.save(); // ⬅️ บันทึก % ใหม่ และ totalLessons ใหม่
+      
+      console.log("--- DEBUG: Progress updated - completed:", completedCount, "total:", progress.totalLessons, "percentage:", progress.percentage);
       
       console.log("--- DEBUG: Progress saved successfully");
       res.json({ success: true, message: "อัปเดต Progress สำเร็จ", data: progress });
@@ -119,11 +122,26 @@ router.get("/:courseId", authenticateJWT, isEnrolled, async (req, res) => {
             // (ถ้าไม่เคยเรียนเลย ก็ส่งค่า 0 กลับไป)
             return res.json({ 
                 success: true, 
-                data: { percentage: 0, lessonsCompleted: [] } 
+                data: { 
+                    percentage: 0, 
+                    lessonsCompleted: [],
+                    totalLessons: 0,
+                } 
             });
         }
         
-        res.json({ success: true, data: progress });
+        // ✅ Ensure percentage is within 0-100 range
+        const safePercentage = Math.min(100, Math.max(0, progress.percentage || 0));
+        
+        console.log("--- DEBUG GET progress: userId =", userId, "course =", courseId, "percentage =", safePercentage, "completed =", progress.lessonsCompleted.length, "total =", progress.totalLessons);
+        
+        res.json({ 
+            success: true, 
+            data: {
+                ...progress.toObject(),
+                percentage: safePercentage,
+            }
+        });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }

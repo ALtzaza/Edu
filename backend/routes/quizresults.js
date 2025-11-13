@@ -1,15 +1,16 @@
 import express from "express";
 import { Quiz, QuizResult, Lesson } from "../models/schema.models.js";
+import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
 
 //ดูผลสอบ ของตัวเอง ในบทเรียนนั้นๆ (สำหรับนักเรียน)
 //  (แก้ไข) เปลี่ยนจาก /:lessonNum เป็น /:lessonId
-router.get("/:lessonId/results/me", async (req, res) => {
+router.get("/:lessonId/results/me", authenticateJWT, isEnrolled, async (req, res) => {
   try {
-    const userId = MOCK_USER_ID;
+    const userId = req.user._id;
     const { lessonId } = req.params; 
 
     const quizResults = await QuizResult.find({
@@ -31,9 +32,9 @@ router.get("/:lessonId/results/me", async (req, res) => {
 });
 //ดูประวัติการทำแบบทดสอบทั้งหมด ของตัวเอง (สำหรับนักเรียน)
 // (Route นี้ไม่จำเป็นต้องแก้)
-router.get("/me", async (req, res) => {
+router.get("/me", authenticateJWT, isEnrolled, async (req, res) => {
   try {
-    const userId = MOCK_USER_ID;
+    const userId = req.user._id;
     const quizResults = await QuizResult.find({ user: userId })
     .populate("lesson", "title lessonNumber")
     res.status(200).send(quizResults);
@@ -44,7 +45,7 @@ router.get("/me", async (req, res) => {
 
 // ดูผลสอบ ของนักเรียนทุกคน ในบทเรียนนั้น (สำหรับครู/Admin)
 //  (แก้ไข) เปลี่ยนจาก /:lessonNum เป็น /:lessonId
-router.get("/:lessonId/results", async (req, res) => {
+router.get("/:lessonId/results", authenticateJWT, isAdmin, async (req, res) => {
   try {
     //  (แก้ไข) รับ lessonId
     const { lessonId } = req.params; //  (แก้ไข) ไม่ต้องค้นหา Lesson ก่อน, ใช้ lessonId ได้เลย
@@ -65,7 +66,7 @@ router.get("/:lessonId/results", async (req, res) => {
 
 //ดูผลสอบทั้งหมด ของนักเรียนคนเดียว (สำหรับครู/Admin)
 // (Route นี้ไม่จำเป็นต้องแก้)
-router.get("/:userId/results", async (req, res) => {
+router.get("/:userId/results", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
     const quizResults = await QuizResult.find({ user: userId }).populate(
