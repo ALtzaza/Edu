@@ -1,0 +1,92 @@
+.manage-userprofile-container {
+  padding: 30px;
+  background-color: #1a1f3b; /* เข้าธีม */
+  color: #fff;
+  font-family: "Apercu", sans-serif;
+  border-radius: 15px;
+  max-width: 900px;
+  margin: auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-grid {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  flex: 1;
+  text-align: center;
+}
+
+.profile-avatar img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  margin-bottom: 10px;
+}
+
+
+.profile-avatar input[type="file"] {
+  display: block;
+  margin: 10px auto;
+}
+
+.profile-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-info label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.profile-info input,
+.profile-info select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+  font-size: 14px;
+}
+
+.profile-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.profile-buttons button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.profile-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #444;
+  color: #fff;
+}
+
+.profile-buttons button:not(.btn-cancel) {
+  background-color: #3f87f5;
+  color: #fff;
+}
