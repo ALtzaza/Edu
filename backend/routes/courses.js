@@ -16,7 +16,7 @@ import multer from "multer";
 import path from "path";
 import fs from 'fs';
 
-import { authenticateJWT } from "../middleware/authMiddleware.js";
+import { authenticateJWT ,getCourseEnrollmentStatus} from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = Router();
@@ -145,6 +145,11 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+router.get(
+  '/:id/status',
+  authenticateJWT,          // 1. ตรวจสอบ Token (เพื่อเอา req.user)
+  getCourseEnrollmentStatus   // 2. เรียกใช้ Controller ของคุณ
+);
 
 // --- 3. POST /api/courses (สร้างคอร์สใหม่ - Admin) ---
 router.post("/", authenticateJWT, isAdmin, upload.single("thumbnail"), async (req, res) => {

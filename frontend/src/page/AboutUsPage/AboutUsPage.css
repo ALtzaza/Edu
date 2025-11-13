@@ -1,0 +1,234 @@
+/* src/pages/AboutUsPage/AboutUsPage.css */
+
+/* --- 1. Global Page Setup --- */
+.about-page-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    color: #C9D1D9;
+  }
+  
+  /* --- 2. Animations (ลูกเล่น) --- */
+  /* (เราต้องประกาศ Keyframes แบบ Global) */
+  @keyframes aboutPageFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* --- 3. Hero Section --- */
+  .about-hero-section {
+    text-align: center;
+    margin-bottom: 6rem;
+    animation: aboutPageFadeInUp 0.5s ease-out; /* ⭐️ ลูกเล่น: Fade In */
+  }
+  
+  .about-hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #F0F6FC;
+  }
+  
+  .about-gradient-text {
+    /* ⭐️ ลูกเล่น: สี Gradient */
+    background: linear-gradient(90deg, #00AFFF, #007ACC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+  
+  .about-hero-subtitle {
+    font-size: 1.25rem;
+    color: #8B949E;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* --- 4. Story Section --- */
+  .about-story-section {
+    margin-bottom: 6rem;
+    animation: aboutPageFadeInUp 0.7s ease-out; /* ⭐️ ลูกเล่น: Fade In (ช้ากว่า) */
+  }
+  
+  .about-story-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #F0F6FC;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  /* src/pages/AboutUsPage/AboutUsPage.css */
+
+.about-story-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    line-height: 1.7;
+  
+    /* --- ⭐️ เพิ่ม 3 บรรทัดนี้เข้าไป --- */
+    text-align: left;    /* 1. จัดข้อความชิดซ้าย (สำคัญที่สุด) */
+    max-width: 800px;  /* 2. จำกัดความกว้างไม่ให้ยาวเกินไป (อ่านง่าย) */
+    margin: 0 auto;    /* 3. จัดให้ "กล่องข้อความ" นี้อยู่ตรงกลาง */
+  }
+  
+  /* --- 5. Team Section --- */
+  .about-team-section {
+    margin-bottom: 6rem;
+    text-align: center;
+    animation: aboutPageFadeInUp 0.9s ease-out; /* ⭐️ ลูกเล่น: Fade In (ช้ากว่าอีก) */
+  }
+  
+  .about-team-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #F0F6FC;
+    margin-bottom: 1rem;
+  }
+  
+  .about-team-subtitle {
+    font-size: 1.1rem;
+    color: #8B949E;
+    margin-bottom: 3rem;
+  }
+  
+  .about-team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 คอลัมน์ */
+    gap: 2rem;
+  }
+  
+  /* * ⭐️⭐️⭐️ นี่คือ "ลูกเล่น" หลักครับ ⭐️⭐️⭐️
+   * (The Main Gimmick: Card Hover Effect)
+   */
+  .about-team-card {
+    background-color: #161B22; 
+    border: 1px solid #30363D;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease; /* ⭐️ 1. "รอเปลี่ยน" */
+  }
+  
+  .about-team-card:hover {
+    transform: translateY(-10px); /* ⭐️ 2. "ลอย" */
+    border-color: #00AFFF; /* ⭐️ 3. "เรืองแสง" */
+    box-shadow: 0 10px 30px -10px rgba(0, 175, 255, 0.2);
+  }
+  
+  .about-card-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem auto;
+    overflow: hidden;
+    border: 4px solid #30363D;
+    transition: border-color 0.3s ease;
+  }
+  .about-team-card:hover .about-card-image-container {
+    border-color: #00AFFF; /* ⭐️ ขอบรูปเปลี่ยนสีตาม */
+  }
+  
+  .about-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .about-card-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #F0F6FC;
+    margin-bottom: 0.25rem;
+  }
+  
+  .about-card-role {
+    color: #00AFFF; 
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  
+  .about-card-bio {
+    font-size: 0.9rem;
+    color: #8B949E;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .about-card-socials {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  
+  .about-card-socials a {
+    color: #C9D1D9;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .about-card-socials a:hover {
+    color: #00AFFF; /* ⭐️ Link ก็เปลี่ยนสี */
+  }
+  
+  /* --- 6. CTA Section --- */
+  .about-cta-section {
+    text-align: center;
+    background-color: #161B22;
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    animation: aboutPageFadeInUp 1.1s ease-out;
+  }
+  
+  .about-cta-section h2 {
+    font-size: 2rem;
+    color: #F0F6FC;
+    margin-bottom: 1rem;
+  }
+  
+  .about-cta-section p {
+    color: #8B949E;
+    margin-bottom: 2rem;
+  }
+  
+  .about-cta-button {
+    background-color: #00AFFF;
+    color: #0D1117;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+  .about-cta-button:hover {
+    background-color: #F0F6FC;
+    transform: scale(1.05);
+  }
+  
+  /* --- 7. Responsive (สำหรับมือถือ) --- */
+  @media (max-width: 992px) {
+    .about-team-grid {
+      grid-template-columns: 1fr 1fr; /* 2 คอลัมน์ */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .about-hero-title {
+      font-size: 3rem;
+    }
+    .about-story-content {
+      grid-template-columns: 1fr; /* 1 คอลัมน์ */
+    }
+    .about-team-grid {
+      grid-template-columns: 1fr; /* 1 คอลัมน์ */
+    }
+  }

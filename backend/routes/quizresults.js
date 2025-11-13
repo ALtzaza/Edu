@@ -3,13 +3,13 @@ import { Quiz, QuizResult, Lesson } from "../models/schema.models.js";
 
 const router = express.Router();
 
-const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
+import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
 
 //ดูผลสอบ ของตัวเอง ในบทเรียนนั้นๆ (สำหรับนักเรียน)
 //  (แก้ไข) เปลี่ยนจาก /:lessonNum เป็น /:lessonId
-router.get("/:lessonId/results/me", async (req, res) => {
+router.get("/:lessonId/results/me", authenticateJWT ,async (req, res) => {
   try {
-    const userId = MOCK_USER_ID;
+      const userId = req.user.id;
     const { lessonId } = req.params; 
 
     const quizResults = await QuizResult.find({
@@ -31,9 +31,9 @@ router.get("/:lessonId/results/me", async (req, res) => {
 });
 //ดูประวัติการทำแบบทดสอบทั้งหมด ของตัวเอง (สำหรับนักเรียน)
 // (Route นี้ไม่จำเป็นต้องแก้)
-router.get("/me", async (req, res) => {
+router.get("/me",authenticateJWT, async (req, res) => {
   try {
-    const userId = MOCK_USER_ID;
+    const userId = req.user.id;
     const quizResults = await QuizResult.find({ user: userId })
     .populate("lesson", "title lessonNumber")
     res.status(200).send(quizResults);

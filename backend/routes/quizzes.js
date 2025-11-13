@@ -1,6 +1,6 @@
 import express from "express";
 import { Quiz, QuizResult, Lesson } from "../models/schema.models.js";
-
+import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 const populateQuizDetails = (query) => {
@@ -165,15 +165,16 @@ router.get("/:lessonId/quizzes/take", async (req, res) => {
   }
 });
 
-const MOCK_USER_ID = "68fb69f249ed00d001f1d029";
+
 
 // (API /submit นี้ใช้ quizId อยู่แล้ว ซึ่งถูกต้อง ไม่ต้องแก้ครับ)
-router.post("/:lessonId/quizzes/submit", async (req, res) => {
+router.post("/:lessonId/quizzes/submit", authenticateJWT, isEnrolled , async (req, res) => {
   try {
     const { lessonId } = req.params;
 
     const { answers } = req.body; // e.g., [{ quizId: "60f123...", selectedAnswer: "A" }]
 
+    const userId = req.user.id;
     const lesson = await Lesson.findById( lessonId);
     if (!lesson) {
       return res
@@ -197,7 +198,7 @@ router.post("/:lessonId/quizzes/submit", async (req, res) => {
     const PASSING_GRADE = 70; // 70% ตามเกณฑ์ที่ต้องการ
 
     const newQuizResult = new QuizResult({
-      user: MOCK_USER_ID,
+      user: userId,
       lesson: lessonId,
       score,
       total: totalQuestions, // ใช้ totalQuestions แทน quizzes.length โดยตรง

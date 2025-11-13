@@ -117,3 +117,26 @@ export const isEnrolled = async (req, res, next) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getCourseEnrollmentStatus = async (req, res) => {
+  try {
+      const { id: courseId } = req.params; // นี่คือ courseId
+      const { id: userId } = req.user;     // นี่คือ userId (จาก JWT)
+
+      // ค้นหาใน Purchase/Enrollment
+      const purchase = await Purchase.findOne({
+          user: userId,
+          course: courseId,
+          status: 'paid' // หรือ 'approved' (แล้วแต่คุณตั้งชื่อ)
+      });
+
+      if (purchase) {
+          return res.json({ isEnrolled: true });
+      } else {
+          return res.json({ isEnrolled: false });
+      }
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+};
+

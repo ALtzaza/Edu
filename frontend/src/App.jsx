@@ -18,6 +18,7 @@ import ForgotPasswordPage from './page/ForgotPasswordPage/ForgotPasswordPage.jsx
 import ResetPasswordPage from './page/ResetPasswordPage/ResetPasswordPage.jsx';
 import PurchaseFlowPage from "./pages/PurchasesPage/PurchaseFlowPage";
 import PurchasesPage from "./pages/PurchasesPage/PurchasesPage";
+import AboutUsPage from './page/AboutUsPage/AboutUsPage.jsx';
 // import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 
 import AdminLayout from './layouts/AdminLayout.jsx';
@@ -57,7 +58,8 @@ function App() {
           <Route path="courses/:id" element={<CourseDetailPage />} />
           <Route path="/lessons/:courseId/:lessonId" element={<CourseLessonPage />} />
           <Route path="/purchases" element={<PurchasesPage />} />
-          <Route path="/purchase/:courseId" element={<PurchaseFlowPage />} />
+          <Route path="/courses/:courseId/purchase" element={<PurchaseFlowPage />} />
+          <Route path="/about" element={<AboutUsPage />} />
         
           {/* (Route อื่นๆ ที่อยู่ใน Layout) */}
           <Route path="Profile" element={<ProfilePage/>} />

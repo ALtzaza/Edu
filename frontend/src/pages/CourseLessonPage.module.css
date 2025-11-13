@@ -393,3 +393,167 @@
     color: #9ca3af;
     cursor: not-allowed;
 }
+.videoFrame {
+    /* ลบ height, max-height, min-height (ถ้ามี) ออก */
+  
+    /* ⭐️ เพิ่ม 2 บรรทัดนี้เข้าไป ⭐️ */
+    width: 100%;         /* ให้กว้างเต็มกรอบเสมอ */
+    aspect-ratio: 16 / 9;  /* ⬅️ บังคับอัตราส่วน 16:9 (นี่คือตัวแก้ครับ) */
+    
+    height: auto;        /* (ปล่อยให้ความสูงปรับอัตโนมัติ) */
+    border: none;        /* (เผื่อเป็น iframe จะได้ไม่มีขอบ) */
+    background-color: #000; /* (แสดงพื้นหลังสีดำระหว่างโหลด) */
+  }
+
+  /* ... (CSS เดิมของคุณ) ... */
+
+/* ⭐️⭐️⭐️ (เพิ่ม CSS ใหม่) ⭐️⭐️⭐️ */
+
+/* กล่องที่ครอบปุ่ม Mark Complete และ Checkbox */
+.markCompleteSection {
+    margin-top: 24px;
+    border-top: 1px solid #30363D;
+    padding-top: 24px;
+  }
+  
+  /* กล่องสำหรับ Checkbox "ยืนยันว่าดูจบ" (สำหรับ Embed) */
+  .embedConfirmBox {
+    margin-bottom: 16px;
+  }
+  
+  .embedConfirmLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #C9D1D9; /* (สีเทาอ่อน) */
+  }
+  
+  .embedConfirmLabel input[type="checkbox"] {
+    /* (สไตล์ Checkbox ถ้าต้องการ) */
+    cursor: pointer;
+  }
+  
+  /* ⭐️ (เพิ่ม) สไตล์สำหรับบทเรียนที่เรียนจบแล้วใน Sidebar */
+  .completedLesson .lessonLink {
+    color: #8B949E; /* (สีเทา) */
+    text-decoration: line-through; /* (ขีดฆ่า) */
+  }
+  
+  /* ⭐️ (เพิ่ม) แก้ไข Aspect Ratio ของวิดีโอ (ตามที่เราคุยกัน) */
+  .videoFrame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: none;
+    background-color: #000;
+  }
+
+  /* ⭐️ (เพิ่ม) CSS ใหม่สำหรับ Reset Modal ⭐️
+  (คัดลอกไปวางท้ายไฟล์ .css ของคุณ) 
+*/
+
+/* (เราจะอ้างอิงจาก .quizResultModal ที่คุณมีอยู่แล้ว) */
+.resetModal {
+    /* ใช้สีเหลือง (Warning) แทนสีแดง (Fail) */
+    border-top: 5px solid #FFC107; 
+    box-shadow: 0 10px 30px -10px rgba(255, 193, 7, 0.3);
+  }
+  
+  /* (ถ้าคุณใช้ .module.css ให้ลบ .quizResultModal ออกจากชื่อ) */
+  .quizResultModal.resetModal h3 {
+    color: #FFC107; /* สีหัวข้อเป็นสีเหลือง */
+  }
+  
+  /* (ถ้าคุณใช้ .module.css ให้ลบ .quizResultModal ออกจากชื่อ) */
+  .quizResultModal.resetModal .retakeNote {
+    color: #FFD54F; /* สีข้อความย่อย (เหลืองอ่อน) */
+    font-size: 0.95rem;
+    background-color: rgba(255, 193, 7, 0.05);
+    border: 1px dashed rgba(255, 193, 7, 0.3);
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  /* (ถ้าคุณใช้ .module.css ให้ลบ .quizResultModal ออกจากชื่อ) */
+  .quizResultModal.resetModal .retakeButton {
+    /* (ปุ่ม "ตกลง" สีเหลือง) */
+    background-color: #FFC107;
+    color: #161B22; /* (สีพื้นหลังเข้ม) */
+    border: none;
+  }
+  
+  .quizResultModal.resetModal .retakeButton:hover {
+    background-color: #FFD54F;
+    transform: scale(1.03);
+  }
+
+/* ⭐️ Reset Modal Centered (เด้งกลางหน้าจอ, overlay, กรอบเหลือง) ⭐️ */
+.resetModalCenteredOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(17, 24, 39, 0.7); /* ดำโปร่งแสง */
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.resetModalCentered {
+  background: #1f2937;
+  border: 3px solid #FFC107; /* กรอบเหลือง */
+  border-radius: 16px;
+  padding: 18px 18px 18px 18px;
+  box-shadow: 0 12px 36px -10px rgba(255, 193, 7, 0.25), 0 2px 16px rgba(0,0,0,0.30);
+  z-index: 1200;
+  width: 400px;
+  min-width: 0;
+  max-width: 95vw;
+  height: auto;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.resetModalCentered h3 {
+  font-size: 1.15rem;
+  margin: 0 0 8px 0;
+  color: #FFC107;
+  font-weight: 700;
+}
+.resetModalCentered p,
+.resetModalCentered .retakeNote {
+  font-size: 0.97rem;
+  color: #FFD54F;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* สไตล์ปุ่มใน Reset Modal Centered */
+.resetModalCentered .retakeButton {
+  background-color: #FFC107;
+  color: #161B22; /* สีพื้นหลังเข้ม */
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.08em;
+  padding: 13px 28px;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: background-color 0.18s, color 0.18s, box-shadow 0.18s, transform 0.13s;
+  box-shadow: 0 1px 4px 0 rgba(255, 193, 7, 0.10);
+}
+.resetModalCentered .retakeButton:hover {
+  background-color: #FFD54F;
+  color: #22272e;
+  box-shadow: 0 2px 10px 0 rgba(255, 193, 7, 0.16);
+  transform: scale(1.03);
+}

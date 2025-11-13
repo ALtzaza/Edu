@@ -12,7 +12,7 @@ const router = Router();
 router.post("/", authenticateJWT, isAdmin, async (req, res) => {
   try {
     console.log("--- DEBUG (lessons.js V16): 'POST /' (Create) ---"); // (Debug V16)
-    const { title, videoUrl, content, sectionId } = req.body;
+    const { title, videoUrl, content, sectionId ,type } = req.body;
     if (!title || !sectionId) {
       return res
         .status(400)

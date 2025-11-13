@@ -11,29 +11,27 @@ import "./HomePage.css"; // (Import CSS V18 ที่คุณเพิ่งส
 // ---------------------------------------------------
 
 const FeaturedCoursesSection = () => {
-  const [courses, setCourses] = useState([]); // (เก็บ 2 คอร์สที่ดีที่สุด)
-
+  const [courses, setCourses] = useState([]); 
   const [loading, setLoading] = useState(true);
+
+  // 1. ⭐️ (แก้ไข) กำหนด URL หลักของ Server
+  // (นี่คือที่อยู่ที่ Server (Back-end) ของคุณรันอยู่)
+  const SERVER_URL = "http://localhost:3000";
 
   useEffect(() => {
     const fetchTopCourses = async () => {
       try {
         setLoading(true);
-
-        // ⭐️ (API จริง) ยิง API ดึง 2 คอร์สที่ 'rating' ดีที่สุด
-
         const res = await api.get("/courses?sort=rating_desc&limit=2");
-
-        setCourses(res.data.data || []); // (ได้ 2 คอร์ส)
+        setCourses(res.data.data || []); 
       } catch (err) {
         console.error("Failed to fetch top courses:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchTopCourses();
-  }, []); // (ยิงครั้งเดียวตอนโหลด)
+  }, []); 
 
   return (
     <section className="featured-courses-section">
@@ -42,63 +40,63 @@ const FeaturedCoursesSection = () => {
       {loading ? (
         <p style={{ color: "white" }}>Loading classes...</p>
       ) : courses.length > 0 ? (
-        // ⭐️ (Render) วน Loop 2 คอร์สที่ได้จาก API
+        courses.map((course, index) => {
+          
+          // 2. ⭐️ (แก้ไข) สร้าง URL ที่สมบูรณ์สำหรับรูปภาพ
+          // (เช่น: http://localhost:3000/uploads/thumbnails/image.jpg)
+          const thumbnailUrl = course.thumbnail 
+            ? `${SERVER_URL}/${course.thumbnail}` 
+            : null;
 
-        courses.map((course, index) => (
-          <div
-            className="course-card-wrapper"
-            style={{ flexDirection: index % 2 === 1 ? "row-reverse" : "row" }}
-            key={course._id}
-          >
-            {/* (ส่วนรูปภาพ) */}
+          return (
+            <div
+              className="course-card-wrapper"
+              style={{ flexDirection: index % 2 === 1 ? "row-reverse" : "row" }}
+              key={course._id}
+            >
+              {/* (ส่วนรูปภาพ) */}
+              <div className="course-image-container">
+                <div
+                  className="course-image-mock"
+                  style={{
+                    // 3. ⭐️ (แก้ไข) ใช้ thumbnailUrl ตัวแปรใหม่
+                    backgroundImage: thumbnailUrl
+                      ? `url(${thumbnailUrl})`
+                      : "none",
+                    backgroundColor: thumbnailUrl // ⬅️ แก้ไขตรงนี้ด้วย
+                      ? "#1E1E1E"
+                      : index % 2 === 0
+                      ? "#007ACC"
+                      : "#569CD6",
+                  }}
+                >
+                  {!thumbnailUrl && (index % 2 === 0 ? "PYTHON" : "C LANG")}
+                </div>
+              </div>
 
-            <div className="course-image-container">
-              <div
-                className="course-image-mock"
-                style={{
-                  backgroundImage: course.thumbnail
-                    ? `url(${course.thumbnail})`
-                    : "none",
-
-                  backgroundColor: course.thumbnail
-                    ? "#1E1E1E"
+              {/* (ส่วนเนื้อหา) */}
+              <div className="course-content-container">
+                <h3>{course.title}</h3>
+                <p>
+                  {course.description
+                    ? course.description.substring(0, 100) + "..."
                     : index % 2 === 0
-                    ? "#007ACC"
-                    : "#569CD6",
-                }}
-              >
-                {!course.thumbnail && (index % 2 === 0 ? "PYTHON" : "C LANG")}
+                    ? '"หลักสูตรที่เข้าใจง่าย..."'
+                    : '"ชุมชนที่พร้อมสนับสนุน..."'}
+                </p>
+                <Link to={`/courses/${course._id}`} className="cta-button">
+                  View Course
+                </Link>
               </div>
             </div>
-
-            {/* (ส่วนเนื้อหา) */}
-
-            <div className="course-content-container">
-              <h3>{course.title}</h3>
-
-              <p>
-                {course.description
-                  ? course.description.substring(0, 100) + "..."
-                  : index % 2 === 0
-                  ? '"หลักสูตรที่เข้าใจง่าย..."'
-                  : '"ชุมชนที่พร้อมสนับสนุน..."'}
-              </p>
-
-              <Link to={`/courses/${course._id}`} className="cta-button">
-                View Course
-              </Link>
-            </div>
-          </div>
-        ))
+          );
+        })
       ) : (
-        // (ถ้า API ไม่คืนคอร์สเลย (เช่น ยังไม่มีรีวิว))
-
         <p style={{ color: "white" }}>ยังไม่มีคอร์สที่เปิดสอน</p>
       )}
     </section>
   );
 };
-
 // ---------------------------------------------------
 
 // ⭐️ (ใหม่) 2. Component "Typing Animation" (V17)

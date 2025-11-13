@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react'; // 1. นำเข้า useState
-import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom';
-import styles from './CourseDetailPage.module.css'; 
+// src/pages/CourseDetailPage.jsx
 
-// --- Database จำลอง (Mock Data) ถูกลบออก ---
-// ********* MOCK DATA ถูกลบออก *********
+// 1. ⭐️ (เพิ่ม) import useLocation
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useOutletContext, useNavigate, useLocation } from 'react-router-dom';
+import styles from './CourseDetailPage.module.css'; 
 
 const getBannerSrc = (thumb) => {
     const t = (thumb || '').trim();
     return t ? t : '/images/default-banner.png';
-  };
+};
 
-
-// ฟังก์ชันสำหรับแปลง Section/Lesson Data (ใช้ในภายหลังเพื่อแสดงสารบัญ)
 const mapSectionsForDisplay = (sections) => {
-    // รวมจำนวนบทเรียน, แบบทดสอบ และเวิร์กชอปจากข้อมูลจริง
+    // ... (ฟังก์ชันนี้เหมือนเดิม ไม่ต้องแก้ไข) ...
     let totalLessons = 0;
     let totalQuizzes = 0;
     let totalWorkshops = 0;
@@ -21,8 +19,6 @@ const mapSectionsForDisplay = (sections) => {
     const mappedSections = sections.map(section => {
         const lessons = section.lessons || [];
         totalLessons += lessons.length;
-
-        // นับ quiz/workshop ต่อบท ถ้า type ไม่ได้เซ็ต ให้เดาว่าบทที่มี quizzes > 0 คือ quiz
         lessons.forEach(lesson => {
             const isQuizLesson = lesson.type === 'quiz' || (Array.isArray(lesson.quizzes) && lesson.quizzes.length > 0);
             const isWorkshopLesson = lesson.type === 'workshop';
@@ -42,48 +38,66 @@ const mapSectionsForDisplay = (sections) => {
     return { mappedSections, totalLessons, totalQuizzes, totalWorkshops };
 }
 
-
 // ✅ Component "หลัก" (CourseDetailPage) ✅
 export default function CourseDetailPage() {
     const { id } = useParams(); 
     const navigate = useNavigate();
     const { setPageTitle } = useOutletContext(); 
+    const location = useLocation(); // 2. ⭐️ (เพิ่ม) ดึง location ปัจจุบัน
 
-    // 1. สร้าง State สำหรับเก็บข้อมูลคอร์สจริง
+    // 3. ⭐️ (เพิ่ม) State สำหรับเช็คสถานะ
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isEnrolled, setIsEnrolled] = useState(false); // ⭐️ State ใหม่: เช็คว่าซื้อคอร์สนี้หรือยัง
+
+    // 4. ⭐️ (เพิ่ม) ดึง token มาเช็คสถานะ login
+    const token = localStorage.getItem('token');
+    const isLoggedIn = !!token; // แปลงเป็น true/false
     
-    // --- โลจิก Fetch Data ---
+    // --- 5. ⭐️ (แก้ไข) โลจิก Fetch Data ---
+    // (เปลี่ยนเป็น fetch ข้อมูลคอร์ส และ สถานะการลงทะเบียน พร้อมกัน)
     useEffect(() => {
-        const fetchCourse = async () => {
+        const fetchCourseAndStatus = async () => {
             setLoading(true);
             setError(null);
-            
-            // ในโหมด Dev ใช้ Proxy, แต่ถ้ายังติด error เดิมให้ใช้ Absolute URL
-            // const apiUrl = `/api/courses/${id}`;
-            // const API_BASE_URL = 'http://localhost:3000'; // ถ้า Proxy ไม่ทำงาน
+            setIsEnrolled(false); // Reset สถานะก่อนโหลด
             
             try {
                 const API_BASE_URL = 'http://localhost:3000';
-                const response = await fetch(`${API_BASE_URL}/api/courses/${id}`); // หรือ fetch(`${API_BASE_URL}${apiUrl}`)
                 
-                if (!response.ok) {
-                    throw new Error(`Course not found or network error: ${response.status}`);
-                }
-                
-                const result = await response.json();
+                // 1. ดึงข้อมูลคอร์ส (Public)
+                const courseRes = await fetch(`${API_BASE_URL}/api/courses/${id}`);
+                if (!courseRes.ok) throw new Error(`Course not found: ${courseRes.status}`);
+                const result = await courseRes.json();
                 
                 if (result.success && result.data) {
                     setCourse(result.data);
                     setPageTitle(result.data.title);
                 } else {
-                    setCourse(null);
-                    setPageTitle("Course Not Found");
+                    throw new Error('Course data invalid');
+                }
+
+                // 2. (เพิ่ม) ถ้า Login อยู่ ให้เช็คสถานะการลงทะเบียน (Private)
+                if (isLoggedIn) {
+                    // 🚨 (นี่คือ API Endpoint ใหม่ที่คุณต้องสร้างที่ Back-end)
+                    const statusRes = await fetch(`${API_BASE_URL}/api/courses/${id}/status`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (statusRes.ok) {
+                        const statusData = await statusRes.json();
+                        // (สมมติ Back-end ตอบกลับ { isEnrolled: true })
+                        if (statusData.isEnrolled) {
+                            setIsEnrolled(true);
+                        }
+                    } 
+                    // ถ้า fetch status ไม่สำเร็จ (เช่น 401, 404) ก็ไม่เป็นไร
+                    // isEnrolled จะยังคงเป็น false (ยังไม่ซื้อ)
                 }
 
             } catch (err) {
-                console.error("Failed to fetch course details:", err);
+                console.error("Failed to fetch course data:", err);
                 setError("ไม่สามารถดึงรายละเอียดคอร์สนี้ได้");
                 setPageTitle("Course Not Found");
             } finally {
@@ -92,28 +106,43 @@ export default function CourseDetailPage() {
         };
 
         if (id) {
-            fetchCourse();
+            fetchCourseAndStatus();
         }
-    }, [id, setPageTitle]); 
+    // 6. ⭐️ (เพิ่ม) ใส่ isLoggedIn, token ใน dependency array
+    }, [id, setPageTitle, isLoggedIn, token]); 
 
 
     // --- Handlers ---
     const handleEnrollClick = () => {
-  if (course && course.sections && course.sections.length > 0) {
-        const firstSection = course.sections[0];
-        if (firstSection.lessons && firstSection.lessons.length > 0) {
-            const firstLessonId = firstSection.lessons[0]._id;
-            // นำทางไปยังหน้าบทเรียนแรก: /lessons/:courseId/:lessonId
-            navigate(`/lessons/${id}/${firstLessonId}`); 
-            return;
+        // (ฟังก์ชันเดิมของคุณ: สำหรับคนที่ซื้อแล้ว)
+        if (course && course.sections && course.sections.length > 0) {
+            const firstSection = course.sections[0];
+            if (firstSection.lessons && firstSection.lessons.length > 0) {
+                const firstLessonId = firstSection.lessons[0]._id;
+                navigate(`/lessons/${id}/${firstLessonId}`); 
+                return;
+            }
         }
-    }
-    // หากไม่พบบทเรียนแรก ให้นำทางไปหน้า Index ของคอร์ส
-    navigate(`/lessons/${id}`);
+        navigate(`/lessons/${id}`);
+    };
+
+    // 7. ⭐️ (เพิ่ม) Handler ใหม่สำหรับกดปุ่ม "สั่งซื้อ"
+    const handlePurchaseClick = () => {
+        if (!isLoggedIn) {
+            // Flow 1: ยังไม่ Login
+            alert("กรุณาเข้าสู่ระบบก่อนทำการสั่งซื้อ");
+            // เด้งไปหน้า Login และ "จำ" หน้าปัจจุบันไว้ (location)
+            navigate('/login', { state: { from: location } });
+        } else {
+            // Flow 2: Login แล้ว
+            // เด้งไปหน้า PurchasePage ที่คุณสร้างไว้
+            navigate(`/courses/${id}/purchase`);
+        }
     };
 
     // --- Loading State ---
     if (loading) {
+        // ... (เหมือนเดิม) ...
         return (
             <div className={styles.pageContainer}>
                 <h2>กำลังโหลดรายละเอียดคอร์ส...</h2>
@@ -123,6 +152,7 @@ export default function CourseDetailPage() {
     
     // --- Error & Not Found State ---
     if (error || !course) {
+        // ... (เหมือนเดิม) ...
         return (
             <div>
                 <h2>404 - {error || 'ไม่พบคอร์ส'}</h2>
@@ -131,18 +161,12 @@ export default function CourseDetailPage() {
         );
     }
 
-    // --- Mapping Data จาก API ไปเป็น Format สำหรับ Render ---
-    
-    // *️⃣ Data จาก API: course.category.name, course.instructor.name, course.sections (Array)
+    // --- Mapping Data (เหมือนเดิม) ---
     const categoryName = course.category?.name || 'Uncategorized';
     const instructorName = course.instructor?.name || 'Unknown Instructor';
     const instructorBio = course.instructor?.bio || 'ไม่มีประวัติผู้สอน';
-    const totalDurationText = 'ยังไม่ระบุ'; // 💡 คุณต้องคำนวณหรือเพิ่ม field ใน Backend
-    
-    // 💡 การจัดการสารบัญ (Sections/Lessons)
+    const totalDurationText = 'ยังไม่ระบุ'; 
     const { mappedSections, totalLessons, totalQuizzes, totalWorkshops } = mapSectionsForDisplay(course.sections || []);
-
-    // 💡 Mock/Hardcoded Meta Data (ควรรวมเข้ากับ API ถ้าเป็นไปได้)
     const metaData = [
         { icon: '📚', text: `${totalLessons} บทเรียน` },
         { icon: '🧪', text: `${totalQuizzes} แบบทดสอบ` },
@@ -150,15 +174,11 @@ export default function CourseDetailPage() {
         { icon: '🕒', text: totalDurationText },
         { icon: '/images/certificate.png', text: 'ประกาศนียบัตรเมื่อจบคอร์ส' }
     ];
-    
-    // *️⃣ โครงสร้างเนื้อหาหลัก (Content Body)
     const contentHtml = `
         <h2>เกี่ยวกับคอร์ส: ${course.title}</h2>
         <p>${course.description || 'ไม่มีคำอธิบายโดยละเอียดสำหรับคอร์สนี้'}</p>
-        
         <h3>ผู้สอน: ${instructorName}</h3>
         <p>${instructorBio}</p>
-        
         <h2>สารบัญคอร์ส (${totalLessons} บทเรียน)</h2>
         ${mappedSections.map(section => `
             <h4>${section.title} (${section.lessons.length} บท)</h4>
@@ -167,45 +187,35 @@ export default function CourseDetailPage() {
             </ul>
         `).join('')}
     `;
-
-    // *️⃣ Tools/Tags (ยังต้อง Hardcode จนกว่าจะมี field ใน Schema)
     const mockTags = ['HTML', 'Frontend', categoryName.toUpperCase()];
     const mockTools = [
         { name: 'VS Code', icon: '/images/vscode-logo.png' }
     ];
 
-
+    // --- 8. ⭐️ (แก้ไข) JSX Render (ส่วน Sidebar) ---
     return (
         <div className={styles.pageContainer}>
             
             {/* --- คอลัมน์ซ้าย (Main Content) --- */}
             <div className={styles.mainContent}>
-                
+                {/* ... (ส่วนนี้เหมือนเดิมทั้งหมด) ... */}
                 <nav className={styles.breadcrumbs}>
-                    {/* Breadcrumbs */}
                     <Link to="/catalog">Catalog</Link> &gt; 
                     <Link to={`/catalog/${categoryName.toLowerCase().replace(' ', '-')}`}> {categoryName}</Link> &gt; 
                     <span> {course.title}</span>
                 </nav>
-
                 <img
-                src={getBannerSrc(course.thumbnail)}
-                alt={course.title}
-                className={styles.featureBanner}
-                onError={(e) => { e.currentTarget.src = '/images/default-banner.png'; }}
+                    src={getBannerSrc(course.thumbnail)}
+                    alt={course.title}
+                    className={styles.featureBanner}
+                    onError={(e) => { e.currentTarget.src = '/images/default-banner.png'; }}
                 />
-
                 <nav className={styles.subNav}>
-                    {/* Sub Navigation (Sticky) */}
                     <a href="#about" className={styles.subNavLinkActive}>เกี่ยวกับ</a>
-                    {/* อาจเพิ่ม Link ไปยัง สารบัญ, รีวิว, ผู้สอน */}
                 </nav>
-
-                {/* เนื้อหา "เกี่ยวกับ" */}
                 <div 
                     id="about"
                     className={styles.contentBody} 
-                    // ⬅ ใช้ contentHtml ที่เราสร้างจาก API Data
                     dangerouslySetInnerHTML={{ __html: contentHtml }} 
                 />
             </div>
@@ -217,38 +227,50 @@ export default function CourseDetailPage() {
                         {course.price} <span>บาท</span>
                     </div>
                     
-                    {/* ✅ ปุ่มสมัครเรียน */}
-                    <button 
-                        className={styles.enrollButton}
-                        onClick={handleEnrollClick} 
-                    >
-                        เข้าสู่บทเรียน
-                    </button>
+                    {/* ✅ ⭐️ (จุดที่แก้ไข)
+                      ใช้ 'isEnrolled' เป็นตัวสลับปุ่ม
+                      เราใช้ 'styles.enrollButton' ทั้งสองปุ่มเพื่อกัน CSS พัง 
+                    */}
+                    {isEnrolled ? (
+                        // A. ถ้าซื้อแล้ว: แสดงปุ่ม "เข้าสู่บทเรียน"
+                        <button 
+                            className={styles.enrollButton}
+                            onClick={handleEnrollClick} 
+                        >
+                            เข้าสู่บทเรียน
+                        </button>
+                    ) : (
+                        // B. ถ้ายังไม่ซื้อ: แสดงปุ่ม "สั่งซื้อคอร์สนี้"
+                        <button 
+                            className={styles.enrollButton} // ⬅️ ใช้ Style เดียวกัน
+                            onClick={handlePurchaseClick}   // ⬅️ แต่ใช้คนละ Handler
+                        >
+                            สั่งซื้อคอร์สนี้
+                        </button>
+                    )}
 
-                    {/* Meta List (Icon/Emoji Check) */}
+                    {/* Meta List (เหมือนเดิม) */}
                     <ul className={styles.metaList}>
                         {metaData.map((item, index) => (
                             <li key={index} className={styles.metaItem}>
-                                
                                 {item.icon.startsWith('/') ? (
                                     <img src={item.icon} alt="" className={styles.metaIcon} />
                                 ) : (
                                     <span className={styles.metaEmoji}>{item.icon}</span>
                                 )}
                                 {item.text}
-
                             </li>
                         ))}
                     </ul>
                     
-                    {/* Tags */}
+                    {/* Tags (เหมือนเดิม) */}
                     <div className={styles.tagGroup}>
                         {mockTags.map((tag, index) => (
                             <span key={index} className={styles.tag}>{tag}</span>
                         ))}
                     </div>
 
-                    {/* Tools/Software แนะนำ */}
+                    {/* Tools (เหมือนเดิม) */}
                     <div className={styles.toolsGroup}>
                         <h4 className={styles.toolsTitle}>
                             ซอฟต์แวร์แนะนำสำหรับคอร์สนี้

@@ -1,9 +1,9 @@
 .container {
   width: 100%;
-  max-width: 1280px; /* 7xl */
+  max-width: 100%; /* 7xl */
   margin-left: auto;
   margin-right: auto;;
-  padding: 0 1.5rem; /* p-8 */
+  padding: 0 ; /* p-8 */
 }
 
 .fullWidthContainer {
@@ -24,12 +24,16 @@
   overflow: hidden;
   margin-bottom: 40px;
 
-  background-image: url('/images/catalog-header-bg.png');
-background-size: cover; 
-  background-position: center; 
-  background-repeat: no-repeat;
-
+  background-image: 
+    
+    linear-gradient(rgba(16, 22, 47, 0.7), rgba(16, 22, 47, 0.7)),
   
+    url('/img/Categoriesbackgound.png');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+ 
   background-attachment: fixed;
 }
 
