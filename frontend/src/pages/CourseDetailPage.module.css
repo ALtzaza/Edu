@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   gap: 2rem;
-  margin: 50px;
+  margin: 50px; 
 }
 
 /* (ถ้าจอมือถือ) ให้กลายเป็น 1 คอลัมน์ */
@@ -13,10 +13,7 @@
   }
 }
 
-/* --- 2. คอลัมน์ซ้าย (เนื้อหาหลัก) --- */
-.mainContent {
-  /* ไม่มีอะไรพิเศษ */
-}
+
 
 .breadcrumbs {
   font-size: 0.875rem;
@@ -54,11 +51,11 @@
   color: #9ca3af;
   border-bottom: 2px solid transparent;
 }
-.subNavLinkActive {
+/* .subNavLinkActive {
   composes: subNavLink; 
   color: white;
   border-bottom-color: #60a5fa; 
-}
+} */
 
 /* HTML DIB */
 .contentBody h2 {
@@ -111,10 +108,7 @@
   font-size: 1.1rem;
 }
 
-/* --- 3. คอลัมน์ขวา (Sidebar) --- */
-.sidebar {
-  /* ... (โค้ดเก่า) ... */
-}
+/* \ */
 @media (max-width: 1024px) {
   .sidebar {
     grid-row-start: 1; 

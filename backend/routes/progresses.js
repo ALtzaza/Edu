@@ -62,11 +62,14 @@ router.post("/mark-complete", authenticateJWT, isEnrolled, async (req, res) => {
   
       // 6. คำนวณ % ใหม่ (ด้วย 'totalLessons' ที่อัปเดตแล้ว)
       const completedCount = progress.lessonsCompleted.length;
-      progress.percentage = (completedCount / progress.totalLessons) * 100;
-      if (progress.percentage > 100) progress.percentage = 100;
+      const safeTotalForCalc = Math.max(progress.totalLessons, completedCount); // ✅ ป้องกัน > 100%
+      progress.percentage = (completedCount / safeTotalForCalc) * 100;
+      progress.percentage = Math.min(100, Math.max(0, progress.percentage)); // ✅ Clamp 0-100
   
       progress.lastWatched = lessonId;
       await progress.save(); // ⬅️ บันทึก % ใหม่, totalLessons ใหม่, และ lessonsCompleted ใหม่
+      
+      console.log("--- DEBUG: Progress updated - completed:", completedCount, "total:", progress.totalLessons, "percentage:", progress.percentage);
       
       console.log("--- DEBUG: Progress saved successfully");
       
@@ -105,31 +108,23 @@ router.get("/:courseId", authenticateJWT, isEnrolled, async (req, res) => {
                 data: { 
                     percentage: 0, 
                     lessonsCompleted: [],
-                    totalLessons: safeTotalLessons // ⬅️ ส่งค่าที่ถูกต้อง (เช่น 9)
+                    totalLessons: 0,
                 } 
             });
         }
         
-        // 3. ⭐️ (เพิ่ม) "ซิงค์ข้อมูล" (Sync)
-        // ถ้าจำนวนบทเรียนที่บันทึกไว้ (เช่น 4) ไม่ตรงกับที่นับได้จริง (เช่น 9)
-        if (progress.totalLessons !== actualTotalLessons) {
-            console.log(`--- DEBUG: Syncing progress. DB was ${progress.totalLessons}, but actual is ${actualTotalLessons}`);
-            
-            // อัปเดตค่าให้ถูกต้อง
-            progress.totalLessons = safeTotalLessons;
-            
-            // คำนวณ % ใหม่
-            const completedCount = progress.lessonsCompleted.length;
-            progress.percentage = (completedCount / safeTotalLessons) * 100;
-            if (progress.percentage > 100) progress.percentage = 100;
-            
-            // บันทึกค่าที่แก้ไขแล้ว (ไม่ต้องรอ)
-            await progress.save();
-        }
+        // ✅ Ensure percentage is within 0-100 range
+        const safePercentage = Math.min(100, Math.max(0, progress.percentage || 0));
         
-        // 4. ส่งข้อมูลที่ "ซิงค์แล้ว" และ "ถูกต้อง" กลับไป
-        res.json({ success: true, data: progress });
-
+        console.log("--- DEBUG GET progress: userId =", userId, "course =", courseId, "percentage =", safePercentage, "completed =", progress.lessonsCompleted.length, "total =", progress.totalLessons);
+        
+        res.json({ 
+            success: true, 
+            data: {
+                ...progress.toObject(),
+                percentage: safePercentage,
+            }
+        });
     } catch (err) {
         console.error("--- ERROR in GET /:courseId progress:", err); // ⭐️ (แก้ Log)
         res.status(500).json({ success: false, message: err.message });

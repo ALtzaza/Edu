@@ -50,10 +50,20 @@ const WorkshopComponent = ({ courseId, lessonId, lessonTitle, workshopData, onSu
         const formData = new FormData();
         formData.append("workshopFile", file);
 
-        try {
+       try {
+            // 1. ดึง Token จาก localStorage (หรือที่ที่คุณเก็บไว้)
+            // (สำคัญ!) หากคุณใช้ key อื่นที่ไม่ใช่ 'token' ให้เปลี่ยนตรงนี้
+            const token = localStorage.getItem('token'); 
+
+            // 2. สร้าง Headers object
+            const headers = new Headers();
+            if (token) {
+                headers.append('Authorization', `Bearer ${token}`);
+            }
             // API สำหรับส่งงาน: POST /api/courses/:courseId/lessons/:lessonId/workshops
-            const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}/lessons/${lessonId}/workshops`, {
+const response = await fetch(`${API_BASE_URL}/api/workshops/${courseId}/lessons/${lessonId}/workshops`, {
                 method: "POST",
+                headers: headers,
                 body: formData,
             });
 

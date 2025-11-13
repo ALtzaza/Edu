@@ -8,11 +8,44 @@ import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = Router();
 
+
+
+router.get("/", async (req, res) => {
+  try {
+    const { sectionId } = req.query;
+    let lessons;
+
+    if (sectionId) {
+      lessons = await Lesson.find({ section: sectionId })
+        .populate({
+          path: "section",
+          select: "title course",
+          populate: { path: "course", select: "title" },
+        });
+    } else {
+      lessons = await Lesson.find()
+        .populate({
+          path: "section",
+          select: "title course",
+          populate: { path: "course", select: "title" },
+        });
+    }
+
+    res.json(lessons);
+  } catch (err) {
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาดในการดึงบทเรียน",
+      error: err.message,
+    });
+  }
+});
+
+
 // --- 1. ⭐️ (แก้ไข) POST / (สร้าง) (V16) ⭐️ ---
 router.post("/", authenticateJWT, isAdmin, async (req, res) => {
   try {
     console.log("--- DEBUG (lessons.js V16): 'POST /' (Create) ---"); // (Debug V16)
-    const { title, videoUrl, content, sectionId ,type } = req.body;
+    const { title, videoUrl, content, sectionId, type } = req.body;
     if (!title || !sectionId) {
       return res
         .status(400)

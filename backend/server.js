@@ -15,6 +15,7 @@ import sectionRouter from "./routes/section.js";
 import lessonRouter from "./routes/lesson.js"; // ⬅️ (เอกพจน์)
 import progressRoutes from "./routes/progresses.js";
 import notificationRoutes from "./routes/notificates.js";
+
 // (Import V1 ที่เหลือ)
 import quiz from './routes/quizzes.js';
 // ⭐️ (ลบ 'import lesson' (V1) ที่ "ซ้ำ" ทิ้ง)
@@ -61,10 +62,12 @@ app.use("/api/admin", adminRoutes);
 app.use('/api/users', userRoutes); 
 app.use("/api/reviews", reviewRoutes);
 app.use('/api/purchases', purchaseRoutes);
-app.use('/api/lessons', quiz);              // 🟢 Changed: was '/api/quizzes'
-app.use('/api/lessons', quizresults);       // 🟢 Changed: was '/api/quizresults'
+// Mount quiz-related routes at their correct base paths
+app.use('/api/quizzes', quiz);
+app.use('/api/lessons', quiz); // ⭐️ Enable lesson-scoped quiz endpoints like /api/lessons/:lessonId/quizzes/take
+app.use('/api/quizresults', quizresults);
 app.use('/api/certificates', certificateRoutes); 
-app.use('/api/courses', workShopRoutes);    // 🟢 Changed: was '/api/workshops'
+app.use('/api/workshops', workShopRoutes);    // 🟢 Changed: was '/api/workshops'
 // ⭐️ (ลบ 'app.use('/', lesson)' (V1) ที่ "ชน" กัน ทิ้ง)
 
 // --- 5. เชื่อมต่อ DB และเปิดเซิร์ฟเวอร์ ---

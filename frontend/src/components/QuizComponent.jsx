@@ -29,10 +29,9 @@ const QuizResultModal = ({ result, onClose }) => { // ⬅️ 1. ลบ onRetake 
                 )}
 
                 <div className={styles.modalActions}>
-                    {/* 🟢 ปุ่ม "ตกลง" (ปุ่มเดียว) */}
-                    <button onClick={onClose} className={styles.closeButton}>
-                        ตกลง
-                    </button>
+<button onClick={() => onClose(result)} className={styles.closeButton}>
+    กลับสู่บทเรียน
+</button>
                     
                     {/* ❌ (ลบ) ลบปุ่ม "ทำควิซอีกครั้ง" ทิ้ง ❌ */}
                     {/*
@@ -65,7 +64,18 @@ export default function QuizComponent({ lessonId, lessonTitle, courseId, onQuizF
         setError(null);
         setQuizResult(null); 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/quizzes/take`);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("กรุณาเข้าสู่ระบบก่อน");
+                setLoading(false);
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/quizzes/take`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (!response.ok) throw new Error("Failed to fetch quizzes");
             
             const fetchedQuizzes = await response.json();
@@ -117,13 +127,22 @@ export default function QuizComponent({ lessonId, lessonTitle, courseId, onQuizF
         }));
 
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("กรุณาเข้าสู่ระบบก่อน");
+                setIsSubmitting(false);
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/lessons/${lessonId}/quizzes/submit`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ answers: answersPayload }),
+                body: JSON.stringify({ 
+                    answers: answersPayload,
+                    courseId: courseId }),
             });
 
             if (!response.ok) {

@@ -42,6 +42,12 @@ const AdminLayout = () => {
         <Link to="/admin/manage-courses" className="admin-nav-link">
           Manage Courses
         </Link>
+        <Link to="/admin/manage-quizzes" className="admin-nav-link">
+          Manage Quizzes
+        </Link>
+        <Link to="/admin/manage-workshop" className="admin-nav-link">
+          Manage Workshop Approvals
+        </Link>
         <Link to="/admin/manage-users" className="admin-nav-link">
           Manage Users
         </Link>

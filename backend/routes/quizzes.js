@@ -1,6 +1,8 @@
 import express from "express";
 import { Quiz, QuizResult, Lesson } from "../models/schema.models.js";
 import { authenticateJWT, isEnrolled } from "../middleware/authMiddleware.js";
+import { isAdmin } from "../middleware/roleMiddleware.js";
+
 const router = express.Router();
 
 const populateQuizDetails = (query) => {
@@ -21,8 +23,18 @@ const populateQuizDetails = (query) => {
   });
 };
 
+// Admin: list all quizzes (populated) - useful for admin panels
+router.get('/', async (req, res) => {
+  try {
+    const quizzes = await populateQuizDetails(Quiz.find());
+    res.status(200).json(quizzes);
+  } catch (error) {
+    res.status(500).send({ message: 'Server Error', error: error.message });
+  }
+});
+
 // API สำหรับ "สร้าง Quiz ใหม่สำหรับบทเรียน"
-router.post("/:lessonId/quizzes", async (req, res) => {
+router.post("/:lessonId/quizzes", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { lessonId } = req.params; // รับ ObjectId ของ Lesson // 1. ค้นหา Lesson ด้วย ObjectId
 
@@ -68,7 +80,7 @@ router.post("/:lessonId/quizzes", async (req, res) => {
 
 // API สำหรับ "ดึง Quiz ทั้งหมดของบทเรียน"
 //  (แก้ไข) เปลี่ยนจาก /:lessonNum เป็น /:lessonId
-router.get("/:lessonId/quizzes", async (req, res) => {
+router.get("/:lessonId/quizzes", authenticateJWT, isEnrolled, async (req, res) => {
   try {
     //  (แก้ไข) เปลี่ยนจาก lessonNum เป็น lessonId
     const { lessonId } = req.params;
@@ -93,7 +105,7 @@ router.get("/:lessonId/quizzes", async (req, res) => {
   }
 });
 
-router.put("/:quizId", async (req, res) => {
+router.put("/:quizId", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { quizId } = req.params;
     const { question, choices, correctAnswer } = req.body; //  ลบ lessonNum ออก
@@ -118,7 +130,7 @@ router.put("/:quizId", async (req, res) => {
   }
 });
 
-router.delete("/:quizId", async (req, res) => {
+router.delete("/:quizId", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { quizId } = req.params;
     const deletedQuiz = await Quiz.findByIdAndDelete(quizId);
@@ -141,7 +153,7 @@ router.delete("/:quizId", async (req, res) => {
 //API สำหรับการทำแบบทดสอบ (Taking the Quiz)
 
 // สำหรับ "นักเรียน" (ซ่อนเฉลย)
-router.get("/:lessonId/quizzes/take", async (req, res) => {
+router.get("/:lessonId/quizzes/take", authenticateJWT, isEnrolled, async (req, res) => {
   try {
     const { lessonId } = req.params; // 🟢 เปลี่ยนจาก lessonNum เป็น lessonId
     const lesson = await Lesson.findById(lessonId); // 🟢 ใช้ findById() ซึ่งเร็วกว่า
@@ -168,13 +180,13 @@ router.get("/:lessonId/quizzes/take", async (req, res) => {
 
 
 // (API /submit นี้ใช้ quizId อยู่แล้ว ซึ่งถูกต้อง ไม่ต้องแก้ครับ)
-router.post("/:lessonId/quizzes/submit", authenticateJWT, isEnrolled , async (req, res) => {
+router.post("/:lessonId/quizzes/submit", authenticateJWT, isEnrolled,  async (req, res) => {
   try {
     const { lessonId } = req.params;
+    const userId = req.user._id; // ดึง userId จาก token ที่ authenticateJWT เพิ่มให้
+    const { answers , courseId } = req.body; // e.g., [{ quizId: "60f123...", selectedAnswer: "A" }]
 
-    const { answers } = req.body; // e.g., [{ quizId: "60f123...", selectedAnswer: "A" }]
-
-    const userId = req.user.id;
+    
     const lesson = await Lesson.findById( lessonId);
     if (!lesson) {
       return res
@@ -198,8 +210,9 @@ router.post("/:lessonId/quizzes/submit", authenticateJWT, isEnrolled , async (re
     const PASSING_GRADE = 70; // 70% ตามเกณฑ์ที่ต้องการ
 
     const newQuizResult = new QuizResult({
-      user: userId,
+      user: userId,
       lesson: lessonId,
+      course: courseId,
       score,
       total: totalQuestions, // ใช้ totalQuestions แทน quizzes.length โดยตรง
       percentage: parseFloat(percentage.toFixed(2)), // เก็บเปอร์เซ็นต์ (ทศนิยม 2 ตำแหน่ง)
