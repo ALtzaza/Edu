@@ -164,7 +164,7 @@ export default function CourseDetailPage() {
     // --- Mapping Data (เหมือนเดิม) ---
     const categoryName = course.category?.name || 'Uncategorized';
     const instructorName = course.instructor?.name || 'Unknown Instructor';
-    const instructorBio = course.instructor?.bio || 'ไม่มีประวัติผู้สอน';
+    // const instructorBio = course.instructor?.bio || 'ไม่มีประวัติผู้สอน';
     const totalDurationText = 'ยังไม่ระบุ'; 
     const { mappedSections, totalLessons, totalQuizzes, totalWorkshops } = mapSectionsForDisplay(course.sections || []);
     const metaData = [
@@ -178,7 +178,6 @@ export default function CourseDetailPage() {
         <h2>เกี่ยวกับคอร์ส: ${course.title}</h2>
         <p>${course.description || 'ไม่มีคำอธิบายโดยละเอียดสำหรับคอร์สนี้'}</p>
         <h3>ผู้สอน: ${instructorName}</h3>
-        <p>${instructorBio}</p>
         <h2>สารบัญคอร์ส (${totalLessons} บทเรียน)</h2>
         ${mappedSections.map(section => `
             <h4>${section.title} (${section.lessons.length} บท)</h4>

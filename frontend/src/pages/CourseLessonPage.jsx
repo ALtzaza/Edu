@@ -1001,7 +1001,7 @@ export default function CourseLessonPage() {
               )
             ) : (
               <div className={styles.noVideoPlaceholder}>
-                วิดีโออยู่ระหว่างการอัปโหลด
+                ไม่มีคลิปเรียนในบทเรียนนี้
               </div>
             )}
                                {" "}

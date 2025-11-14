@@ -179,7 +179,7 @@ export function getCertificateHtml(userName, courseTitle, issueDate) {
                         <div class="name">Course Instructor</div>
                         <div class="role">ผู้สอน</div>
                     </div>
-                    <div class="badge">Edu</div>
+                    <div class="badge">Tid_Code</div>
                     <div class="sign">
                         <div class="line"></div>
                         <div class="name">Authorized</div>

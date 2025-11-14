@@ -271,6 +271,7 @@ const ManageQuizPage = () => {
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.target.value)}
           className="border p-2 rounded"
+          style={{marginLeft: "8px"}}
         >
           <option value="ทั้งหมด">ทั้งหมด</option>
           {Array.isArray(courses) &&
@@ -319,7 +320,7 @@ const ManageQuizPage = () => {
                 <td>{quiz.question}</td>
                 <td>{quiz.correctAnswer}</td>
                 <td>{quiz.lesson?.title || "N/A"}</td>
-                <td>
+                <td className="actions-cell">
                   <button
                     className="action-button edit-button"
                     onClick={() => setEditingQuiz(quiz)}

@@ -13,6 +13,7 @@ const ManageAprooveWorkshopPage = () => {
     const fetchWorkshops = async () => {
       try {
         const res = await api.get("/workshops");
+        console.log("Data from API:", res.data.workshops);
         setWorkshops(res.data.workshops || []);
       } catch (err) {
         setError(err.message);
@@ -93,9 +94,9 @@ const ManageAprooveWorkshopPage = () => {
           <thead>
             <tr>
               <th>Course</th>
-              <th>Section</th>
+              {/* <th>Section</th> */}
               <th>Lesson</th>
-              <th>Student</th>
+              <th>User</th>
               <th>Status</th>
               <th>Feedback</th>
               <th>Actions</th>
@@ -113,9 +114,9 @@ const ManageAprooveWorkshopPage = () => {
                 <tr key={workshop._id}>
                   
                   <td>{workshop.course?.title || "-"}</td>
-                  <td>{workshop.section?.title || "-"}</td>
+                  {/* <td>{workshop.section?.title || "-"}</td> */}
                   <td>{workshop.lesson?.title || "-"}</td>
-                  <td>{workshop.user ? (workshop.user.name || workshop.user.email) : "Unknown"}</td>
+                  <td>{workshop.user ? (workshop.user.username || workshop.user.name || "Unknown") : "Unknown"}</td>
                   <td>
                     <span
                       className={`status-badge ${
