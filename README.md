@@ -1,4 +1,4 @@
-# 🎓 E-SUS - Educational Platform
+# 🎓 Tid_Code - Educational Platform
 
 A comprehensive full-stack educational platform built with **React + Vite** (frontend) and **Node.js + Express** (backend). This system manages courses, lessons, quizzes, workshops, and student purchases with admin capabilities.
 
